@@ -18,7 +18,7 @@ public class FloatNode : Node
         HandleInputValue(valueField.text);
 
         valueField.contentType = TMP_InputField.ContentType.DecimalNumber;
-        valueField.onEndEdit.AddListener(HandleInputValue);
+        valueField.onValueChanged.AddListener(HandleInputValue);
     }
 
     private void HandleInputValue(string value)
