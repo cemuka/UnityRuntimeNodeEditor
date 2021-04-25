@@ -13,6 +13,7 @@ public class FloatNode : Node
         base.Init(pos);
         outputSocket.Init(this);
         SetType(NodeType.Float);
+        SetHeader("float");
         
         valueField.text = "0";
         HandleInputValue(valueField.text);

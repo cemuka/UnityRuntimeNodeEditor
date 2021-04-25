@@ -19,17 +19,17 @@ public class NodeGraph : MonoBehaviour
     {
         drawer.Init();
 
-        GrapEventListener.GraphMouseEvent   += OnGraphMouseClick;
-        SignalSystem.RequestStartedEvent    += OnRequestStarted;
-        SignalSystem.RequestSuccesEvent     += OnRequestSuccess;
-        SignalSystem.RequestFailEvent       += OnRequestFailed;
+        GraphPointerListener.GraphPointerEvent   += OnGraphMouseClick;
+        SignalSystem.RequestStartedEvent        += OnRequestStarted;
+        SignalSystem.RequestSuccesEvent         += OnRequestSuccess;
+        SignalSystem.RequestFailEvent           += OnRequestFailed;
 
         _contextMenu = CreatePrefab<ContextMenu>("Prefabs/ContextMenu", contextMenuContainer);
         
         _contextMenu.Init();
         _contextMenu.Hide();
-        _contextMenu.AddItem("float node", OnNodeItemClicked<FloatNode>("Prefabs/Nodes/FloatNode"));
-        _contextMenu.AddItem("sum node",  OnNodeItemClicked<SumNode>("Prefabs/Nodes/SumNode"));
+        _contextMenu.AddItem("float node",              OnNodeItemClicked<FloatNode>("Prefabs/Nodes/FloatNode"));
+        _contextMenu.AddItem("operation node",          OnNodeItemClicked<MathOperationNode>("Prefabs/Nodes/MathOperationNode"));
     }
 
     private void Update()
@@ -91,7 +91,10 @@ public class NodeGraph : MonoBehaviour
     private Vector2 GetMousePosition()
     {
         Vector2 localPointerPos;
-        var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(nodeContainer, Input.mousePosition, null, out localPointerPos);
+        var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(nodeContainer,
+                                                                              Input.mousePosition,
+                                                                              null,
+                                                                              out localPointerPos);
     
         return localPointerPos;
     }

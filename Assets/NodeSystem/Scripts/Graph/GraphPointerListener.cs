@@ -6,12 +6,12 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class GrapEventListener : MonoBehaviour, IPointerClickHandler
+public class GraphPointerListener : MonoBehaviour, IPointerClickHandler
 {
-    public static event Action<PointerEventData> GraphMouseEvent;
+    public static event Action<PointerEventData> GraphPointerEvent;
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        GraphMouseEvent?.Invoke(eventData);
+        GraphPointerEvent?.Invoke(eventData);
     }
 }

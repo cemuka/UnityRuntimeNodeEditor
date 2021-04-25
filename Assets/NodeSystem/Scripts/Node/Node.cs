@@ -1,9 +1,11 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Node : MonoBehaviour, IConnection
 {
+    public TMP_Text headerText;
     public GameObject body;
     
     private DragPanel _dragPanel;
@@ -27,6 +29,11 @@ public class Node : MonoBehaviour, IConnection
     public void SetValue(object value)
     {
         _value = value;
+    }
+
+    public void SetHeader(string name)
+    {
+        headerText.SetText(name);
     }
 
     public void SetType(NodeType type)
