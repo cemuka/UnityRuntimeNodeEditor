@@ -21,11 +21,7 @@ public class BezierCurveDrawer : MonoBehaviour
     {
         _connections = new List<ConnectionData>();
         _lineRenderer = GenerateLine();
-        RequestState(false);
-
-        SignalSystem.RequestStartedEvent    += OnRequestStarted;
-        SignalSystem.RequestSuccesEvent     += OnRequestSuccess;
-        SignalSystem.RequestFailEvent       += OnRequestFailed;
+        _hasRequest = false;
     }
     
     public void UpdateDraw()
@@ -41,28 +37,22 @@ public class BezierCurveDrawer : MonoBehaviour
         }
     }
 
-    //  event callbacks
-    private void OnRequestStarted(Socket socket)
+    public void Add(Socket from, Socket to)
     {
-        RequestState(true);
-        _requestSocket = socket;
+        _connections.Add(new ConnectionData(from, to, GenerateLine()));
     }
 
-    private void OnRequestSuccess(Socket target)
+    public void DrawRequest(Socket from)
     {
-        RequestState(false);
-        _connections.Add(new ConnectionData(_requestSocket, target, GenerateLine()));
+        _requestSocket = from;
+        _hasRequest = true;
+        _lineRenderer.gameObject.SetActive(_hasRequest);
     }
 
-    private void OnRequestFailed()
+    public void CancelRequest()
     {
-        RequestState(false);
-    }
-
-    private void RequestState(bool state)
-    {
-        _lineRenderer.gameObject.SetActive(state);
-        _hasRequest = state;
+        _hasRequest = false;
+        _lineRenderer.gameObject.SetActive(_hasRequest);
     }
 
     //  drawing
@@ -97,7 +87,7 @@ public class BezierCurveDrawer : MonoBehaviour
     private void DrawRequestConnection(Socket socket)
     {
         Vector2 localPointerPos;
-        var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(nodeContainer, Input.mousePosition, null, out localPointerPos);
+        var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(lineContainer, Input.mousePosition, null, out localPointerPos);
         PointerLocator.localPosition = localPointerPos;
 
         var pointList = new List<Vector2>();

@@ -10,3 +10,9 @@ public enum MathOperations
     Add,
     Substract
 }
+
+public enum SocketType
+{
+    Input,
+    Output
+}

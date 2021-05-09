@@ -1,9 +1,12 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class NodeGraph : MonoBehaviour
 {
+    [HideInInspector] public List<Node> nodes;
+
     //  scene references
     public BezierCurveDrawer drawer;
     public RectTransform contextMenuContainer;
@@ -19,7 +22,8 @@ public class NodeGraph : MonoBehaviour
     {
         drawer.Init();
 
-        GraphPointerListener.GraphPointerEvent   += OnGraphMouseClick;
+        GraphPointerListener.GraphPointerEvent  += OnGraphMouseClick;
+        
         SignalSystem.RequestStartedEvent        += OnRequestStarted;
         SignalSystem.RequestSuccesEvent         += OnRequestSuccess;
         SignalSystem.RequestFailEvent           += OnRequestFailed;
@@ -28,8 +32,8 @@ public class NodeGraph : MonoBehaviour
         
         _contextMenu.Init();
         _contextMenu.Hide();
-        _contextMenu.AddItem("float node",              OnNodeItemClicked<FloatNode>("Prefabs/Nodes/FloatNode"));
-        _contextMenu.AddItem("operation node",          OnNodeItemClicked<MathOperationNode>("Prefabs/Nodes/MathOperationNode"));
+        _contextMenu.AddItem("float node",               OnContextItemSelected<FloatNode>        ("Prefabs/Nodes/FloatNode"));
+        _contextMenu.AddItem("operation node",          OnContextItemSelected<MathOperationNode>("Prefabs/Nodes/MathOperationNode"));
     }
 
     private void Update()
@@ -58,25 +62,34 @@ public class NodeGraph : MonoBehaviour
 
     private void OnRequestFailed()
     {
+        drawer.CancelRequest();
         _requestSocket = null;
     }
 
     private void OnRequestSuccess(Socket target)
     {
-        target.parent.OnConnection(_requestSocket.connection);
+        if(target.type == SocketType.Input)
+        {
+            drawer.Add(_requestSocket, target);
+            target.parent.OnConnection(_requestSocket.connection);
+        }
+
         _requestSocket = null;
+        drawer.CancelRequest();
     }
 
     private void OnRequestStarted(Socket request)
     {
         _requestSocket = request;
+        drawer.DrawRequest(_requestSocket);
     }
 
-    private Action OnNodeItemClicked<T>(string path) where T : Node
+    private Action OnContextItemSelected<T>(string path) where T : Node
     {
         Action callback = null;
 
-        callback = () => { 
+        callback = () => 
+        { 
             _contextMenu.Hide();
             var node = CreatePrefab<T>(path, nodeContainer);
             var pos = GetMousePosition();

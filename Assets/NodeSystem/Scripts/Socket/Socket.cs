@@ -26,7 +26,7 @@ public class Socket : MonoBehaviour, IEndDragHandler, IDragHandler, IBeginDragHa
         foreach (var item in eventData.hovered)
         {
             var socket = item.GetComponent<Socket>();
-            if (socket != null && socket.type == SocketType.Input)
+            if (socket != null)
             {
                 SignalSystem.InvokeRequestSuccesWith(socket);
                 return;
@@ -48,10 +48,4 @@ public class Socket : MonoBehaviour, IEndDragHandler, IDragHandler, IBeginDragHa
             SignalSystem.InvokeRequestConnFrom(this);
         }
     }
-}
-
-public enum SocketType
-{
-    Input,
-    Output
 }

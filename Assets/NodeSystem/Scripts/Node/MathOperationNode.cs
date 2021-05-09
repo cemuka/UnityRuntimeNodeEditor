@@ -22,6 +22,7 @@ public class MathOperationNode : Node
         outputSocket.Init(this);
         SetType(NodeType.Float);
         SetHeader("operation");
+        SetValue(0);
 
         dropdown.AddOptions(new List<TMP_Dropdown.OptionData>()
         {
