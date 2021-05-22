@@ -10,6 +10,7 @@ public class Socket : MonoBehaviour, IEndDragHandler, IDragHandler, IBeginDragHa
     public Transform handle1;
     public Transform handle2;
     public SocketType type;
+    public ConnectionType connectionType;
     public IConnection connection;
     [HideInInspector]public Node parent;
 
@@ -28,12 +29,12 @@ public class Socket : MonoBehaviour, IEndDragHandler, IDragHandler, IBeginDragHa
             var socket = item.GetComponent<Socket>();
             if (socket != null)
             {
-                SignalSystem.InvokeRequestSuccesWith(socket);
+                SignalSystem.InvokeSocketDragDropWith(socket);
                 return;
             }       
         }
 
-        SignalSystem.InvokeRequestFailed();
+        SignalSystem.InvokeSocketDragDropWith(null);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -45,7 +46,7 @@ public class Socket : MonoBehaviour, IEndDragHandler, IDragHandler, IBeginDragHa
     {
         if (type == SocketType.Output)
         {
-            SignalSystem.InvokeRequestConnFrom(this);
+            SignalSystem.InvokeSocketDragFrom(this);
         }
     }
 }

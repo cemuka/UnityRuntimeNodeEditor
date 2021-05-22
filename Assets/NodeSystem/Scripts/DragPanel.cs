@@ -20,14 +20,20 @@ public class DragPanel : MonoBehaviour, IPointerDownHandler, IDragHandler
         _panelRectTransform.SetAsLastSibling();
         RectTransformUtility.ScreenPointToLocalPointInRectangle(_panelRectTransform, eventData.position, 
                                                                 eventData.pressEventCamera, out _pointerOffset);
+        HandleEvent(eventData);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
+        HandleEvent(eventData);
+    }
+
+    private void HandleEvent(PointerEventData eventData)
+    {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             Vector2 pointerPos = ClampToWindow(eventData);
-            var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRectTransform, pointerPos, 
+            var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRectTransform, pointerPos,
                                                                             eventData.pressEventCamera, out _localPointerPos);
             if (success)
             {

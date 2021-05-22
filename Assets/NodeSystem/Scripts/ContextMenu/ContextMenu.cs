@@ -9,11 +9,13 @@ public class ContextMenu : MonoBehaviour
 
     private RectTransform _rect;
     private List<ContextItem> _items;
+    private GameObject _menuItemPrefab;
 
     public void Init()
     {
         _rect = this.GetComponent<RectTransform>();
         _items = new List<ContextItem>();
+        _menuItemPrefab = Resources.Load<GameObject>("Prefabs/ContextItem");
     }
 
     public void Clear()
@@ -24,8 +26,7 @@ public class ContextMenu : MonoBehaviour
 
     public void AddItem(string name, Action callback)
     {
-        var item = NodeGraph.CreatePrefab<ContextItem>("Prefabs/ContextItem", content);
-
+        var item = Instantiate(_menuItemPrefab, content).GetComponent<ContextItem>();
         item.nameText.text = name;
         item.button.onClick.AddListener(() => callback());
 

@@ -14,7 +14,7 @@ public class BezierCurveDrawer : MonoBehaviour
 
     private UILineRenderer _lineRenderer;
     private bool _hasRequest;
-    private Socket _requestSocket;
+    private Socket _draggingSocket;
     private List<ConnectionData> _connections;
 
     public void Init()
@@ -33,7 +33,7 @@ public class BezierCurveDrawer : MonoBehaviour
 
         if (_hasRequest)
         {
-            DrawRequestConnection(_requestSocket);
+            DrawDragging(_draggingSocket);
         }
     }
 
@@ -42,14 +42,16 @@ public class BezierCurveDrawer : MonoBehaviour
         _connections.Add(new ConnectionData(from, to, GenerateLine()));
     }
 
-    public void DrawRequest(Socket from)
+    public void Remove(){}
+
+    public void StartDrag(Socket from)
     {
-        _requestSocket = from;
+        _draggingSocket = from;
         _hasRequest = true;
         _lineRenderer.gameObject.SetActive(_hasRequest);
     }
 
-    public void CancelRequest()
+    public void CancelDrag()
     {
         _hasRequest = false;
         _lineRenderer.gameObject.SetActive(_hasRequest);
@@ -84,7 +86,7 @@ public class BezierCurveDrawer : MonoBehaviour
         lineRenderer.SetVerticesDirty();
     }
 
-    private void DrawRequestConnection(Socket socket)
+    private void DrawDragging(Socket socket)
     {
         Vector2 localPointerPos;
         var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(lineContainer, Input.mousePosition, null, out localPointerPos);
