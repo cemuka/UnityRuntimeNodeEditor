@@ -696,8 +696,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1814650011}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -713,7 +712,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce51df8af83f84514887f184cd516f9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graph: {fileID: 1814650012}
+  graph: {fileID: 1763663739}
   contextMenuContainer: {fileID: 1372047626}
   nodeContainer: {fileID: 1117861406}
 --- !u!1 &1117861405
@@ -950,6 +949,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1763663736}
   - component: {fileID: 1763663737}
+  - component: {fileID: 1763663738}
+  - component: {fileID: 1763663739}
   m_Layer: 5
   m_Name: Graph
   m_TagString: Untagged
@@ -992,67 +993,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e15f751a4e55c469a9035035bb81d664, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1814650009
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1814650011}
-  - component: {fileID: 1814650010}
-  - component: {fileID: 1814650012}
-  m_Layer: 0
-  m_Name: NodeGrpah
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1814650010
+--- !u!114 &1763663738
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1814650009}
+  m_GameObject: {fileID: 1763663735}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d933f4b77fa4c45e39f9c5dffb9a55df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PointerLocator: {fileID: 1483321592}
+  pointerLocator: {fileID: 1483321592}
   lineContainer: {fileID: 1195190855}
-  nodeContainer: {fileID: 1117861406}
   vertexCount: 60
---- !u!4 &1814650011
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1814650009}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 895255849}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1814650012
+--- !u!114 &1763663739
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1814650009}
+  m_GameObject: {fileID: 1763663735}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05e43f448074346f5b2821f1cefbca3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  drawer: {fileID: 1814650010}
+  drawer: {fileID: 1763663738}
 --- !u!1 &2135844012
 GameObject:
   m_ObjectHideFlags: 0

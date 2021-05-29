@@ -38,7 +38,7 @@ public class MathOperationNode : Node
         });
     }
 
-    public override void OnConnection(SocketInput port, IOutput output)
+    public override void OnConnection(SocketInput input, IOutput output)
     {
         _receivedOutputs.Add(output);
         output.ValueUpdated += OnConnectedValueUpdated;

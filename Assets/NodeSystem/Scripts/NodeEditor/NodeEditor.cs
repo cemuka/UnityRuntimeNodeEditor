@@ -9,7 +9,6 @@ public class NodeEditor : MonoBehaviour
     public RectTransform contextMenuContainer;
     public RectTransform nodeContainer;
 
-    private static RectTransform _contextMenuContainer;
     private ContextMenu _contextMenu;
 
     private void Start()
@@ -17,74 +16,84 @@ public class NodeEditor : MonoBehaviour
         Application.targetFrameRate = 60;
 
         graph.Init();
-        GraphPointerListener.GraphPointerEvent  += OnGraphMouseClick;
-
-        _contextMenuContainer = contextMenuContainer;
-        _contextMenu = CreatePrefab<ContextMenu>("Prefabs/ContextMenu", _contextMenuContainer);        
+        var utility = new Utility(nodeContainer, contextMenuContainer);
+        GraphPointerListener.GraphPointerEvent  += OnGraphPointerClick;
+        SignalSystem.NodePointerClickEvent           += OnNodePointerClick;
+        
+        _contextMenu = Utility.CreatePrefab<ContextMenu>("Prefabs/ContextMenu", contextMenuContainer);        
         _contextMenu.Init();
-        _contextMenu.Hide();
-        _contextMenu.AddItem("float node",           CreateFloatNode);
-        _contextMenu.AddItem("operation node",      CreateOperationNode);   
-    }
-
-    //  context actions
-    private void CreateFloatNode()
-    {
-        _contextMenu.Hide();
-
-        var floatNode = CreatePrefab<FloatNode>("Prefabs/Nodes/FloatNode", nodeContainer);
-        var pos = GetMousePosition();
-        floatNode.Init(pos);
-        NodeGraph.nodes.Add(floatNode);
-    }
-
-    private void CreateOperationNode()
-    {
-        _contextMenu.Hide();
-
-        var opNode = CreatePrefab<MathOperationNode>("Prefabs/Nodes/MathOperationNode", nodeContainer);
-        var pos = GetMousePosition();
-        opNode.Init(pos);
-        NodeGraph.nodes.Add(opNode);
+        CloseContextMenu();
     }
 
     //  event handlers
-    private void OnGraphMouseClick(PointerEventData pointerEvent)
+    private void OnGraphPointerClick(PointerEventData pointerEvent)
     {
         switch (pointerEvent.button)
         {
             case PointerEventData.InputButton.Right:
             {
-                _contextMenu.Show(GetMousePosition());
+                DisplayGraphContextMenu();
             }
             break;
 
             case PointerEventData.InputButton.Left:
             {
-                _contextMenu.Hide();
+                CloseContextMenu();
             }
             break;
         }
     }
 
-    //  helpers
-    public static Vector2 GetMousePosition()
+    private void OnNodePointerClick(Node node, PointerEventData eventData)
     {
-        Vector2 localPointerPos;
-        var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_contextMenuContainer,
-                                                                              Input.mousePosition,
-                                                                              null,
-                                                                              out localPointerPos);
-    
-        return localPointerPos;
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            DisplayNodeContexMenu(node);
+        }
     }
 
-    public static T CreatePrefab<T>(string path, Transform parent)
+    //  context methods
+    private void DisplayGraphContextMenu()
     {
-        var prefab = Resources.Load<GameObject>(path);
-        var instance = Instantiate(prefab, parent);
-        var component = instance.GetComponent<T>();
+        _contextMenu.Clear();
 
-        return component;
+        _contextMenu.AddItem("float node",           CreateFloatNode);
+        _contextMenu.AddItem("operation node",      CreateMatOpNode);  
+
+        _contextMenu.Show(Utility.GetMousePosition());
+    }
+
+    private void DisplayNodeContexMenu(Node node)
+    {
+        _contextMenu.Clear();
+
+        _contextMenu.AddItem("delete",              ()=>DeleteNode(node));
+        
+        _contextMenu.Show(Utility.GetMousePosition());
+    }
+
+    private void CloseContextMenu()
+    {
+        _contextMenu.Hide();
+        _contextMenu.Clear();
+    }
+
+    //  context item actions
+    private void CreateFloatNode()
+    {
+        graph.Create<FloatNode>("Prefabs/Nodes/FloatNode", Utility.GetMousePosition());
+        CloseContextMenu();
+    }
+
+    private void CreateMatOpNode()
+    {
+        graph.Create<MathOperationNode>("Prefabs/Nodes/MathOperationNode", Utility.GetMousePosition());
+        CloseContextMenu();
+    }
+    
+    private void DeleteNode(Node node)
+    {
+        CloseContextMenu();
+        graph.Delete(node);
     }
 }

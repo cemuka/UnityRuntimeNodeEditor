@@ -6,9 +6,8 @@ using UnityEngine.UI.Extensions;
 
 public class BezierCurveDrawer : MonoBehaviour
 {
-    public RectTransform PointerLocator;
+    public RectTransform pointerLocator;
     public RectTransform lineContainer;
-    public RectTransform nodeContainer;
     [Header("Bezier settings")]
     public float vertexCount = 10;
 
@@ -90,14 +89,14 @@ public class BezierCurveDrawer : MonoBehaviour
     {
         Vector2 localPointerPos;
         var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(lineContainer, Input.mousePosition, null, out localPointerPos);
-        PointerLocator.localPosition = localPointerPos;
+        pointerLocator.localPosition = localPointerPos;
 
         var pointList = new List<Vector2>();
 
         for (float i = 0; i < 120; i++)
         {
             var t = i / 120;
-            pointList.Add(QuadraticCurve(port.handle1.position, port.handle2.position, PointerLocator.position, t));
+            pointList.Add(QuadraticCurve(port.handle1.position, port.handle2.position, pointerLocator.position, t));
         }
 
         _lineRenderer.m_points = pointList.ToArray();

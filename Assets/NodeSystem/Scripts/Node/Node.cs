@@ -1,25 +1,29 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class Node : MonoBehaviour
 {
     public TMP_Text headerText;
     public GameObject body;
+    public RectTransform PanelRect => _panelRectTransform;
     
-    private DragPanel _dragPanel;
-    private object _value;
+    private NodeDraggablePanel _dragPanel;
     private NodeType _nodeType;
+    private RectTransform _panelRectTransform;
 
     public virtual void Init(Vector2 pos)
     {
-        body.transform.parent.GetComponent<RectTransform>().localPosition = pos;
-        _dragPanel = body.AddComponent<DragPanel>();
-        _dragPanel.Init();
+        _panelRectTransform = body.transform.parent.GetComponent<RectTransform>();
+        _dragPanel = body.AddComponent<NodeDraggablePanel>();
+        _dragPanel.Init(this);
+
+        SetPosition(pos);
     }
 
-    public virtual void OnConnection(SocketInput port, IOutput output)
+    public virtual void OnConnection(SocketInput input, IOutput output)
     {
 
     }
@@ -33,4 +37,15 @@ public class Node : MonoBehaviour
     {
         _nodeType = type;
     }
+
+    public void SetPosition(Vector2 pos)
+    {
+        _panelRectTransform.localPosition = pos;
+    }
+
+    public void SetAsLastSibling()
+    {
+        _panelRectTransform.SetAsLastSibling();
+    }
+
 }
