@@ -3,16 +3,16 @@ using UnityEngine.EventSystems;
 
 public static class SignalSystem
 {
-    public static event Action<Socket> ConnectionDragStartEvent;
-    public static event Action<Socket> ConnectionDragDropEvent;
+    public static event Action<SocketOutput>    OutputSocketDragStartEvent;
+    public static event Action<SocketInput>     InputSocketDropEvent;
 
-    public static void InvokeSocketDragFrom(Socket socket)
+    public static void InvokeSocketDragFrom(SocketOutput output)
     {
-        ConnectionDragStartEvent?.Invoke(socket);
+        OutputSocketDragStartEvent?.Invoke(output);
     }
 
-    public static void InvokeSocketDragDropWith(Socket socket)
+    public static void InvokeInputSocketDropTo(SocketInput input)
     {
-        ConnectionDragDropEvent?.Invoke(socket);
+        InputSocketDropEvent?.Invoke(input);
     }
 }

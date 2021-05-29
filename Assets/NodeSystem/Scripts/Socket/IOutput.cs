@@ -1,8 +1,7 @@
 using System;
 
-public interface IConnection
+public interface IOutput
 {
     T GetValue<T>();
-    NodeType GetType();
     event Action ValueUpdated;
 }

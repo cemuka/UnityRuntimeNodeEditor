@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Node : MonoBehaviour, IConnection
+public class Node : MonoBehaviour
 {
     public TMP_Text headerText;
     public GameObject body;
@@ -12,8 +12,6 @@ public class Node : MonoBehaviour, IConnection
     private object _value;
     private NodeType _nodeType;
 
-    public event Action ValueUpdated;
-
     public virtual void Init(Vector2 pos)
     {
         body.transform.parent.GetComponent<RectTransform>().localPosition = pos;
@@ -21,14 +19,9 @@ public class Node : MonoBehaviour, IConnection
         _dragPanel.Init();
     }
 
-    public virtual void OnConnection(IConnection conn)
+    public virtual void OnConnection(SocketInput port, IOutput output)
     {
 
-    }
-
-    public void SetValue(object value)
-    {
-        _value = value;
     }
 
     public void SetHeader(string name)
@@ -39,20 +32,5 @@ public class Node : MonoBehaviour, IConnection
     public void SetType(NodeType type)
     {
         _nodeType = type;
-    }
-
-    public void ValueUpdatedEventInvoke()
-    {
-        ValueUpdated?.Invoke();
-    }
-
-    public T GetValue<T>()
-    {
-        return (T)_value;
-    }
-
-    NodeType IConnection.GetType()
-    {
-        return _nodeType;
     }
 }

@@ -15,12 +15,12 @@ public class BezierCurveDrawer : MonoBehaviour
     private UILineRenderer _lineRenderer;
     private bool _hasRequest;
     private Socket _draggingSocket;
-    private List<ConnectionData> _connections;
+    private List<ConnectionDrawData> _connections;
 
     public void Init()
     {
-        _connections = new List<ConnectionData>();
-        _lineRenderer = GenerateLine();
+        _connections = new List<ConnectionDrawData>();
+        _lineRenderer = CreateLine();
         _hasRequest = false;
     }
     
@@ -33,13 +33,13 @@ public class BezierCurveDrawer : MonoBehaviour
 
         if (_hasRequest)
         {
-            DrawDragging(_draggingSocket);
+            DrawDragging(_draggingSocket.handle);
         }
     }
 
-    public void Add(Socket from, Socket to)
+    public void Add(Socket from, Socket target)
     {
-        _connections.Add(new ConnectionData(from, to, GenerateLine()));
+        _connections.Add(new ConnectionDrawData(from.handle, target.handle, CreateLine()));
     }
 
     public void Remove(){}
@@ -72,21 +72,21 @@ public class BezierCurveDrawer : MonoBehaviour
         return Vector3.Lerp(p0, p1, t);
     }
 
-    private void DrawConnection(Socket sock1, Socket sock2, UILineRenderer lineRenderer)
+    private void DrawConnection(SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
     {
         var pointList = new List<Vector2>();
 
         for (float i = 0; i < vertexCount; i++)
         {
             var t = i / vertexCount;
-            pointList.Add(CubicCurve(sock1.handle1.position, sock1.handle2.position, sock2.handle1.position, sock2.handle2.position, t));
+            pointList.Add(CubicCurve(port1.handle1.position, port1.handle2.position, port2.handle1.position, port2.handle2.position, t));
         }
 
         lineRenderer.m_points = pointList.ToArray();
         lineRenderer.SetVerticesDirty();
     }
 
-    private void DrawDragging(Socket socket)
+    private void DrawDragging(SocketHandle port)
     {
         Vector2 localPointerPos;
         var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(lineContainer, Input.mousePosition, null, out localPointerPos);
@@ -97,14 +97,14 @@ public class BezierCurveDrawer : MonoBehaviour
         for (float i = 0; i < 120; i++)
         {
             var t = i / 120;
-            pointList.Add(QuadraticCurve(socket.handle1.position, socket.handle2.position, PointerLocator.position, t));
+            pointList.Add(QuadraticCurve(port.handle1.position, port.handle2.position, PointerLocator.position, t));
         }
 
         _lineRenderer.m_points = pointList.ToArray();
         _lineRenderer.SetVerticesDirty();
     }
    
-    private UILineRenderer GenerateLine()
+    private UILineRenderer CreateLine()
     {
         var lineGO = new GameObject("BezierLine");
         lineGO.transform.SetParent(this.lineContainer);
@@ -116,18 +116,18 @@ public class BezierCurveDrawer : MonoBehaviour
         return linerenderer;
     }
 
-}
-
-public class ConnectionData
-{
-    public Socket output;
-    public Socket input;
-    public UILineRenderer lineRenderer;
-
-    public ConnectionData(Socket conn1, Socket conn2, UILineRenderer lineRenderer)
+    private class ConnectionDrawData
     {
-        this.output = conn1;
-        this.input = conn2;
-        this.lineRenderer = lineRenderer;
+        public SocketHandle output;
+        public SocketHandle input;
+        public UILineRenderer lineRenderer;
+
+        public ConnectionDrawData(SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
+        {
+            this.output = port1;
+            this.input = port2;
+            this.lineRenderer = lineRenderer;
+        }
     }
 }
+

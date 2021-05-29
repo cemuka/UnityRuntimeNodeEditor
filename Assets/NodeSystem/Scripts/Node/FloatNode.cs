@@ -6,7 +6,7 @@ using System;
 public class FloatNode : Node
 {
     public TMP_InputField valueField;
-    public Socket outputSocket;
+    public SocketOutput outputSocket;
 
     public override void Init(Vector2 pos)
     {
@@ -25,8 +25,6 @@ public class FloatNode : Node
     private void HandleInputValue(string value)
     {
         float floatValue = float.Parse(value);
-        SetValue(floatValue);
-
-        ValueUpdatedEventInvoke();
+        outputSocket.SetValue(floatValue);
     }
 }

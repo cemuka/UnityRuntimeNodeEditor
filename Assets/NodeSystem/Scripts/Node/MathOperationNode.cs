@@ -7,22 +7,22 @@ using System.Linq;
 
 public class MathOperationNode : Node
 {
-    public TMP_Text resultText;
-    public TMP_Dropdown dropdown;
-    public Socket inputSocket;
-    public Socket outputSocket;
+    public TMP_Text         resultText;
+    public TMP_Dropdown     dropdown;
+    public SocketInput      inputSocket;
+    public SocketOutput     outputSocket;
 
-    private List<IConnection> _receivedConnections;
+    private List<IOutput> _receivedOutputs;
 
     public override void Init(Vector2 pos)
     {
         base.Init(pos);
-        _receivedConnections = new List<IConnection>();
+        _receivedOutputs = new List<IOutput>();
         inputSocket.Init(this);
         outputSocket.Init(this);
         SetType(NodeType.Float);
         SetHeader("operation");
-        SetValue(0);
+        outputSocket.SetValue(0f);
 
         dropdown.AddOptions(new List<TMP_Dropdown.OptionData>()
         {
@@ -38,10 +38,10 @@ public class MathOperationNode : Node
         });
     }
 
-    public override void OnConnection(IConnection conn)
+    public override void OnConnection(SocketInput port, IOutput output)
     {
-        _receivedConnections.Add(conn);
-        conn.ValueUpdated += OnConnectedValueUpdated;
+        _receivedOutputs.Add(output);
+        output.ValueUpdated += OnConnectedValueUpdated;
 
         OnConnectedValueUpdated();
     }
@@ -49,24 +49,13 @@ public class MathOperationNode : Node
     private void OnConnectedValueUpdated()
     {
         List<float> inputValues = new List<float>();
-        foreach (var c in _receivedConnections)
+        foreach (var c in _receivedOutputs)
         {
-            var type = c.GetType();
-
-            switch (type)
-            {
-                case NodeType.Float:
-                {
-                    inputValues.Add(c.GetValue<float>());
-                }
-                break;
-            }
+            inputValues.Add(c.GetValue<float>());
         }
 
-
         float result = Calculate(inputValues);
-        SetValue(result);
-        ValueUpdatedEventInvoke();
+        outputSocket.SetValue(result);
         Display(result.ToString());
     }
 
