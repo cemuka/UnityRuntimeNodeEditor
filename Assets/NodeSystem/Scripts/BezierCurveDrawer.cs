@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI.Extensions;
@@ -14,11 +15,11 @@ public class BezierCurveDrawer : MonoBehaviour
     private UILineRenderer _lineRenderer;
     private bool _hasRequest;
     private Socket _draggingSocket;
-    private List<ConnectionDrawData> _connections;
+    private Dictionary<int, ConnectionDrawData> _connections;
 
     public void Init()
     {
-        _connections = new List<ConnectionDrawData>();
+        _connections = new Dictionary<int, ConnectionDrawData>();
         _lineRenderer = CreateLine();
         _hasRequest = false;
     }
@@ -27,7 +28,10 @@ public class BezierCurveDrawer : MonoBehaviour
     {
         if (_connections.Count > 0)
         {
-            _connections.ForEach( conn => DrawConnection(conn.output, conn.input, conn.lineRenderer));
+            foreach (var conn in _connections.Values)
+            {
+                DrawConnection(conn.output, conn.input, conn.lineRenderer);
+            }
         }
 
         if (_hasRequest)
@@ -36,12 +40,16 @@ public class BezierCurveDrawer : MonoBehaviour
         }
     }
 
-    public void Add(Socket from, Socket target)
+    public void Add(int connId, Socket from, Socket target)
     {
-        _connections.Add(new ConnectionDrawData(from.handle, target.handle, CreateLine()));
+        _connections.Add(connId, new ConnectionDrawData(connId, from.handle, target.handle, CreateLine()));
     }
 
-    public void Remove(){}
+    public void Remove(int connId)
+    {
+        Destroy(_connections[connId].lineRenderer.gameObject);
+        _connections.Remove(connId);
+    }
 
     public void StartDrag(Socket from)
     {
@@ -57,20 +65,6 @@ public class BezierCurveDrawer : MonoBehaviour
     }
 
     //  drawing
-    private Vector3 QuadraticCurve(Vector3 a, Vector3 b, Vector3 c, float t)
-    {
-        var p0 = Vector3.Lerp(a, b, t);
-        var p1 = Vector3.Lerp(b, c, t);
-        return Vector3.Lerp(p0, p1, t);
-    }
-    
-    private Vector3 CubicCurve(Vector3 a, Vector3 b, Vector3 c, Vector3 d, float t)
-    {
-        var p0 = QuadraticCurve(a, b, c, t);
-        var p1 = QuadraticCurve(b, c, d, t);
-        return Vector3.Lerp(p0, p1, t);
-    }
-
     private void DrawConnection(SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
     {
         var pointList = new List<Vector2>();
@@ -78,7 +72,11 @@ public class BezierCurveDrawer : MonoBehaviour
         for (float i = 0; i < vertexCount; i++)
         {
             var t = i / vertexCount;
-            pointList.Add(CubicCurve(port1.handle1.position, port1.handle2.position, port2.handle1.position, port2.handle2.position, t));
+            pointList.Add(Utility.CubicCurve(port1.handle1.position,
+                                             port1.handle2.position,
+                                             port2.handle1.position,
+                                             port2.handle2.position,
+                                             t));
         }
 
         lineRenderer.m_points = pointList.ToArray();
@@ -88,7 +86,7 @@ public class BezierCurveDrawer : MonoBehaviour
     private void DrawDragging(SocketHandle port)
     {
         Vector2 localPointerPos;
-        var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(lineContainer, Input.mousePosition, null, out localPointerPos);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(lineContainer, Input.mousePosition, null, out localPointerPos);
         pointerLocator.localPosition = localPointerPos;
 
         var pointList = new List<Vector2>();
@@ -96,7 +94,10 @@ public class BezierCurveDrawer : MonoBehaviour
         for (float i = 0; i < 120; i++)
         {
             var t = i / 120;
-            pointList.Add(QuadraticCurve(port.handle1.position, port.handle2.position, pointerLocator.position, t));
+            pointList.Add(Utility.QuadraticCurve(port.handle1.position,
+                                                 port.handle2.position,
+                                                 pointerLocator.position,
+                                                 t));
         }
 
         _lineRenderer.m_points = pointList.ToArray();
@@ -117,12 +118,14 @@ public class BezierCurveDrawer : MonoBehaviour
 
     private class ConnectionDrawData
     {
+        public int id;
         public SocketHandle output;
         public SocketHandle input;
         public UILineRenderer lineRenderer;
 
-        public ConnectionDrawData(SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
+        public ConnectionDrawData(int id, SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
         {
+            this.id = id;
             this.output = port1;
             this.input = port2;
             this.lineRenderer = lineRenderer;

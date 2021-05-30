@@ -67,7 +67,8 @@ public class NodeEditor : MonoBehaviour
     {
         _contextMenu.Clear();
 
-        _contextMenu.AddItem("delete",              ()=>DeleteNode(node));
+        _contextMenu.AddItem("delete",                      ()=>DeleteNode(node));
+        _contextMenu.AddItem("clear connections",           ()=>ClearConnections(node));
         
         _contextMenu.Show(Utility.GetMousePosition());
     }
@@ -95,5 +96,11 @@ public class NodeEditor : MonoBehaviour
     {
         CloseContextMenu();
         graph.Delete(node);
+    }
+
+    private void ClearConnections(Node node)
+    {
+        CloseContextMenu();
+        graph.ClearConnectionsOf(node);
     }
 }

@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class NodeGraph : MonoBehaviour
 {
@@ -17,14 +17,20 @@ public class NodeGraph : MonoBehaviour
     private Vector2 _localPointerPos;
     private RectTransform _container;
 
+    private int _maxId;
+
     public void Init()
     {
+        _maxId = 0;
+
         _container      = this.GetComponent<RectTransform>();
         nodes           = new List<Node>();
         connections     = new List<Connection>();
 
         SignalSystem.OutputSocketDragStartEvent     += OnOutputDragStarted;
-        SignalSystem.InputSocketDropEvent           += OnInputDropped;
+        SignalSystem.OutputSocketDragDrop           += OnOutputDragDroppedTo;
+        SignalSystem.InputSocketClickEvent          += OnInputSocketClicked;
+        SignalSystem.OutputSocketClickEvent         += OnOutputSocketClicked;
         SignalSystem.NodePointerDownEvent           += OnNodePointerDown;
         SignalSystem.NodePointerDragEvent           += OnNodePointerDrag;
 
@@ -40,8 +46,37 @@ public class NodeGraph : MonoBehaviour
 
     public void Delete(Node node)
     {
+        ClearConnectionsOf(node);
         Destroy(node.gameObject);
         nodes.Remove(node);
+    }
+
+    public void Connect(SocketInput input, SocketOutput output)
+    {
+        var connection = new Connection()
+        {
+            id      = CreateId,
+            input   = input,
+            output  = output
+        };
+        connections.Add(connection);
+        input.parentNode.OnConnection(input , output);  
+        
+        drawer.Add(connection.id, output, input);
+    }
+
+    public void Disconnect(Connection conn)
+    {
+        drawer.Remove(conn.id);
+        conn.input.parentNode.OnDisconnect(conn.input, conn.output);
+        connections.Remove(conn);
+    }
+
+    public void ClearConnectionsOf(Node node)
+    {
+        connections.Where( conn => conn.output.parentNode == node || conn.input.parentNode == node)
+            .ToList()
+            .ForEach(conn => Disconnect(conn));
     }
 
     private void Update()
@@ -50,7 +85,27 @@ public class NodeGraph : MonoBehaviour
     }
 
     //  event handlers
-    private void OnInputDropped(SocketInput target)
+    private void OnInputSocketClicked(SocketInput input, PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            connections.Where( conn => conn.input == input)
+                        .ToList()
+                        .ForEach(conn => Disconnect(conn));
+        }
+    }
+
+    private void OnOutputSocketClicked(SocketOutput output, PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            connections.Where( conn => conn.output == output)
+                        .ToList()
+                        .ForEach(conn => Disconnect(conn));
+        }
+    }
+
+    private void OnOutputDragDroppedTo(SocketInput target)
     {
         if (target == null)
         {
@@ -58,14 +113,7 @@ public class NodeGraph : MonoBehaviour
         }
         else
         {
-            drawer.Add(_currentDraggingSocket, target);
-            var connection = new Connection()
-            {
-                input   = target,
-                output  = _currentDraggingSocket
-            };
-            connections.Add(connection);
-            target.parentNode.OnConnection(target , _currentDraggingSocket);   
+            Connect(target, _currentDraggingSocket);
         }
 
         _currentDraggingSocket = null;
@@ -74,6 +122,8 @@ public class NodeGraph : MonoBehaviour
 
     private void OnOutputDragStarted(SocketOutput socketOnDrag)
     {
+
+
         _currentDraggingSocket = socketOnDrag;
         drawer.StartDrag(_currentDraggingSocket);
     }
@@ -119,4 +169,6 @@ public class NodeGraph : MonoBehaviour
         var newPointerPos = new Vector2(clampedX, clampedY);
         return newPointerPos;
     }
+
+    private int CreateId => _maxId++;
 }

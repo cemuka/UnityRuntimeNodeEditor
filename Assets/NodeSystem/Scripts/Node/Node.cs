@@ -28,6 +28,11 @@ public class Node : MonoBehaviour
 
     }
 
+    public virtual void OnDisconnect(SocketInput input, IOutput output)
+    {
+
+    }
+
     public void SetHeader(string name)
     {
         headerText.SetText(name);

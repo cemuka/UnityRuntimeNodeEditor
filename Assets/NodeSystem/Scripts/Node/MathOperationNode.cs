@@ -46,6 +46,14 @@ public class MathOperationNode : Node
         OnConnectedValueUpdated();
     }
 
+    public override void OnDisconnect(SocketInput input, IOutput output)
+    {
+        _receivedOutputs.Remove(output);
+        output.ValueUpdated -= OnConnectedValueUpdated;
+
+        OnConnectedValueUpdated();
+    }
+
     private void OnConnectedValueUpdated()
     {
         List<float> inputValues = new List<float>();

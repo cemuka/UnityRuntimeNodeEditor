@@ -2,7 +2,7 @@ using System;
 using UnityEngine.EventSystems;
 using UnityEngine;
 
-public class SocketOutput : Socket, IOutput, IDragHandler, IEndDragHandler
+public class SocketOutput : Socket, IOutput, IPointerClickHandler, IDragHandler, IEndDragHandler
 {
     private object _value;
 
@@ -21,6 +21,11 @@ public class SocketOutput : Socket, IOutput, IDragHandler, IEndDragHandler
     {
         return(T)_value;
     }
+    
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        SignalSystem.InvokeOutputSocketClick(this, eventData);   
+    }
 
     public void OnDrag(PointerEventData eventData)
     {
@@ -34,11 +39,11 @@ public class SocketOutput : Socket, IOutput, IDragHandler, IEndDragHandler
             var input = item.GetComponent<SocketInput>();
             if (input != null)
             {
-                SignalSystem.InvokeInputSocketDropTo(input);
+                SignalSystem.InvokeOutputSocketDragDropTo(input);
                 return;
             }       
         }
 
-        SignalSystem.InvokeInputSocketDropTo(null);
+        SignalSystem.InvokeOutputSocketDragDropTo(null);
     }
 }

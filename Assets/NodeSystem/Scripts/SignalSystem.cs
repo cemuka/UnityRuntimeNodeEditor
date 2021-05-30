@@ -3,20 +3,32 @@ using UnityEngine.EventSystems;
 
 public static class SignalSystem
 {
-    public static event Action<SocketOutput>                OutputSocketDragStartEvent;
-    public static event Action<SocketInput>                 InputSocketDropEvent;
-    public static event Action<Node, PointerEventData>      NodePointerClickEvent;
-    public static event Action<Node, PointerEventData>      NodePointerDownEvent;
-    public static event Action<Node, PointerEventData>      NodePointerDragEvent;
+    public static event Action<SocketOutput>                    OutputSocketDragStartEvent;
+    public static event Action<SocketInput>                     OutputSocketDragDrop;
+    public static event Action<SocketInput, PointerEventData>   InputSocketClickEvent;
+    public static event Action<SocketOutput, PointerEventData>  OutputSocketClickEvent;
+    public static event Action<Node, PointerEventData>          NodePointerClickEvent;
+    public static event Action<Node, PointerEventData>          NodePointerDownEvent;
+    public static event Action<Node, PointerEventData>          NodePointerDragEvent;
 
     public static void InvokeSocketDragFrom(SocketOutput output)
     {
         OutputSocketDragStartEvent?.Invoke(output);
     }
 
-    public static void InvokeInputSocketDropTo(SocketInput input)
+    public static void InvokeOutputSocketDragDropTo(SocketInput input)
     {
-        InputSocketDropEvent?.Invoke(input);
+        OutputSocketDragDrop?.Invoke(input);
+    }
+
+    public static void InvokeInputSocketClick(SocketInput input, PointerEventData eventData)
+    {
+        InputSocketClickEvent?.Invoke(input, eventData);
+    }
+
+    public static void InvokeOutputSocketClick(SocketOutput output, PointerEventData eventData)
+    {
+        OutputSocketClickEvent?.Invoke(output, eventData);
     }
 
     public static void InvokeNodePointerClick(Node node, PointerEventData eventData)
