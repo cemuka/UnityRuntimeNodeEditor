@@ -12,7 +12,7 @@ Progress so far:
 [ ] Save graph as json
 [ ] Load graph
 [ ] Blackboard 
-[ ] Implement single/multiple socket 
+[x] Implement single/multiple socket 
 ```
 
 Current state is quite experimental.  
