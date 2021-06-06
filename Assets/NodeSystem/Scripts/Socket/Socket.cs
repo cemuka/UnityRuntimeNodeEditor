@@ -21,4 +21,14 @@ public class Socket : MonoBehaviour
     {
         return connection != null;
     }
+
+    public void Connect(IConnection conn)
+    {
+        connection = conn;
+    }
+
+    public void Disconnect()
+    {
+        connection = null;
+    }
 }

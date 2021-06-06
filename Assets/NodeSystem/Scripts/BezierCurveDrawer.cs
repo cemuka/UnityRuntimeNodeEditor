@@ -40,9 +40,9 @@ public class BezierCurveDrawer : MonoBehaviour
         }
     }
 
-    public void Add(int connId, Socket from, Socket target)
+    public void Add(int connId, SocketHandle from, SocketHandle target)
     {
-        _connections.Add(connId, new ConnectionDrawData(connId, from.handle, target.handle, CreateLine()));
+        _connections.Add(connId, new ConnectionDrawData(connId, from, target, CreateLine()));
     }
 
     public void Remove(int connId)

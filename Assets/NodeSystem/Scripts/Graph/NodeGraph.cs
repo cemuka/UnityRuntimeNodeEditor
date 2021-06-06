@@ -59,13 +59,13 @@ public class NodeGraph : MonoBehaviour
             output  = output
         };
 
-        input.connection = connection;
-        output.connection = connection;
+        input.Connect(connection);
+        output.Connect(connection);
 
         connections.Add(connection);
         input.parentNode.OnConnection(input , output);  
         
-        drawer.Add(connection.id, output, input);
+        drawer.Add(connection.id, output.handle, input.handle);
     }
 
     public void Disconnect(Connection conn)
@@ -73,8 +73,8 @@ public class NodeGraph : MonoBehaviour
         drawer.Remove(conn.id);
         conn.input.parentNode.OnDisconnect(conn.input, conn.output);
 
-        conn.input.connection = null;
-        conn.output.connection = null;
+        conn.input.Disconnect();
+        conn.output.Disconnect();
 
         connections.Remove(conn);
     }
@@ -173,17 +173,17 @@ public class NodeGraph : MonoBehaviour
         node.SetAsLastSibling();
         RectTransformUtility.ScreenPointToLocalPointInRectangle(node.PanelRect, eventData.position, 
                                                                 eventData.pressEventCamera, out _pointerOffset);
-        HandleNodeDragEvent(node, eventData);
+        DragNode(node, eventData);
     }
 
     private void OnNodePointerDrag(Node node, PointerEventData eventData)
     {
-        HandleNodeDragEvent(node, eventData);
+        DragNode(node, eventData);
     }
 
 
     //  helper methods
-    private void HandleNodeDragEvent(Node node, PointerEventData eventData)
+    private void DragNode(Node node, PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
