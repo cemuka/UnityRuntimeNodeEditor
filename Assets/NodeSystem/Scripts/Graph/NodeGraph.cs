@@ -17,7 +17,6 @@ public class NodeGraph : MonoBehaviour
     private Vector2 _localPointerPos;
     private RectTransform _container;
 
-    private int _maxId;
 
     public void Init()
     {
@@ -59,6 +58,10 @@ public class NodeGraph : MonoBehaviour
             input   = input,
             output  = output
         };
+
+        input.connection = connection;
+        output.connection = connection;
+
         connections.Add(connection);
         input.parentNode.OnConnection(input , output);  
         
@@ -69,7 +72,17 @@ public class NodeGraph : MonoBehaviour
     {
         drawer.Remove(conn.id);
         conn.input.parentNode.OnDisconnect(conn.input, conn.output);
+
+        conn.input.connection = null;
+        conn.output.connection = null;
+
         connections.Remove(conn);
+    }
+
+    public void Disconnect(IConnection conn)
+    {
+        var connection = connections.FirstOrDefault<Connection>(c => c.id == conn.Id);
+        Disconnect(connection);
     }
 
     public void ClearConnectionsOf(Node node)
@@ -105,14 +118,33 @@ public class NodeGraph : MonoBehaviour
         }
     }
 
-    private void OnOutputDragDroppedTo(SocketInput target)
+    private void OnOutputDragDroppedTo(SocketInput target)  
     {
-        if (target == null)
+        //  if sockets connected already
+        //  do nothing
+        if (_currentDraggingSocket.HasConnection() && target.HasConnection())
         {
-            
+            if (_currentDraggingSocket.connection == target.connection)
+            {
+                _currentDraggingSocket = null;
+                drawer.CancelDrag();
+                
+                return;
+            }
         }
-        else
+
+        if (target != null)
         {
+            //  check if input allows multiple connection
+            if (target.HasConnection())
+            {
+                //  disconnect old connection
+                if (target.connectionType != ConnectionType.Multiple)
+                {
+                    Disconnect(target.connection);
+                }
+            }
+
             Connect(target, _currentDraggingSocket);
         }
 
@@ -122,10 +154,18 @@ public class NodeGraph : MonoBehaviour
 
     private void OnOutputDragStarted(SocketOutput socketOnDrag)
     {
-
-
         _currentDraggingSocket = socketOnDrag;
         drawer.StartDrag(_currentDraggingSocket);
+
+        //  check socket connection type
+        if (_currentDraggingSocket.HasConnection())
+        {
+            //  if single, disconnect
+            if (_currentDraggingSocket.connectionType == ConnectionType.Single)
+            {
+                Disconnect(_currentDraggingSocket.connection);
+            }
+        }
     }
 
     private void OnNodePointerDown(Node node, PointerEventData eventData)
@@ -170,5 +210,6 @@ public class NodeGraph : MonoBehaviour
         return newPointerPos;
     }
 
+    private int _maxId;
     private int CreateId => _maxId++;
 }
