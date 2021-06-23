@@ -2,6 +2,6 @@ using UnityEngine;
 
 public class SocketHandle : MonoBehaviour
 {
-    public Transform handle1;
-    public Transform handle2;
+    public RectTransform handle1;
+    public RectTransform handle2;
 }

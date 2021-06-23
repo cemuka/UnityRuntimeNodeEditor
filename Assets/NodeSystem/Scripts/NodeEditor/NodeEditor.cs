@@ -4,7 +4,10 @@ using UnityEngine.EventSystems;
 
 public class NodeEditor : MonoBehaviour
 {
+    public float minZoom;
+    public float maxZoom;
     public NodeGraph graph;
+    public GraphPointerListener pointerListener;
 
     public RectTransform contextMenuContainer;
     public RectTransform nodeContainer;
@@ -15,9 +18,11 @@ public class NodeEditor : MonoBehaviour
     {
         Application.targetFrameRate = 60;
 
-        graph.Init();
+        graph.Init(nodeContainer);
+        pointerListener.Init(graph.GraphContainer, minZoom, maxZoom);
         var utility = new Utility(nodeContainer, contextMenuContainer);
-        GraphPointerListener.GraphPointerEvent  += OnGraphPointerClick;
+        GraphPointerListener.GraphPointerClickEvent  += OnGraphPointerClick;
+        GraphPointerListener.GraphPointerDragEvent   += OnGraphPointerDrag;
         SignalSystem.NodePointerClickEvent           += OnNodePointerClick;
         
         _contextMenu = Utility.CreatePrefab<ContextMenu>("Prefabs/ContextMenu", contextMenuContainer);        
@@ -25,10 +30,16 @@ public class NodeEditor : MonoBehaviour
         CloseContextMenu();
     }
 
-    //  event handlers
-    private void OnGraphPointerClick(PointerEventData pointerEvent)
+    private void Update()
     {
-        switch (pointerEvent.button)
+        pointerListener.OnUpdate();
+        graph.OnUpdate();
+    }
+
+    //  event handlers
+    private void OnGraphPointerClick(PointerEventData eventData)
+    {
+        switch (eventData.button)
         {
             case PointerEventData.InputButton.Right:
             {
@@ -41,6 +52,14 @@ public class NodeEditor : MonoBehaviour
                 CloseContextMenu();
             }
             break;
+        }
+    }
+
+    private void OnGraphPointerDrag(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Middle)
+        {
+            graph.GraphContainer.localPosition += new Vector3(eventData.delta.x, eventData.delta.y);
         }
     }
 
@@ -60,7 +79,7 @@ public class NodeEditor : MonoBehaviour
         _contextMenu.AddItem("float node",           CreateFloatNode);
         _contextMenu.AddItem("operation node",      CreateMatOpNode);  
 
-        _contextMenu.Show(Utility.GetMousePosition());
+        _contextMenu.Show(Utility.GetCtxMenuPointerPosition());
     }
 
     private void DisplayNodeContexMenu(Node node)
@@ -70,7 +89,7 @@ public class NodeEditor : MonoBehaviour
         _contextMenu.AddItem("delete",                      ()=>DeleteNode(node));
         _contextMenu.AddItem("clear connections",           ()=>ClearConnections(node));
         
-        _contextMenu.Show(Utility.GetMousePosition());
+        _contextMenu.Show(Utility.GetCtxMenuPointerPosition());
     }
 
     private void CloseContextMenu()
@@ -82,13 +101,15 @@ public class NodeEditor : MonoBehaviour
     //  context item actions
     private void CreateFloatNode()
     {
-        graph.Create<FloatNode>("Prefabs/Nodes/FloatNode", Utility.GetMousePosition());
+        var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
+        graph.Create<FloatNode>("Prefabs/Nodes/FloatNode", pos);
         CloseContextMenu();
     }
 
     private void CreateMatOpNode()
     {
-        graph.Create<MathOperationNode>("Prefabs/Nodes/MathOperationNode", Utility.GetMousePosition());
+        var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
+        graph.Create<MathOperationNode>("Prefabs/Nodes/MathOperationNode", pos);
         CloseContextMenu();
     }
     

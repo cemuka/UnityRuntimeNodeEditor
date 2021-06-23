@@ -5,26 +5,30 @@ using System.Linq;
 
 public class NodeGraph : MonoBehaviour
 {
-    public List<Node> nodes;
-    public List<Connection> connections;
+    public static List<Node> nodes;
+    public static List<Connection> connections;
 
     //  scene references
     public BezierCurveDrawer drawer;
 
     //  cache
-    private SocketOutput _currentDraggingSocket;
-    private Vector2 _pointerOffset;
-    private Vector2 _localPointerPos;
-    private RectTransform _container;
+    private static SocketOutput _currentDraggingSocket;
+    private static Vector2 _pointerOffset;
+    private static Vector2 _localPointerPos;
+    private static RectTransform _nodeContainer;
+    private static RectTransform _graphContainer;
+
+    public RectTransform GraphContainer => _graphContainer;
 
 
-    public void Init()
+    public void Init(RectTransform nodeContainer)
     {
         _maxId = 0;
 
-        _container      = this.GetComponent<RectTransform>();
-        nodes           = new List<Node>();
-        connections     = new List<Connection>();
+        _nodeContainer      = nodeContainer;
+        _graphContainer     = this.GetComponent<RectTransform>();
+        nodes               = new List<Node>();
+        connections         = new List<Connection>();
 
         SignalSystem.OutputSocketDragStartEvent     += OnOutputDragStarted;
         SignalSystem.OutputSocketDragDrop           += OnOutputDragDroppedTo;
@@ -92,7 +96,7 @@ public class NodeGraph : MonoBehaviour
             .ForEach(conn => Disconnect(conn));
     }
 
-    private void Update()
+    public void OnUpdate()
     {
         drawer.UpdateDraw();
     }
@@ -188,7 +192,7 @@ public class NodeGraph : MonoBehaviour
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             Vector2 pointerPos = ClampToWindow(eventData);
-            var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_container, Input.mousePosition,
+            var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_nodeContainer, pointerPos,
                                                                             eventData.pressEventCamera, out _localPointerPos);
             if (success)
             {
@@ -201,7 +205,7 @@ public class NodeGraph : MonoBehaviour
     {
         var rawPointerPos = eventData.position;
         var canvasCorners = new Vector3[4];
-        _container.GetWorldCorners(canvasCorners);
+        _nodeContainer.GetWorldCorners(canvasCorners);
 
         var clampedX = Mathf.Clamp(rawPointerPos.x, canvasCorners[0].x, canvasCorners[2].x);
         var clampedY = Mathf.Clamp(rawPointerPos.y, canvasCorners[0].y, canvasCorners[2].y);

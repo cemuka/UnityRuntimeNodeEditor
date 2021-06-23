@@ -12,16 +12,20 @@ public class BezierCurveDrawer : MonoBehaviour
     [Header("Bezier settings")]
     public float vertexCount = 10;
 
-    private UILineRenderer _lineRenderer;
-    private bool _hasRequest;
-    private Socket _draggingSocket;
-    private Dictionary<int, ConnectionDrawData> _connections;
+    private static UILineRenderer _lineRenderer;
+    private static bool _hasRequest;
+    private static Socket _draggingSocket;
+    private static Dictionary<int, ConnectionDrawData> _connections;
+    private static RectTransform _lineContainer;
+    private static RectTransform _pointerLocator;
 
     public void Init()
     {
-        _connections = new Dictionary<int, ConnectionDrawData>();
-        _lineRenderer = CreateLine();
-        _hasRequest = false;
+        _connections        = new Dictionary<int, ConnectionDrawData>();
+        _lineContainer      = lineContainer;
+        _pointerLocator     = pointerLocator;
+        _lineRenderer       = CreateLine();
+        _hasRequest         = false;
     }
     
     public void UpdateDraw()
@@ -72,10 +76,10 @@ public class BezierCurveDrawer : MonoBehaviour
         for (float i = 0; i < vertexCount; i++)
         {
             var t = i / vertexCount;
-            pointList.Add(Utility.CubicCurve(port1.handle1.position,
-                                             port1.handle2.position,
-                                             port2.handle1.position,
-                                             port2.handle2.position,
+            pointList.Add(Utility.CubicCurve(GetLocalPoint(port1.handle1.position),
+                                             GetLocalPoint(port1.handle2.position),
+                                             GetLocalPoint(port2.handle1.position),
+                                             GetLocalPoint(port2.handle2.position),
                                              t));
         }
 
@@ -83,20 +87,20 @@ public class BezierCurveDrawer : MonoBehaviour
         lineRenderer.SetVerticesDirty();
     }
 
-    private void DrawDragging(SocketHandle port)
+    private static void DrawDragging(SocketHandle port)
     {
         Vector2 localPointerPos;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(lineContainer, Input.mousePosition, null, out localPointerPos);
-        pointerLocator.localPosition = localPointerPos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(_lineContainer, Input.mousePosition, null, out localPointerPos);
+        _pointerLocator.localPosition = localPointerPos;
 
         var pointList = new List<Vector2>();
 
         for (float i = 0; i < 120; i++)
         {
             var t = i / 120;
-            pointList.Add(Utility.QuadraticCurve(port.handle1.position,
-                                                 port.handle2.position,
-                                                 pointerLocator.position,
+            pointList.Add(Utility.QuadraticCurve(GetLocalPoint(port.handle1.position),
+                                                 GetLocalPoint(port.handle2.position),
+                                                 GetLocalPoint(_pointerLocator.position),
                                                  t));
         }
 
@@ -104,24 +108,41 @@ public class BezierCurveDrawer : MonoBehaviour
         _lineRenderer.SetVerticesDirty();
     }
    
-    private UILineRenderer CreateLine()
+    private static UILineRenderer CreateLine()
     {
-        var lineGO = new GameObject("BezierLine");
-        lineGO.transform.SetParent(this.lineContainer);
-        var linerenderer = lineGO.AddComponent<UILineRenderer>();
+        var lineGO                  = new GameObject("BezierLine");
+        var linerenderer            = lineGO.AddComponent<UILineRenderer>();
+        var lineRect                = lineGO.GetComponent<RectTransform>();
+        
+        lineGO.transform.SetParent(_lineContainer);
 
-        linerenderer.material = new Material(Shader.Find("Sprites/Default"));
-        linerenderer.lineThickness = 4f;
+        lineRect.localPosition      = Vector3.zero;
+        lineRect.localScale         = Vector3.one;
+        lineRect.anchorMin          = Vector2.zero;
+        lineRect.anchorMax          = Vector2.one;
+        lineRect.Left(0);
+        lineRect.Right(0);
+        lineRect.Top(0);
+        lineRect.Bottom(0);
+
+        linerenderer.material       = new Material(Shader.Find("Sprites/Default"));
+        linerenderer.lineThickness  = 4f;
         linerenderer.material.color = Color.yellow;
+        linerenderer.raycastTarget  = false;
+
         return linerenderer;
     }
 
+    private static Vector2 GetLocalPoint(Vector3 pos)
+    {
+        return Utility.GetLocalPointIn(_lineContainer, pos);
+    }
     private class ConnectionDrawData
     {
-        public int id;
-        public SocketHandle output;
-        public SocketHandle input;
-        public UILineRenderer lineRenderer;
+        public readonly int id;
+        public readonly SocketHandle output;
+        public readonly SocketHandle input;
+        public readonly UILineRenderer lineRenderer;
 
         public ConnectionDrawData(int id, SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
         {
@@ -131,5 +152,6 @@ public class BezierCurveDrawer : MonoBehaviour
             this.lineRenderer = lineRenderer;
         }
     }
+
 }
 

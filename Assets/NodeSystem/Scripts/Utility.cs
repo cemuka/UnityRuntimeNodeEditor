@@ -12,7 +12,14 @@ public class Utility
     }
 
 
-    public static Vector2 GetMousePosition()
+    public static Vector2 GetLocalPointIn(RectTransform container, Vector3 pos, Camera eventCamera = null)
+    {
+        var point = Vector2.zero;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(container, pos, eventCamera, out point);
+        return point;
+    }
+
+    public static Vector2 GetCtxMenuPointerPosition()
     {
         Vector2 localPointerPos;
         var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_contextMenuContainer,
@@ -49,5 +56,32 @@ public class Utility
         var p0 = QuadraticCurve(a, b, c, t);
         var p1 = QuadraticCurve(b, c, d, t);
         return Vector3.Lerp(p0, p1, t);
+    }
+}
+
+public static class RectTransformExtensions
+{
+    public static RectTransform Left( this RectTransform rt, float x )
+    {
+        rt.offsetMin = new Vector2( x, rt.offsetMin.y );
+        return rt;
+    }
+
+    public static RectTransform Right( this RectTransform rt, float x )
+    {
+        rt.offsetMax = new Vector2( -x, rt.offsetMax.y );
+        return rt;
+    }
+
+    public static RectTransform Bottom( this RectTransform rt, float y )
+    {
+        rt.offsetMin = new Vector2( rt.offsetMin.x, y );
+        return rt;
+    }
+
+    public static RectTransform Top( this RectTransform rt, float y )
+    {
+        rt.offsetMax = new Vector2( rt.offsetMax.x, -y );
+        return rt;
     }
 }
