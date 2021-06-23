@@ -8,6 +8,7 @@ Progress so far:
 [x] Add and delete nodes
 [x] Drag and drop connection
 [x] Graph context menu
+[x] Graph zoom and pan
 [x] Node context menu
 [ ] Save graph as json
 [ ] Load graph

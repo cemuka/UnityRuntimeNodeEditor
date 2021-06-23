@@ -11,12 +11,9 @@ public class GraphPointerListener : MonoBehaviour, IPointerClickHandler, IDragHa
     private Vector2 _zoomCenterPos;
     private float    _currentZoom;
     private float    _mouseWheelSensitivity;
-    private bool    _isDragging = false;
     private float    _minZoom;
     private float    _maxZoom;
 
-    private List<RaycastResult> _raycastResults;
-    private PointerEventData    _currentPointerData;
     
     public static event Action<PointerEventData> GraphPointerClickEvent;
     public static event Action<PointerEventData> GraphPointerDragEvent;
@@ -38,11 +35,6 @@ public class GraphPointerListener : MonoBehaviour, IPointerClickHandler, IDragHa
     public void OnDrag(PointerEventData eventData)
     {
         GraphPointerDragEvent?.Invoke(eventData);
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        _isDragging = false;
     }
 
 //     private void ConstraitPosition()
