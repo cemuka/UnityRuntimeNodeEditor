@@ -5,7 +5,7 @@ public class Utility
     private static RectTransform _nodeContainer;
     private static RectTransform _contextMenuContainer;
     
-    public Utility(RectTransform nodeContainer, RectTransform contextMenuContainer)
+    public static void Initialize(RectTransform nodeContainer, RectTransform contextMenuContainer)
     {
         _nodeContainer          = nodeContainer;
         _contextMenuContainer   = contextMenuContainer;

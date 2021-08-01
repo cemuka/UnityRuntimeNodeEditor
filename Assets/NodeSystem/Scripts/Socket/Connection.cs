@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class Connection : IConnection
 {
-    public int id;
+    public string connId;
     public SocketInput      input;
     public SocketOutput     output;
 
-    int IConnection.Id => id;
+    string IConnection.ConnId => connId;
 }
 
 public interface IConnection
 {
-    int Id { get; }
+    string ConnId { get; }
 }

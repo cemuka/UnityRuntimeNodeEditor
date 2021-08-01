@@ -12,14 +12,13 @@ public class MathOperationNode : Node
     public SocketInput      inputSocket;
     public SocketOutput     outputSocket;
 
-    private List<IOutput> _receivedOutputs;
 
-    public override void Init(Vector2 pos)
+    public override void Setup()
     {
-        base.Init(pos);
-        _receivedOutputs = new List<IOutput>();
-        inputSocket.Init(this);
-        outputSocket.Init(this);
+        Register(outputSocket);
+        Register(inputSocket);
+
+
         SetType(NodeType.Float);
         SetHeader("operation");
         outputSocket.SetValue(0f);
@@ -36,33 +35,50 @@ public class MathOperationNode : Node
         {
             OnConnectedValueUpdated();
         });
+
+        OnConnectionEvent += OnConnection;
+        OnDisconnectEvent += OnDisconnect;
     }
 
-    public override void OnConnection(SocketInput input, IOutput output)
+    public void OnConnection(SocketInput input, IOutput output)
     {
-        _receivedOutputs.Add(output);
         output.ValueUpdated += OnConnectedValueUpdated;
 
         OnConnectedValueUpdated();
     }
 
-    public override void OnDisconnect(SocketInput input, IOutput output)
+    public void OnDisconnect(SocketInput input, IOutput output)
     {
-        _receivedOutputs.Remove(output);
         output.ValueUpdated -= OnConnectedValueUpdated;
 
         OnConnectedValueUpdated();
     }
 
+    public override void OnSerialize(Serializer serializer)
+    {
+        var output = outputSocket.GetValue<float>();
+        serializer.Add("outputValue", output.ToString())
+                    .Add("opType", dropdown.value.ToString());
+    }
+
+    public override void OnDeserialize(Serializer serializer)
+    {
+        var opType = int.Parse(serializer.Get("opType"));
+        dropdown.SetValueWithoutNotify(opType);
+
+        var outputValue = serializer.Get("outputValue");
+        Display(outputValue);
+    }
+
     private void OnConnectedValueUpdated()
     {
-        List<float> inputValues = new List<float>();
-        foreach (var c in _receivedOutputs)
+        List<float> incomingValues = new List<float>();
+        foreach (var c in connectedOutputs)
         {
-            inputValues.Add(c.GetValue<float>());
+            incomingValues.Add(c.GetValue<float>());
         }
 
-        float result = Calculate(inputValues);
+        float result = Calculate(incomingValues);
         outputSocket.SetValue(result);
         Display(result.ToString());
     }

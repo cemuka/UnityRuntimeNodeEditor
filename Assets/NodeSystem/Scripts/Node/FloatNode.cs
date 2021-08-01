@@ -8,10 +8,11 @@ public class FloatNode : Node
     public TMP_InputField valueField;
     public SocketOutput outputSocket;
 
-    public override void Init(Vector2 pos)
+    public override void Setup()
     {
-        base.Init(pos);
-        outputSocket.Init(this);
+        Register(outputSocket);
+
+
         SetType(NodeType.Float);
         SetHeader("float");
         
@@ -26,5 +27,18 @@ public class FloatNode : Node
     {
         float floatValue = float.Parse(value);
         outputSocket.SetValue(floatValue);
+    }
+
+    public override void OnSerialize(Serializer serializer)
+    {
+        serializer.Add("floatValue", valueField.text);
+    }
+
+    public override void OnDeserialize(Serializer serializer)
+    {
+        var value = serializer.Get("floatValue");
+        valueField.SetTextWithoutNotify(value);
+        
+        HandleInputValue(value);
     }
 }

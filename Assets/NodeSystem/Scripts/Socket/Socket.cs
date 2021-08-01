@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class Socket : MonoBehaviour
 {
+    public string socketId;
     public IConnection connection;
     public SocketHandle handle;
     public ConnectionType connectionType;

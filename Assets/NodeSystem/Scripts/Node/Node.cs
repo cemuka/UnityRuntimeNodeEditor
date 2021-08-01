@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,6 +7,16 @@ using UnityEngine.UI;
 
 public class Node : MonoBehaviour
 {
+    public string ID { get; private set; }
+    public Vector2 Position => _panelRectTransform.anchoredPosition;
+    public string Path { get; private set; }
+    public List<SocketOutput> outputs;
+    public List<SocketInput> inputs;
+    public List<SocketOutput> connectedOutputs;
+
+    public event Action<SocketInput, IOutput> OnConnectionEvent;
+    public event Action<SocketInput, IOutput> OnDisconnectEvent;
+
     public TMP_Text headerText;
     public GameObject body;
     public RectTransform PanelRect => _panelRectTransform;
@@ -14,21 +25,54 @@ public class Node : MonoBehaviour
     private NodeType _nodeType;
     private RectTransform _panelRectTransform;
 
-    public virtual void Init(Vector2 pos)
+    public void Init(Vector2 pos, string id, string path)
     {
+        ID = id;
+        Path = path;
+
         _panelRectTransform = body.transform.parent.GetComponent<RectTransform>();
         _dragPanel = body.AddComponent<NodeDraggablePanel>();
         _dragPanel.Init(this);
 
         SetPosition(pos);
+        outputs = new List<SocketOutput>();
+        inputs = new List<SocketInput>();
+        
+        connectedOutputs = new List<SocketOutput>();
     }
 
-    public virtual void OnConnection(SocketInput input, IOutput output)
+    public virtual void Setup(){}
+
+    public void Register(SocketOutput output)
+    {
+        output.Init(this);
+        outputs.Add(output);
+    }
+
+    public void Register(SocketInput input)
+    {
+        input.Init(this);
+        inputs.Add(input);
+    }
+
+    public void Connect(SocketInput input, SocketOutput output)
+    {
+        connectedOutputs.Add(output);
+        OnConnectionEvent?.Invoke(input, output);
+    }
+
+    public void Disconnect(SocketInput input, SocketOutput output)
+    {
+        connectedOutputs.Remove(output);
+        OnDisconnectEvent?.Invoke(input, output);
+    }
+
+    public virtual void OnSerialize(Serializer serializer)
     {
 
     }
 
-    public virtual void OnDisconnect(SocketInput input, IOutput output)
+    public virtual void OnDeserialize(Serializer serializer)
     {
 
     }

@@ -15,17 +15,18 @@ public class BezierCurveDrawer : MonoBehaviour
     private static UILineRenderer _lineRenderer;
     private static bool _hasRequest;
     private static Socket _draggingSocket;
-    private static Dictionary<int, ConnectionDrawData> _connections;
+    private static Dictionary<string, ConnectionDrawData> _connections;
     private static RectTransform _lineContainer;
     private static RectTransform _pointerLocator;
 
     public void Init()
     {
-        _connections        = new Dictionary<int, ConnectionDrawData>();
+        _connections        = new Dictionary<string, ConnectionDrawData>();
         _lineContainer      = lineContainer;
         _pointerLocator     = pointerLocator;
         _lineRenderer       = CreateLine();
         _hasRequest         = false;
+        CancelDrag();
     }
     
     public void UpdateDraw()
@@ -44,12 +45,12 @@ public class BezierCurveDrawer : MonoBehaviour
         }
     }
 
-    public void Add(int connId, SocketHandle from, SocketHandle target)
+    public void Add(string connId, SocketHandle from, SocketHandle target)
     {
         _connections.Add(connId, new ConnectionDrawData(connId, from, target, CreateLine()));
     }
 
-    public void Remove(int connId)
+    public void Remove(string connId)
     {
         Destroy(_connections[connId].lineRenderer.gameObject);
         _connections.Remove(connId);
@@ -125,9 +126,8 @@ public class BezierCurveDrawer : MonoBehaviour
         lineRect.Top(0);
         lineRect.Bottom(0);
 
-        linerenderer.material       = new Material(Shader.Find("Sprites/Default"));
         linerenderer.lineThickness  = 4f;
-        linerenderer.material.color = Color.yellow;
+        linerenderer.color          = Color.yellow;
         linerenderer.raycastTarget  = false;
 
         return linerenderer;
@@ -139,12 +139,12 @@ public class BezierCurveDrawer : MonoBehaviour
     }
     private class ConnectionDrawData
     {
-        public readonly int id;
+        public readonly string id;
         public readonly SocketHandle output;
         public readonly SocketHandle input;
         public readonly UILineRenderer lineRenderer;
 
-        public ConnectionDrawData(int id, SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
+        public ConnectionDrawData(string id, SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
         {
             this.id = id;
             this.output = port1;

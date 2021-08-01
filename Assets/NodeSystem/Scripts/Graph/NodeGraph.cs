@@ -5,26 +5,24 @@ using System.Linq;
 
 public class NodeGraph : MonoBehaviour
 {
-    public static List<Node> nodes;
-    public static List<Connection> connections;
+    public List<Node> nodes;
+    public List<Connection> connections;
 
     //  scene references
     public BezierCurveDrawer drawer;
 
     //  cache
-    private static SocketOutput _currentDraggingSocket;
-    private static Vector2 _pointerOffset;
-    private static Vector2 _localPointerPos;
-    private static RectTransform _nodeContainer;
-    private static RectTransform _graphContainer;
+    private SocketOutput _currentDraggingSocket;
+    private Vector2 _pointerOffset;
+    private Vector2 _localPointerPos;
+    private RectTransform _nodeContainer;
+    private RectTransform _graphContainer;
 
     public RectTransform GraphContainer => _graphContainer;
 
 
     public void Init(RectTransform nodeContainer)
     {
-        _maxId = 0;
-
         _nodeContainer      = nodeContainer;
         _graphContainer     = this.GetComponent<RectTransform>();
         nodes               = new List<Node>();
@@ -40,11 +38,13 @@ public class NodeGraph : MonoBehaviour
         drawer.Init();
     }
 
-    public void Create<T>(string prefabPath, Vector2 pos) where T : Node
+    public void Create(string prefabPath, Vector2 pos)
     {
-        var node = Utility.CreateNodePrefab<T>(prefabPath);
-        node.Init(pos);
+        var node = Utility.CreateNodePrefab<Node>(prefabPath);
+        node.Init(pos, CreateId, prefabPath);
+        node.Setup();
         nodes.Add(node);
+        HandleSocketRegister(node);
     }
 
     public void Delete(Node node)
@@ -58,7 +58,7 @@ public class NodeGraph : MonoBehaviour
     {
         var connection = new Connection()
         {
-            id      = CreateId,
+            connId  = CreateId,
             input   = input,
             output  = output
         };
@@ -67,15 +67,15 @@ public class NodeGraph : MonoBehaviour
         output.Connect(connection);
 
         connections.Add(connection);
-        input.parentNode.OnConnection(input , output);  
+        input.parentNode.Connect(input , output);  
         
-        drawer.Add(connection.id, output.handle, input.handle);
+        drawer.Add(connection.connId, output.handle, input.handle);
     }
 
     public void Disconnect(Connection conn)
     {
-        drawer.Remove(conn.id);
-        conn.input.parentNode.OnDisconnect(conn.input, conn.output);
+        drawer.Remove(conn.connId);
+        conn.input.parentNode.Disconnect(conn.input, conn.output);
 
         conn.input.Disconnect();
         conn.output.Disconnect();
@@ -85,7 +85,7 @@ public class NodeGraph : MonoBehaviour
 
     public void Disconnect(IConnection conn)
     {
-        var connection = connections.FirstOrDefault<Connection>(c => c.id == conn.Id);
+        var connection = connections.FirstOrDefault<Connection>(c => c.connId == conn.ConnId);
         Disconnect(connection);
     }
 
@@ -94,6 +94,96 @@ public class NodeGraph : MonoBehaviour
         connections.Where( conn => conn.output.parentNode == node || conn.input.parentNode == node)
             .ToList()
             .ForEach(conn => Disconnect(conn));
+    }
+
+    public void Save()
+    {
+        var graph = new GraphData();
+        var nodeDatas = new List<NodeData>();
+        var connDatas = new List<ConnectionData>();
+
+        foreach (var node in nodes)
+        {
+            var ser = new Serializer();
+            var data = new NodeData();
+            node.OnSerialize(ser);
+            
+            data.id = node.ID;
+            data.values = ser.Serialize();
+            data.posX = node.Position.x;
+            data.posY = node.Position.y;
+            data.path = node.Path;
+
+            var inputIds = new List<string>();
+            foreach (var input in node.inputs)
+            {
+                inputIds.Add(input.socketId);
+            }
+
+            var outputIds = new List<string>();
+            foreach (var output in node.outputs)
+            {
+                outputIds.Add(output.socketId);
+            }
+
+            data.inputSocketIds = inputIds.ToArray();
+            data.outputSocketIds = outputIds.ToArray();
+
+            nodeDatas.Add(data);
+        }
+
+        foreach (var conn in connections)
+        {
+            var data = new ConnectionData();
+            data.id              = conn.connId;
+            data.outputSocketId  = conn.output.socketId;
+            data.inputSocketId   = conn.input.socketId;
+
+            connDatas.Add(data);
+        }
+
+        graph.name = "awesome graph";
+        graph.nodes = nodeDatas.ToArray();
+        graph.connections = connDatas.ToArray();
+
+        var path = Application.dataPath + "/NodeSystem/Resources/graph.json";
+        System.IO.File.WriteAllText(path, JsonUtility.ToJson(graph, true));
+    }
+
+    public void Load()
+    {
+        var path = Application.dataPath + "/NodeSystem/Resources/graph.json";
+
+        if (System.IO.File.Exists(path))
+        {
+            var file     = System.IO.File.ReadAllText(path);
+            var graph   = JsonUtility.FromJson<GraphData>(file);
+
+            foreach (var data in graph.nodes)
+            {
+                LoadNode(data);
+            }
+
+            foreach (var node in nodes)
+            {
+                var nodeData = graph.nodes.FirstOrDefault(data => data.id == node.ID);
+
+                for (int i = 0; i < nodeData.inputSocketIds.Length; i++)
+                {
+                    node.inputs[i].socketId = nodeData.inputSocketIds[i];
+                }
+                
+                for (int i = 0; i < nodeData.outputSocketIds.Length; i++)
+                {
+                    node.outputs[i].socketId = nodeData.outputSocketIds[i];
+                }
+            }
+
+            foreach (var data in graph.connections)
+            {
+                LoadConn(data);
+            }
+        }
     }
 
     public void OnUpdate()
@@ -214,6 +304,56 @@ public class NodeGraph : MonoBehaviour
         return newPointerPos;
     }
 
-    private int _maxId;
-    private int CreateId => _maxId++;
+    private void HandleSocketRegister(Node node)
+    {
+        foreach (var i in node.inputs)
+        {
+            i.socketId = CreateId;
+        }
+
+        foreach (var o in node.outputs)
+        {
+            o.socketId = CreateId;
+        }
+    }
+
+    private void LoadNode(NodeData data)
+    {
+        var node = Utility.CreateNodePrefab<Node>(data.path);
+        node.Init(new Vector2(data.posX, data.posY), data.id, data.path);
+        node.Setup();
+        nodes.Add(node);
+
+        var ser = new Serializer();
+        ser.Deserialize(data.values);
+        node.OnDeserialize(ser);
+
+
+    }
+
+    private void LoadConn(ConnectionData data)
+    {
+        var input   = nodes.SelectMany(n => n.inputs).FirstOrDefault( i => i.socketId == data.inputSocketId);
+        var output  = nodes.SelectMany(n => n.outputs).FirstOrDefault( o => o.socketId == data.outputSocketId);
+
+        if (input != null && output != null)
+        {
+            var connection = new Connection()
+            {
+                connId  = data.id,
+                input   = input,
+                output  = output
+            };
+
+            input.Connect(connection);
+            output.Connect(connection);
+
+            connections.Add(connection);
+            input.parentNode.Connect(input , output);  
+            
+            drawer.Add(connection.connId, output.handle, input.handle);
+        }
+    }
+    
+    private string CreateId => Nanoid.Nanoid.Generate(size:10);
 }

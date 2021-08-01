@@ -20,7 +20,7 @@ public class NodeEditor : MonoBehaviour
 
         graph.Init(nodeContainer);
         pointerListener.Init(graph.GraphContainer, minZoom, maxZoom);
-        var utility = new Utility(nodeContainer, contextMenuContainer);
+        Utility.Initialize(nodeContainer, contextMenuContainer);
         GraphPointerListener.GraphPointerClickEvent  += OnGraphPointerClick;
         GraphPointerListener.GraphPointerDragEvent   += OnGraphPointerDrag;
         SignalSystem.NodePointerClickEvent           += OnNodePointerClick;
@@ -102,14 +102,14 @@ public class NodeEditor : MonoBehaviour
     private void CreateFloatNode()
     {
         var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
-        graph.Create<FloatNode>("Prefabs/Nodes/FloatNode", pos);
+        graph.Create("Prefabs/Nodes/FloatNode", pos);
         CloseContextMenu();
     }
 
     private void CreateMatOpNode()
     {
         var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
-        graph.Create<MathOperationNode>("Prefabs/Nodes/MathOperationNode", pos);
+        graph.Create("Prefabs/Nodes/MathOperationNode", pos);
         CloseContextMenu();
     }
     
@@ -123,5 +123,17 @@ public class NodeEditor : MonoBehaviour
     {
         CloseContextMenu();
         graph.ClearConnectionsOf(node);
+    }
+
+    [UnityEngine.ContextMenu("save")]
+    public void SaveGraph()
+    {
+        graph.Save();
+    }
+
+    [UnityEngine.ContextMenu("load")]
+    public void LoadGraph()
+    {
+        graph.Load();
     }
 }
