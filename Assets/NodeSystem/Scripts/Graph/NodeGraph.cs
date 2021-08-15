@@ -150,10 +150,8 @@ public class NodeGraph : MonoBehaviour
         System.IO.File.WriteAllText(path, JsonUtility.ToJson(graph, true));
     }
 
-    public void Load()
+    public void Load(string path)
     {
-        var path = Application.dataPath + "/NodeSystem/Resources/graph.json";
-
         if (System.IO.File.Exists(path))
         {
             var file     = System.IO.File.ReadAllText(path);
@@ -184,6 +182,12 @@ public class NodeGraph : MonoBehaviour
                 LoadConn(data);
             }
         }
+    }
+
+    public void Clear()
+    {
+        var nodesToClear = new List<Node>(nodes);
+        nodesToClear.ForEach(n => Delete(n));
     }
 
     public void OnUpdate()

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -13,6 +14,8 @@ public class NodeEditor : MonoBehaviour
     public RectTransform nodeContainer;
 
     private ContextMenu _contextMenu;
+    private ContextMenuData _graphCtx;
+    private ContextMenuData _nodeCtx;
 
     private void Start()
     {
@@ -28,6 +31,12 @@ public class NodeEditor : MonoBehaviour
         _contextMenu = Utility.CreatePrefab<ContextMenu>("Prefabs/ContextMenu", contextMenuContainer);        
         _contextMenu.Init();
         CloseContextMenu();
+
+
+
+
+
+
     }
 
     private void Update()
@@ -41,17 +50,8 @@ public class NodeEditor : MonoBehaviour
     {
         switch (eventData.button)
         {
-            case PointerEventData.InputButton.Right:
-            {
-                DisplayGraphContextMenu();
-            }
-            break;
-
-            case PointerEventData.InputButton.Left:
-            {
-                CloseContextMenu();
-            }
-            break;
+            case PointerEventData.InputButton.Right:    DisplayGraphContextMenu();  break;
+            case PointerEventData.InputButton.Left:     CloseContextMenu();         break;
         }
     }
 
@@ -74,22 +74,26 @@ public class NodeEditor : MonoBehaviour
     //  context methods
     private void DisplayGraphContextMenu()
     {
+        _graphCtx = new ContextMenuBuilder()
+                    .Add("float",        CreateFloatNode)
+                    .Add("math op",     CreateMatOpNode)
+                    .Add("load",        LoadGraph)
+                    .Add("save",        SaveGraph)
+                    .Build();
+
         _contextMenu.Clear();
-
-        _contextMenu.AddItem("float node",           CreateFloatNode);
-        _contextMenu.AddItem("operation node",      CreateMatOpNode);  
-
-        _contextMenu.Show(Utility.GetCtxMenuPointerPosition());
+        _contextMenu.Show(_graphCtx, Utility.GetCtxMenuPointerPosition());
     }
 
     private void DisplayNodeContexMenu(Node node)
     {
-        _contextMenu.Clear();
+        _nodeCtx = new ContextMenuBuilder()
+            .Add("clear connections", ()=> ClearConnections(node))
+            .Add("delete",            ()=> DeleteNode(node))
+            .Build();
 
-        _contextMenu.AddItem("delete",                      ()=>DeleteNode(node));
-        _contextMenu.AddItem("clear connections",           ()=>ClearConnections(node));
-        
-        _contextMenu.Show(Utility.GetCtxMenuPointerPosition());
+        _contextMenu.Clear();
+        _contextMenu.Show(_nodeCtx, Utility.GetCtxMenuPointerPosition());
     }
 
     private void CloseContextMenu()
@@ -125,15 +129,16 @@ public class NodeEditor : MonoBehaviour
         graph.ClearConnectionsOf(node);
     }
 
-    [UnityEngine.ContextMenu("save")]
     public void SaveGraph()
     {
+        CloseContextMenu();
         graph.Save();
     }
 
-    [UnityEngine.ContextMenu("load")]
     public void LoadGraph()
     {
-        graph.Load();
+        CloseContextMenu();
+        graph.Clear();
+        graph.Load(Application.dataPath + "/NodeSystem/Resources/Graphs/graph.json");
     }
 }

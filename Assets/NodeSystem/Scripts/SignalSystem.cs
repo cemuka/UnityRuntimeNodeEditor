@@ -10,6 +10,7 @@ public static class SignalSystem
     public static event Action<Node, PointerEventData>          NodePointerClickEvent;
     public static event Action<Node, PointerEventData>          NodePointerDownEvent;
     public static event Action<Node, PointerEventData>          NodePointerDragEvent;
+    public static event Action<ContextMenuData, ContextContainer> OnMenuItemClicked;
 
     public static void InvokeSocketDragFrom(SocketOutput output)
     {
@@ -44,5 +45,10 @@ public static class SignalSystem
     public static void InvokeNodePointerDrag(Node node, PointerEventData eventData)
     {
         NodePointerDragEvent?.Invoke(node, eventData);
+    }
+
+    public static void InvokeMenuItemClicked(ContextMenuData data, ContextContainer container)
+    {
+        OnMenuItemClicked?.Invoke(data, container);
     }
 }

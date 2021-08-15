@@ -1,40 +1,58 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ContextMenu : MonoBehaviour
 {
-    public Transform content;
-
     private RectTransform _rect;
-    private List<ContextItem> _items;
     private GameObject _menuItemPrefab;
+    private ContextContainer _root;
+
+    private List<ContextContainer> _subContainers;
 
     public void Init()
     {
         _rect = this.GetComponent<RectTransform>();
-        _items = new List<ContextItem>();
-        _menuItemPrefab = Resources.Load<GameObject>("Prefabs/ContextItem");
+        _subContainers = new List<ContextContainer>();
+
+        SignalSystem.OnMenuItemClicked += OnMenuItemClicked;
+    }
+
+    private void OnMenuItemClicked(ContextMenuData data, ContextContainer container)
+    {
+        List<ContextContainer>  toRemove = new List<ContextContainer>();
+        foreach (var item in _subContainers)
+        {
+            if (item.depthLevel > data.Level)
+            {
+                toRemove.Add(item);
+            }
+        }
+
+        foreach (var item in toRemove)
+        {
+            Destroy(item.gameObject);
+            _subContainers.Remove(item);
+        }
+
+        _subContainers.Add(container);
     }
 
     public void Clear()
     {
-        _items.ForEach(item => Destroy(item.gameObject));
-        _items.Clear();
+        if (_root != null)
+        {
+            Destroy(_root.gameObject);
+            _subContainers = new List<ContextContainer>();
+        }
     }
 
-    public void AddItem(string name, Action callback)
+    public void Show(ContextMenuData context, Vector2 pos)
     {
-        var item = Instantiate(_menuItemPrefab, content).GetComponent<ContextItem>();
-        item.nameText.text = name;
-        item.button.onClick.AddListener(() => callback());
-
-        _items.Add(item);
-    }
-
-    public void Show(Vector2 pos)
-    {
+        _root = Utility.CreatePrefab<ContextContainer>("Prefabs/ContextContainer", _rect);
+        _root.Init(context.children.ToArray());
         _rect.localPosition = pos;
         gameObject.SetActive(true);
     }
