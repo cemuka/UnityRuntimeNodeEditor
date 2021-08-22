@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class Node : MonoBehaviour
 {
@@ -19,8 +17,20 @@ public class Node : MonoBehaviour
 
     public TMP_Text headerText;
     public GameObject body;
-    public RectTransform PanelRect => _panelRectTransform;
-    
+    public RectTransform PanelRect
+    {
+        get
+        {
+            return _panelRectTransform;
+
+        }
+        set
+        {
+            _panelRectTransform = value;
+        }
+
+    }
+
     private NodeDraggablePanel _dragPanel;
     private NodeType _nodeType;
     private RectTransform _panelRectTransform;
@@ -31,18 +41,38 @@ public class Node : MonoBehaviour
         Path = path;
 
         _panelRectTransform = body.transform.parent.GetComponent<RectTransform>();
+
+
+        if (this.GetType() == typeof(GroupNode))
+        {
+            _panelRectTransform = body.transform.parent.parent.GetComponent<RectTransform>();
+        }
+
         _dragPanel = body.AddComponent<NodeDraggablePanel>();
         _dragPanel.Init(this);
+
+        InitBeforeSetup();
+
 
         SetPosition(pos);
         outputs = new List<SocketOutput>();
         inputs = new List<SocketInput>();
-        
+
         connectedOutputs = new List<SocketOutput>();
     }
 
-    public virtual void Setup(){}
+    public virtual void InitBeforeSetup()
+    {
 
+    }
+
+    public virtual void Setup() { }
+
+
+    public virtual bool CanMove()
+    {
+        return true;
+    }
     public void Register(SocketOutput output)
     {
         output.Init(this);
@@ -96,5 +126,8 @@ public class Node : MonoBehaviour
     {
         _panelRectTransform.SetAsLastSibling();
     }
-
+    public void SetAsFirstSibling()
+    {
+        _panelRectTransform.SetAsFirstSibling();
+    }
 }

@@ -59,6 +59,44 @@ public class Utility
         var p1 = QuadraticCurve(b, c, d, t);
         return Vector3.Lerp(p0, p1, t);
     }
+
+
+    public static Transform FindTopmostCanvas(Transform currentObject)
+    {
+        var canvases = currentObject.GetComponentsInParent<Canvas>();
+        if (canvases.Length == 0)
+        {
+            return null;
+        }
+
+        return canvases[canvases.Length - 1].transform;
+    }
+
+    public static void UpdateLayout(UnityEngine.UI.LayoutGroup layout)
+    {
+        if (layout == null)
+        {
+            return;
+        }
+
+        layout.CalculateLayoutInputHorizontal();
+        layout.SetLayoutHorizontal();
+        layout.CalculateLayoutInputVertical();
+        layout.SetLayoutVertical();
+    }
+
+
+    public static T GetOrAddComponent<T>(Component obj)
+        where T : Component
+    {
+        var component = obj.GetComponent<T>();
+        if (component == null)
+        {
+            component = obj.gameObject.AddComponent<T>();
+        }
+
+        return component;
+    }
 }
 
 public static class RectTransformExtensions
@@ -85,5 +123,21 @@ public static class RectTransformExtensions
     {
         rt.offsetMax = new Vector2( rt.offsetMax.x, -y );
         return rt;
+    }
+
+    public static bool IsRectTransformOverlap(this RectTransform rect1, RectTransform rect2)
+    {
+        float rect1MinX = rect1.position.x - rect1.rect.width / 2;
+        float rect1MaxX = rect1.position.x + rect1.rect.width / 2;
+        float rect1MinY = rect1.position.y - rect1.rect.height / 2;
+        float rect1MaxY = rect1.position.y + rect1.rect.height / 2;
+        float rect2MinX = rect2.position.x - rect2.rect.width / 2;
+        float rect2MaxX = rect2.position.x + rect2.rect.width / 2;
+        float rect2MinY = rect2.position.y - rect2.rect.height / 2;
+        float rect2MaxY = rect2.position.y + rect2.rect.height / 2;
+
+        bool notOverlap = rect1MaxX <= rect2MinX || rect2MaxX <= rect1MinX || rect1MaxY <= rect2MinY || rect2MaxY <= rect1MinY;
+
+        return !notOverlap;
     }
 }

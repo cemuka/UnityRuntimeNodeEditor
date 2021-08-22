@@ -7,25 +7,31 @@ using UnityEngine.UI.Extensions;
 
 public class BezierCurveDrawer : MonoBehaviour
 {
+  
+
     public RectTransform pointerLocator;
     public RectTransform lineContainer;
     [Header("Bezier settings")]
     public float vertexCount = 10;
 
-    private static UILineRenderer _lineRenderer;
+    private static UILineRendererWithCollider _lineRenderer;
     private static bool _hasRequest;
     private static Socket _draggingSocket;
     private static Dictionary<string, ConnectionDrawData> _connections;
     private static RectTransform _lineContainer;
     private static RectTransform _pointerLocator;
 
+   
     public void Init()
     {
+       
+
         _connections        = new Dictionary<string, ConnectionDrawData>();
         _lineContainer      = lineContainer;
         _pointerLocator     = pointerLocator;
         _lineRenderer       = CreateLine();
         _hasRequest         = false;
+
         CancelDrag();
     }
     
@@ -47,7 +53,11 @@ public class BezierCurveDrawer : MonoBehaviour
 
     public void Add(string connId, SocketHandle from, SocketHandle target)
     {
-        _connections.Add(connId, new ConnectionDrawData(connId, from, target, CreateLine()));
+        var line = CreateLine();
+        var trigger = line.gameObject.AddComponent<LineEventTrigger>();
+        trigger.ID = connId;
+        trigger.drawer = this;
+        _connections.Add(connId, new ConnectionDrawData(connId, from, target, line));
     }
 
     public void Remove(string connId)
@@ -70,7 +80,7 @@ public class BezierCurveDrawer : MonoBehaviour
     }
 
     //  drawing
-    private void DrawConnection(SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
+    private void DrawConnection(SocketHandle port1, SocketHandle port2, UILineRendererWithCollider lineRenderer)
     {
         var pointList = new List<Vector2>();
 
@@ -109,10 +119,10 @@ public class BezierCurveDrawer : MonoBehaviour
         _lineRenderer.SetVerticesDirty();
     }
    
-    private static UILineRenderer CreateLine()
+    private static UILineRendererWithCollider CreateLine()
     {
         var lineGO                  = new GameObject("BezierLine");
-        var linerenderer            = lineGO.AddComponent<UILineRenderer>();
+        var linerenderer            = lineGO.AddComponent<UILineRendererWithCollider>();
         var lineRect                = lineGO.GetComponent<RectTransform>();
         
         lineGO.transform.SetParent(_lineContainer);
@@ -142,9 +152,9 @@ public class BezierCurveDrawer : MonoBehaviour
         public readonly string id;
         public readonly SocketHandle output;
         public readonly SocketHandle input;
-        public readonly UILineRenderer lineRenderer;
+        public readonly UILineRendererWithCollider lineRenderer;
 
-        public ConnectionDrawData(string id, SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
+        public ConnectionDrawData(string id, SocketHandle port1, SocketHandle port2, UILineRendererWithCollider lineRenderer)
         {
             this.id = id;
             this.output = port1;

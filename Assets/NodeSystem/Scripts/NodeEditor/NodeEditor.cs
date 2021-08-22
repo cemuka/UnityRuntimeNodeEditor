@@ -27,7 +27,8 @@ public class NodeEditor : MonoBehaviour
         GraphPointerListener.GraphPointerClickEvent  += OnGraphPointerClick;
         GraphPointerListener.GraphPointerDragEvent   += OnGraphPointerDrag;
         SignalSystem.NodePointerClickEvent           += OnNodePointerClick;
-        
+        SignalSystem.LineDownEvent += OnLineDown;
+
         _contextMenu = Utility.CreatePrefab<ContextMenu>("Prefabs/ContextMenu", contextMenuContainer);        
         _contextMenu.Init();
         CloseContextMenu();
@@ -71,12 +72,22 @@ public class NodeEditor : MonoBehaviour
         }
     }
 
+    //link
+    private void OnLineDown(string line_id, PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            DisplayLineContexMenu(line_id);
+        }
+    }
+
     //  context methods
     private void DisplayGraphContextMenu()
     {
         _graphCtx = new ContextMenuBuilder()
                     .Add("float",        CreateFloatNode)
                     .Add("math op",     CreateMatOpNode)
+                    .Add("group", CreateGroup)
                     .Add("load",        LoadGraph)
                     .Add("save",        SaveGraph)
                     .Build();
@@ -84,7 +95,16 @@ public class NodeEditor : MonoBehaviour
         _contextMenu.Clear();
         _contextMenu.Show(_graphCtx, Utility.GetCtxMenuPointerPosition());
     }
+    private void DisplayLineContexMenu(string line_id)
+    {
+        _nodeCtx = new ContextMenuBuilder()
+            .Add("delete that line", () => DisconnectConnection(line_id))
 
+            .Build();
+
+        _contextMenu.Clear();
+        _contextMenu.Show(_nodeCtx, Utility.GetCtxMenuPointerPosition());
+    }
     private void DisplayNodeContexMenu(Node node)
     {
         _nodeCtx = new ContextMenuBuilder()
@@ -109,7 +129,12 @@ public class NodeEditor : MonoBehaviour
         graph.Create("Prefabs/Nodes/FloatNode", pos);
         CloseContextMenu();
     }
-
+    private void CreateGroup()
+    {
+        var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
+        graph.Create("Prefabs/Nodes/GroupNode", pos);
+        CloseContextMenu();
+    }
     private void CreateMatOpNode()
     {
         var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
@@ -123,6 +148,11 @@ public class NodeEditor : MonoBehaviour
         graph.Delete(node);
     }
 
+    private void DisconnectConnection(string line_id)
+    {
+        CloseContextMenu();
+        graph.Disconnect(line_id);
+    }
     private void ClearConnections(Node node)
     {
         CloseContextMenu();

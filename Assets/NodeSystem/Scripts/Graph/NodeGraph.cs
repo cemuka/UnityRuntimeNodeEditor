@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Linq;
 
 public class NodeGraph : MonoBehaviour
 {
@@ -23,17 +23,17 @@ public class NodeGraph : MonoBehaviour
 
     public void Init(RectTransform nodeContainer)
     {
-        _nodeContainer      = nodeContainer;
-        _graphContainer     = this.GetComponent<RectTransform>();
-        nodes               = new List<Node>();
-        connections         = new List<Connection>();
+        _nodeContainer = nodeContainer;
+        _graphContainer = this.GetComponent<RectTransform>();
+        nodes = new List<Node>();
+        connections = new List<Connection>();
 
-        SignalSystem.OutputSocketDragStartEvent     += OnOutputDragStarted;
-        SignalSystem.OutputSocketDragDrop           += OnOutputDragDroppedTo;
-        SignalSystem.InputSocketClickEvent          += OnInputSocketClicked;
-        SignalSystem.OutputSocketClickEvent         += OnOutputSocketClicked;
-        SignalSystem.NodePointerDownEvent           += OnNodePointerDown;
-        SignalSystem.NodePointerDragEvent           += OnNodePointerDrag;
+        SignalSystem.OutputSocketDragStartEvent += OnOutputDragStarted;
+        SignalSystem.OutputSocketDragDrop += OnOutputDragDroppedTo;
+        SignalSystem.InputSocketClickEvent += OnInputSocketClicked;
+        SignalSystem.OutputSocketClickEvent += OnOutputSocketClicked;
+        SignalSystem.NodePointerDownEvent += OnNodePointerDown;
+        SignalSystem.NodePointerDragEvent += OnNodePointerDrag;
 
         drawer.Init();
     }
@@ -58,17 +58,17 @@ public class NodeGraph : MonoBehaviour
     {
         var connection = new Connection()
         {
-            connId  = CreateId,
-            input   = input,
-            output  = output
+            connId = CreateId,
+            input = input,
+            output = output
         };
 
         input.Connect(connection);
         output.Connect(connection);
 
         connections.Add(connection);
-        input.parentNode.Connect(input , output);  
-        
+        input.parentNode.Connect(input, output);
+
         drawer.Add(connection.connId, output.handle, input.handle);
     }
 
@@ -89,9 +89,15 @@ public class NodeGraph : MonoBehaviour
         Disconnect(connection);
     }
 
+    public void Disconnect(string id)
+    {
+        var connection = connections.FirstOrDefault<Connection>(c => c.connId == id);
+        Disconnect(connection);
+    }
+
     public void ClearConnectionsOf(Node node)
     {
-        connections.Where( conn => conn.output.parentNode == node || conn.input.parentNode == node)
+        connections.Where(conn => conn.output.parentNode == node || conn.input.parentNode == node)
             .ToList()
             .ForEach(conn => Disconnect(conn));
     }
@@ -107,7 +113,7 @@ public class NodeGraph : MonoBehaviour
             var ser = new Serializer();
             var data = new NodeData();
             node.OnSerialize(ser);
-            
+
             data.id = node.ID;
             data.values = ser.Serialize();
             data.posX = node.Position.x;
@@ -135,9 +141,9 @@ public class NodeGraph : MonoBehaviour
         foreach (var conn in connections)
         {
             var data = new ConnectionData();
-            data.id              = conn.connId;
-            data.outputSocketId  = conn.output.socketId;
-            data.inputSocketId   = conn.input.socketId;
+            data.id = conn.connId;
+            data.outputSocketId = conn.output.socketId;
+            data.inputSocketId = conn.input.socketId;
 
             connDatas.Add(data);
         }
@@ -146,7 +152,7 @@ public class NodeGraph : MonoBehaviour
         graph.nodes = nodeDatas.ToArray();
         graph.connections = connDatas.ToArray();
 
-        var path = Application.dataPath + "/NodeSystem/Resources/graph.json";
+        var path = Application.dataPath + "/NodeSystem/Resources/Graphs/graph.json";
         System.IO.File.WriteAllText(path, JsonUtility.ToJson(graph, true));
     }
 
@@ -154,8 +160,8 @@ public class NodeGraph : MonoBehaviour
     {
         if (System.IO.File.Exists(path))
         {
-            var file     = System.IO.File.ReadAllText(path);
-            var graph   = JsonUtility.FromJson<GraphData>(file);
+            var file = System.IO.File.ReadAllText(path);
+            var graph = JsonUtility.FromJson<GraphData>(file);
 
             foreach (var data in graph.nodes)
             {
@@ -170,7 +176,7 @@ public class NodeGraph : MonoBehaviour
                 {
                     node.inputs[i].socketId = nodeData.inputSocketIds[i];
                 }
-                
+
                 for (int i = 0; i < nodeData.outputSocketIds.Length; i++)
                 {
                     node.outputs[i].socketId = nodeData.outputSocketIds[i];
@@ -200,7 +206,7 @@ public class NodeGraph : MonoBehaviour
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            connections.Where( conn => conn.input == input)
+            connections.Where(conn => conn.input == input)
                         .ToList()
                         .ForEach(conn => Disconnect(conn));
         }
@@ -210,14 +216,22 @@ public class NodeGraph : MonoBehaviour
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            connections.Where( conn => conn.output == output)
+            connections.Where(conn => conn.output == output)
                         .ToList()
                         .ForEach(conn => Disconnect(conn));
         }
     }
 
-    private void OnOutputDragDroppedTo(SocketInput target)  
+    private void OnOutputDragDroppedTo(SocketInput target)
     {
+
+        if (_currentDraggingSocket == null || target == null)
+        {
+            _currentDraggingSocket = null;
+            drawer.CancelDrag();
+
+            return;
+        }
         //  if sockets connected already
         //  do nothing
         if (_currentDraggingSocket.HasConnection() && target.HasConnection())
@@ -226,7 +240,7 @@ public class NodeGraph : MonoBehaviour
             {
                 _currentDraggingSocket = null;
                 drawer.CancelDrag();
-                
+
                 return;
             }
         }
@@ -268,8 +282,34 @@ public class NodeGraph : MonoBehaviour
 
     private void OnNodePointerDown(Node node, PointerEventData eventData)
     {
-        node.SetAsLastSibling();
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(node.PanelRect, eventData.position, 
+        if (node is GroupNode gn)
+        {
+            var rect_n0 = gn.body.transform as RectTransform;
+            gn.Contains_Nodes.Clear();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i] == node)
+                {
+                    continue;
+                }
+                var rect_n1 = nodes[i].body.transform as RectTransform;
+                if (nodes[i] is GroupNode)
+                {
+                    continue;
+                }
+                if (rect_n0.IsRectTransformOverlap(rect_n1))
+                    gn.Contains_Nodes
+                    .Add(nodes[i]);
+            }
+
+            gn.SetAsFirstSibling();
+
+        }
+        else
+        {
+            node.SetAsLastSibling();
+        }
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(node.PanelRect, eventData.position,
                                                                 eventData.pressEventCamera, out _pointerOffset);
         DragNode(node, eventData);
     }
@@ -290,7 +330,23 @@ public class NodeGraph : MonoBehaviour
                                                                             eventData.pressEventCamera, out _localPointerPos);
             if (success)
             {
+                var prev_pos = node.transform.position;
                 node.SetPosition(_localPointerPos - _pointerOffset);
+                prev_pos = node.transform.position - prev_pos;
+
+                if (node is GroupNode gn)
+                {
+                    var rect_n0 = node.body.transform as RectTransform;
+                    for (int i = 0; i < gn.Contains_Nodes.Count; i++)
+                    {
+                        if (gn.Contains_Nodes[i] == node)
+                        {
+                            continue;
+                        }
+
+                        gn.Contains_Nodes[i].transform.position += prev_pos;
+                    }
+                }
             }
         }
     }
@@ -337,27 +393,27 @@ public class NodeGraph : MonoBehaviour
 
     private void LoadConn(ConnectionData data)
     {
-        var input   = nodes.SelectMany(n => n.inputs).FirstOrDefault( i => i.socketId == data.inputSocketId);
-        var output  = nodes.SelectMany(n => n.outputs).FirstOrDefault( o => o.socketId == data.outputSocketId);
+        var input = nodes.SelectMany(n => n.inputs).FirstOrDefault(i => i.socketId == data.inputSocketId);
+        var output = nodes.SelectMany(n => n.outputs).FirstOrDefault(o => o.socketId == data.outputSocketId);
 
         if (input != null && output != null)
         {
             var connection = new Connection()
             {
-                connId  = data.id,
-                input   = input,
-                output  = output
+                connId = data.id,
+                input = input,
+                output = output
             };
 
             input.Connect(connection);
             output.Connect(connection);
 
             connections.Add(connection);
-            input.parentNode.Connect(input , output);  
-            
+            input.parentNode.Connect(input, output);
+
             drawer.Add(connection.connId, output.handle, input.handle);
         }
     }
-    
-    private string CreateId => Nanoid.Nanoid.Generate(size:10);
+
+    private string CreateId => Nanoid.Nanoid.Generate(size: 10);
 }

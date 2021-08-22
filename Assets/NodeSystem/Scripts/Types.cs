@@ -1,6 +1,7 @@
 public enum NodeType
 {
     Float,
+    Group
 }
 
 public enum MathOperations
