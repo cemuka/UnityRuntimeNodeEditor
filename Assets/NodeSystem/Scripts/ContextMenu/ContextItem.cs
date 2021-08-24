@@ -5,37 +5,42 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ContextItem : MonoBehaviour
+namespace UnityRuntimeNodeEditor
 {
-    public TMP_Text nameText;
-    public Button button;
-    public Transform subContextIcon;
-    public Transform subContextTransform;
-
-    public void Init(ContextMenuData node)
+    public class ContextItem : MonoBehaviour
     {
-        nameText.text = node.name;
+        public TMP_Text nameText;
+        public Button button;
+        public Transform subContextIcon;
+        public Transform subContextTransform;
 
-        bool hasSubMenu = node.children.Count > 0;
-        subContextIcon.gameObject.SetActive(hasSubMenu);
+        public void Init(ContextMenuData node)
+        {
+            nameText.text = node.name;
 
-        if (hasSubMenu)
-        {
-            button.onClick.AddListener(
-                () =>   {
-                    var container = Utility.CreatePrefab<ContextContainer>("Prefabs/ContextContainer", subContextTransform);
-                    container.Init(node.children[0].children.ToArray());
-                    SignalSystem.InvokeMenuItemClicked(node, container);
-                }
-            );
-        }
-        else
-        {
-            button.onClick.AddListener(
-                () =>   {
-                    node.callback();
-                }
-            );
+            bool hasSubMenu = node.children.Count > 0;
+            subContextIcon.gameObject.SetActive(hasSubMenu);
+
+            if (hasSubMenu)
+            {
+                button.onClick.AddListener(
+                    () =>
+                    {
+                        var container = Utility.CreatePrefab<ContextContainer>("Prefabs/ContextContainer", subContextTransform);
+                        container.Init(node.children/*[0].children*/.ToArray());
+                        SignalSystem.InvokeMenuItemClicked(node, container);
+                    }
+                );
+            }
+            else
+            {
+                button.onClick.AddListener(
+                    () =>
+                    {
+                        node.callback?.Invoke();
+                    }
+                );
+            }
         }
     }
 }

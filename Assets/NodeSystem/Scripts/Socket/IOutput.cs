@@ -1,7 +1,10 @@
 using System;
 
-public interface IOutput
+namespace UnityRuntimeNodeEditor
 {
-    T GetValue<T>();
-    event Action ValueUpdated;
+    public interface IOutput
+    {
+        T GetValue<T>();
+        event Action ValueUpdated;
+    }
 }

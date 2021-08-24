@@ -2,123 +2,43 @@
     "name": "awesome graph",
     "nodes": [
         {
-            "id": "vKKZXcKpO2",
+            "id": "YhxiqVXtHM",
             "values": [
                 {
                     "key": "floatValue",
-                    "value": "3"
+                    "value": "0"
                 }
             ],
-            "posX": -349.0,
-            "posY": 117.0,
+            "posX": -7.0,
+            "posY": 87.5,
             "path": "Prefabs/Nodes/FloatNode",
             "inputSocketIds": [],
             "outputSocketIds": [
-                "xKZnbcg2Ke"
+                "toD9PyVGs4"
             ]
         },
         {
-            "id": "qfWAei1QZu",
+            "id": "gi0o0dP8w-",
             "values": [
                 {
                     "key": "outputValue",
-                    "value": "6"
+                    "value": "0"
                 },
                 {
                     "key": "opType",
                     "value": "0"
                 }
             ],
-            "posX": -5.0,
-            "posY": 103.0,
+            "posX": -29.0,
+            "posY": -57.5,
             "path": "Prefabs/Nodes/MathOperationNode",
             "inputSocketIds": [
-                "NgWboRGUge"
+                "TTzX5AWHyJ"
             ],
             "outputSocketIds": [
-                "FBDQsYQRKz"
-            ]
-        },
-        {
-            "id": "wwE2JBTH2d",
-            "values": [
-                {
-                    "key": "floatValue",
-                    "value": "2"
-                }
-            ],
-            "posX": -365.0,
-            "posY": -79.0,
-            "path": "Prefabs/Nodes/FloatNode",
-            "inputSocketIds": [],
-            "outputSocketIds": [
-                "g6lF3Xixx2"
-            ]
-        },
-        {
-            "id": "JKFVnZzrOW",
-            "values": [
-                {
-                    "key": "floatValue",
-                    "value": "4"
-                }
-            ],
-            "posX": -247.0,
-            "posY": -236.0,
-            "path": "Prefabs/Nodes/FloatNode",
-            "inputSocketIds": [],
-            "outputSocketIds": [
-                "SULc4kule3"
-            ]
-        },
-        {
-            "id": "2aaRrP8eVj",
-            "values": [
-                {
-                    "key": "outputValue",
-                    "value": "24"
-                },
-                {
-                    "key": "opType",
-                    "value": "0"
-                }
-            ],
-            "posX": 95.0,
-            "posY": -68.0,
-            "path": "Prefabs/Nodes/MathOperationNode",
-            "inputSocketIds": [
-                "BGIpbNcxQw"
-            ],
-            "outputSocketIds": [
-                "uABb8bHGZv"
+                "PvzJ2uvPiD"
             ]
         }
     ],
-    "connections": [
-        {
-            "id": "jzRCYSHr0X",
-            "outputSocketId": "xKZnbcg2Ke",
-            "inputSocketId": "NgWboRGUge"
-        },
-        {
-            "id": "ni5q0u4zZQ",
-            "outputSocketId": "g6lF3Xixx2",
-            "inputSocketId": "NgWboRGUge"
-        },
-        {
-            "id": "lbKBDyiTxQ",
-            "outputSocketId": "xKZnbcg2Ke",
-            "inputSocketId": "BGIpbNcxQw"
-        },
-        {
-            "id": "nvs-i47Q3h",
-            "outputSocketId": "g6lF3Xixx2",
-            "inputSocketId": "BGIpbNcxQw"
-        },
-        {
-            "id": "DtNHphv4Fv",
-            "outputSocketId": "SULc4kule3",
-            "inputSocketId": "BGIpbNcxQw"
-        }
-    ]
+    "connections": []
 }
