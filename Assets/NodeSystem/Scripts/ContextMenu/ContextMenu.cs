@@ -4,61 +4,64 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ContextMenu : MonoBehaviour
+namespace UnityRuntimeNodeEditor
 {
-    private RectTransform _rect;
-    private GameObject _menuItemPrefab;
-    private ContextContainer _root;
-
-    private List<ContextContainer> _subContainers;
-
-    public void Init()
+    public class ContextMenu : MonoBehaviour
     {
-        _rect = this.GetComponent<RectTransform>();
-        _subContainers = new List<ContextContainer>();
+        private RectTransform _rect;
+        private GameObject _menuItemPrefab;
+        private ContextContainer _root;
 
-        SignalSystem.OnMenuItemClicked += OnMenuItemClicked;
-    }
+        private List<ContextContainer> _subContainers;
 
-    private void OnMenuItemClicked(ContextMenuData data, ContextContainer container)
-    {
-        List<ContextContainer>  toRemove = new List<ContextContainer>();
-        foreach (var item in _subContainers)
+        public void Init()
         {
-            if (item.depthLevel > data.Level)
+            _rect = this.GetComponent<RectTransform>();
+            _subContainers = new List<ContextContainer>();
+
+            SignalSystem.OnMenuItemClicked += OnMenuItemClicked;
+        }
+
+        private void OnMenuItemClicked(ContextMenuData data, ContextContainer container)
+        {
+            List<ContextContainer> toRemove = new List<ContextContainer>();
+            foreach (var item in _subContainers)
             {
-                toRemove.Add(item);
+                if (item.depthLevel > data.Level)
+                {
+                    toRemove.Add(item);
+                }
+            }
+
+            foreach (var item in toRemove)
+            {
+                Destroy(item.gameObject);
+                _subContainers.Remove(item);
+            }
+
+            _subContainers.Add(container);
+        }
+
+        public void Clear()
+        {
+            if (_root != null)
+            {
+                Destroy(_root.gameObject);
+                _subContainers = new List<ContextContainer>();
             }
         }
 
-        foreach (var item in toRemove)
+        public void Show(ContextMenuData context, Vector2 pos)
         {
-            Destroy(item.gameObject);
-            _subContainers.Remove(item);
+            _root = Utility.CreatePrefab<ContextContainer>("Prefabs/ContextContainer", _rect);
+            _root.Init(context.children.ToArray());
+            _rect.localPosition = pos;
+            gameObject.SetActive(true);
         }
 
-        _subContainers.Add(container);
-    }
-
-    public void Clear()
-    {
-        if (_root != null)
+        public void Hide()
         {
-            Destroy(_root.gameObject);
-            _subContainers = new List<ContextContainer>();
+            gameObject.SetActive(false);
         }
-    }
-
-    public void Show(ContextMenuData context, Vector2 pos)
-    {
-        _root = Utility.CreatePrefab<ContextContainer>("Prefabs/ContextContainer", _rect);
-        _root.Init(context.children.ToArray());
-        _rect.localPosition = pos;
-        gameObject.SetActive(true);
-    }
-
-    public void Hide()
-    {
-        gameObject.SetActive(false);
     }
 }

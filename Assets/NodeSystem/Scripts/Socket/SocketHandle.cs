@@ -1,7 +1,10 @@
 using UnityEngine;
 
-public class SocketHandle : MonoBehaviour
+namespace UnityRuntimeNodeEditor
 {
-    public RectTransform handle1;
-    public RectTransform handle2;
+    public class SocketHandle : MonoBehaviour
+    {
+        public RectTransform handle1;
+        public RectTransform handle2;
+    }
 }

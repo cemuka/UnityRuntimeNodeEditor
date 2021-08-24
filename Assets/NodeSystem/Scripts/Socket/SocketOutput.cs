@@ -2,48 +2,51 @@ using System;
 using UnityEngine.EventSystems;
 using UnityEngine;
 
-public class SocketOutput : Socket, IOutput, IPointerClickHandler, IDragHandler, IEndDragHandler
+namespace UnityRuntimeNodeEditor
 {
-    private object _value;
-
-    public void SetValue(object value)
+    public class SocketOutput : Socket, IOutput, IPointerClickHandler, IDragHandler, IEndDragHandler
     {
-        if (_value != value)
+        private object _value;
+
+        public void SetValue(object value)
         {
-            _value = value;
-            ValueUpdated?.Invoke();
-        }
-    }
-
-    public event Action ValueUpdated;
-
-    public T GetValue<T>()
-    {
-        return(T)_value;
-    }
-    
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        SignalSystem.InvokeOutputSocketClick(this, eventData);   
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        SignalSystem.InvokeSocketDragFrom(this);
-    }
-    
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        foreach (var item in eventData.hovered)
-        {
-            var input = item.GetComponent<SocketInput>();
-            if (input != null)
+            if (_value != value)
             {
-                SignalSystem.InvokeOutputSocketDragDropTo(input);
-                return;
-            }       
+                _value = value;
+                ValueUpdated?.Invoke();
+            }
         }
 
-        SignalSystem.InvokeOutputSocketDragDropTo(null);
+        public event Action ValueUpdated;
+
+        public T GetValue<T>()
+        {
+            return (T)_value;
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            SignalSystem.InvokeOutputSocketClick(this, eventData);
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            SignalSystem.InvokeSocketDragFrom(this);
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            foreach (var item in eventData.hovered)
+            {
+                var input = item.GetComponent<SocketInput>();
+                if (input != null)
+                {
+                    SignalSystem.InvokeOutputSocketDragDropTo(input);
+                    return;
+                }
+            }
+
+            SignalSystem.InvokeOutputSocketDragDropTo(null);
+        }
     }
 }

@@ -3,173 +3,176 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class NodeEditor : MonoBehaviour
+namespace UnityRuntimeNodeEditor
 {
-    public float minZoom;
-    public float maxZoom;
-    public NodeGraph graph;
-    public GraphPointerListener pointerListener;
-
-    public RectTransform contextMenuContainer;
-    public RectTransform nodeContainer;
-
-    private ContextMenu _contextMenu;
-    private ContextMenuData _graphCtx;
-    private ContextMenuData _nodeCtx;
-
-    private void Start()
+    public class NodeEditor : MonoBehaviour
     {
-        Application.targetFrameRate = 60;
+        public float minZoom;
+        public float maxZoom;
+        public NodeGraph graph;
+        public GraphPointerListener pointerListener;
 
-        graph.Init(nodeContainer);
-        pointerListener.Init(graph.GraphContainer, minZoom, maxZoom);
-        Utility.Initialize(nodeContainer, contextMenuContainer);
-        GraphPointerListener.GraphPointerClickEvent  += OnGraphPointerClick;
-        GraphPointerListener.GraphPointerDragEvent   += OnGraphPointerDrag;
-        SignalSystem.NodePointerClickEvent           += OnNodePointerClick;
-        SignalSystem.LineDownEvent += OnLineDown;
+        public RectTransform contextMenuContainer;
+        public RectTransform nodeContainer;
 
-        _contextMenu = Utility.CreatePrefab<ContextMenu>("Prefabs/ContextMenu", contextMenuContainer);        
-        _contextMenu.Init();
-        CloseContextMenu();
+        private ContextMenu _contextMenu;
+        private ContextMenuData _graphCtx;
+        private ContextMenuData _nodeCtx;
 
-
-
-
-
-
-    }
-
-    private void Update()
-    {
-        pointerListener.OnUpdate();
-        graph.OnUpdate();
-    }
-
-    //  event handlers
-    private void OnGraphPointerClick(PointerEventData eventData)
-    {
-        switch (eventData.button)
+        private void Start()
         {
-            case PointerEventData.InputButton.Right:    DisplayGraphContextMenu();  break;
-            case PointerEventData.InputButton.Left:     CloseContextMenu();         break;
-        }
-    }
+            Application.targetFrameRate = 60;
 
-    private void OnGraphPointerDrag(PointerEventData eventData)
-    {
-        if (eventData.button == PointerEventData.InputButton.Middle)
+            graph.Init(nodeContainer);
+            pointerListener.Init(graph.GraphContainer, minZoom, maxZoom);
+            Utility.Initialize(nodeContainer, contextMenuContainer);
+            GraphPointerListener.GraphPointerClickEvent += OnGraphPointerClick;
+            GraphPointerListener.GraphPointerDragEvent += OnGraphPointerDrag;
+            SignalSystem.NodePointerClickEvent += OnNodePointerClick;
+            SignalSystem.LineDownEvent += OnLineDown;
+
+            _contextMenu = Utility.CreatePrefab<ContextMenu>("Prefabs/ContextMenu", contextMenuContainer);
+            _contextMenu.Init();
+            CloseContextMenu();
+
+
+
+
+
+
+        }
+
+        private void Update()
         {
-            graph.GraphContainer.localPosition += new Vector3(eventData.delta.x, eventData.delta.y);
+            pointerListener.OnUpdate();
+            graph.OnUpdate();
         }
-    }
 
-    private void OnNodePointerClick(Node node, PointerEventData eventData)
-    {
-        if (eventData.button == PointerEventData.InputButton.Right)
+        //  event handlers
+        private void OnGraphPointerClick(PointerEventData eventData)
         {
-            DisplayNodeContexMenu(node);
+            switch (eventData.button)
+            {
+                case PointerEventData.InputButton.Right: DisplayGraphContextMenu(); break;
+                case PointerEventData.InputButton.Left: CloseContextMenu(); break;
+            }
         }
-    }
 
-    //link
-    private void OnLineDown(string line_id, PointerEventData eventData)
-    {
-        if (eventData.button == PointerEventData.InputButton.Right)
+        private void OnGraphPointerDrag(PointerEventData eventData)
         {
-            DisplayLineContexMenu(line_id);
+            if (eventData.button == PointerEventData.InputButton.Middle)
+            {
+                graph.GraphContainer.localPosition += new Vector3(eventData.delta.x, eventData.delta.y);
+            }
         }
-    }
 
-    //  context methods
-    private void DisplayGraphContextMenu()
-    {
-        _graphCtx = new ContextMenuBuilder()
-                    .Add("nodes/float",        CreateFloatNode)
-                   
-                    .Add("nodes/math op",     CreateMatOpNode)
-                    .Add("nodes/other/other/group", CreateGroup)
-                    .Add("other/load",        LoadGraph)
-                    .Add("other/save",        SaveGraph)
-                    .Build();
+        private void OnNodePointerClick(Node node, PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                DisplayNodeContexMenu(node);
+            }
+        }
 
-        _contextMenu.Clear();
-        _contextMenu.Show(_graphCtx, Utility.GetCtxMenuPointerPosition());
-    }
-    private void DisplayLineContexMenu(string line_id)
-    {
-        _nodeCtx = new ContextMenuBuilder()
-            .Add("delete that line", () => DisconnectConnection(line_id))
+        //link
+        private void OnLineDown(string line_id, PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                DisplayLineContexMenu(line_id);
+            }
+        }
 
-            .Build();
+        //  context methods
+        private void DisplayGraphContextMenu()
+        {
+            _graphCtx = new ContextMenuBuilder()
+                        .Add("nodes/float", CreateFloatNode)
 
-        _contextMenu.Clear();
-        _contextMenu.Show(_nodeCtx, Utility.GetCtxMenuPointerPosition());
-    }
-    private void DisplayNodeContexMenu(Node node)
-    {
-        _nodeCtx = new ContextMenuBuilder()
-            .Add("clear connections", ()=> ClearConnections(node))
-            .Add("delete",            ()=> DeleteNode(node))
-            .Build();
+                        .Add("nodes/math op", CreateMatOpNode)
+                        .Add("nodes/other/other/other/other/other/other/other/other/other/other/other/other/other/other/other/group", CreateGroup)
+                        .Add("other/load", LoadGraph)
+                        .Add("other/save", SaveGraph)
+                        .Build();
 
-        _contextMenu.Clear();
-        _contextMenu.Show(_nodeCtx, Utility.GetCtxMenuPointerPosition());
-    }
+            _contextMenu.Clear();
+            _contextMenu.Show(_graphCtx, Utility.GetCtxMenuPointerPosition());
+        }
+        private void DisplayLineContexMenu(string line_id)
+        {
+            _nodeCtx = new ContextMenuBuilder()
+                .Add("delete that line", () => DisconnectConnection(line_id))
 
-    private void CloseContextMenu()
-    {
-        _contextMenu.Hide();
-        _contextMenu.Clear();
-    }
+                .Build();
 
-    //  context item actions
-    private void CreateFloatNode()
-    {
-        var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
-        graph.Create("Prefabs/Nodes/FloatNode", pos);
-        CloseContextMenu();
-    }
-    private void CreateGroup()
-    {
-        var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
-        graph.Create("Prefabs/Nodes/GroupNode", pos);
-        CloseContextMenu();
-    }
-    private void CreateMatOpNode()
-    {
-        var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
-        graph.Create("Prefabs/Nodes/MathOperationNode", pos);
-        CloseContextMenu();
-    }
-    
-    private void DeleteNode(Node node)
-    {
-        CloseContextMenu();
-        graph.Delete(node);
-    }
+            _contextMenu.Clear();
+            _contextMenu.Show(_nodeCtx, Utility.GetCtxMenuPointerPosition());
+        }
+        private void DisplayNodeContexMenu(Node node)
+        {
+            _nodeCtx = new ContextMenuBuilder()
+                .Add("clear connections", () => ClearConnections(node))
+                .Add("delete", () => DeleteNode(node))
+                .Build();
 
-    private void DisconnectConnection(string line_id)
-    {
-        CloseContextMenu();
-        graph.Disconnect(line_id);
-    }
-    private void ClearConnections(Node node)
-    {
-        CloseContextMenu();
-        graph.ClearConnectionsOf(node);
-    }
+            _contextMenu.Clear();
+            _contextMenu.Show(_nodeCtx, Utility.GetCtxMenuPointerPosition());
+        }
 
-    public void SaveGraph()
-    {
-        CloseContextMenu();
-        graph.Save();
-    }
+        private void CloseContextMenu()
+        {
+            _contextMenu.Hide();
+            _contextMenu.Clear();
+        }
 
-    public void LoadGraph()
-    {
-        CloseContextMenu();
-        graph.Clear();
-        graph.Load(Application.dataPath + "/NodeSystem/Resources/Graphs/graph.json");
+        //  context item actions
+        private void CreateFloatNode()
+        {
+            var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
+            graph.Create("Prefabs/Nodes/FloatNode", pos);
+            CloseContextMenu();
+        }
+        private void CreateGroup()
+        {
+            var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
+            graph.Create("Prefabs/Nodes/GroupNode", pos);
+            CloseContextMenu();
+        }
+        private void CreateMatOpNode()
+        {
+            var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
+            graph.Create("Prefabs/Nodes/MathOperationNode", pos);
+            CloseContextMenu();
+        }
+
+        private void DeleteNode(Node node)
+        {
+            CloseContextMenu();
+            graph.Delete(node);
+        }
+
+        private void DisconnectConnection(string line_id)
+        {
+            CloseContextMenu();
+            graph.Disconnect(line_id);
+        }
+        private void ClearConnections(Node node)
+        {
+            CloseContextMenu();
+            graph.ClearConnectionsOf(node);
+        }
+
+        public void SaveGraph()
+        {
+            CloseContextMenu();
+            graph.Save();
+        }
+
+        public void LoadGraph()
+        {
+            CloseContextMenu();
+            graph.Clear();
+            graph.Load(Application.dataPath + "/NodeSystem/Resources/Graphs/graph.json");
+        }
     }
 }

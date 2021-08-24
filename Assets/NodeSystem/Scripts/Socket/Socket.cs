@@ -5,31 +5,34 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Socket : MonoBehaviour
+namespace UnityRuntimeNodeEditor
 {
-    public string socketId;
-    public IConnection connection;
-    public SocketHandle handle;
-    public ConnectionType connectionType;
-    [HideInInspector]public Node parentNode;
-
-    public void Init(Node parent)
+    public class Socket : MonoBehaviour
     {
-        this.parentNode = parent;
-    }
+        public string socketId;
+        public IConnection connection;
+        public SocketHandle handle;
+        public ConnectionType connectionType;
+        [HideInInspector] public Node parentNode;
 
-    public bool HasConnection()
-    {
-        return connection != null;
-    }
+        public void Init(Node parent)
+        {
+            this.parentNode = parent;
+        }
 
-    public void Connect(IConnection conn)
-    {
-        connection = conn;
-    }
+        public bool HasConnection()
+        {
+            return connection != null;
+        }
 
-    public void Disconnect()
-    {
-        connection = null;
+        public void Connect(IConnection conn)
+        {
+            connection = conn;
+        }
+
+        public void Disconnect()
+        {
+            connection = null;
+        }
     }
 }

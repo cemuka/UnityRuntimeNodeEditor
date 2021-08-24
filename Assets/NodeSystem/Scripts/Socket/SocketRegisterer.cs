@@ -1,24 +1,27 @@
 using System;
 using System.Collections.Generic;
 
-public class SocketRegisterer
+namespace UnityRuntimeNodeEditor
 {
-    public List<SocketOutput> outputs;
-    public List<SocketInput>  inputs;
-
-    public SocketRegisterer()
+    public class SocketRegisterer
     {
-        outputs = new List<SocketOutput>();
-        inputs = new List<SocketInput>();
-    }
+        public List<SocketOutput> outputs;
+        public List<SocketInput> inputs;
 
-    public void Register(SocketOutput output)
-    {
-        outputs.Add(output);
-    }
+        public SocketRegisterer()
+        {
+            outputs = new List<SocketOutput>();
+            inputs = new List<SocketInput>();
+        }
 
-    public void Register(SocketInput input)
-    {
-        inputs.Add(input);
+        public void Register(SocketOutput output)
+        {
+            outputs.Add(output);
+        }
+
+        public void Register(SocketInput input)
+        {
+            inputs.Add(input);
+        }
     }
 }

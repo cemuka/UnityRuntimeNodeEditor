@@ -1,25 +1,28 @@
-public enum NodeType
+namespace UnityRuntimeNodeEditor
 {
-    Float,
-    Group
-}
+    public enum NodeType
+    {
+        Float,
+        Group
+    }
 
-public enum MathOperations
-{
-    Multiply,
-    Divide,
-    Add,
-    Substract
-}
+    public enum MathOperations
+    {
+        Multiply,
+        Divide,
+        Add,
+        Substract
+    }
 
-public enum SocketType
-{
-    Input,
-    Output
-}
+    public enum SocketType
+    {
+        Input,
+        Output
+    }
 
-public enum ConnectionType
-{
-    Single,
-    Multiple
+    public enum ConnectionType
+    {
+        Single,
+        Multiple
+    }
 }

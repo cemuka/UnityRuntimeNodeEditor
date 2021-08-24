@@ -5,24 +5,27 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
-public  class LineEventTrigger : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IDragHandler
+namespace UnityRuntimeNodeEditor
 {
-    public string ID;
-    public BezierCurveDrawer drawer;
-    public void OnPointerClick(PointerEventData eventData)
+    public class LineEventTrigger : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IDragHandler
     {
-        SignalSystem.InvokeLineClick(ID, eventData);
-    }
+        public string ID;
+        public BezierCurveDrawer drawer;
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            SignalSystem.InvokeLineClick(ID, eventData);
+        }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        SignalSystem.InvokeLineDown(ID, eventData);
-    }
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            SignalSystem.InvokeLineDown(ID, eventData);
+        }
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        SignalSystem.InvokeLineDrag(ID, eventData);
+        public void OnDrag(PointerEventData eventData)
+        {
+            SignalSystem.InvokeLineDrag(ID, eventData);
+        }
+
     }
 
 }
-

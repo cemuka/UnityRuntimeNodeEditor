@@ -3,42 +3,45 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 
-public class FloatNode : Node
+namespace UnityRuntimeNodeEditor
 {
-    public TMP_InputField valueField;
-    public SocketOutput outputSocket;
-
-    public override void Setup()
+    public class FloatNode : Node
     {
-        Register(outputSocket);
+        public TMP_InputField valueField;
+        public SocketOutput outputSocket;
+
+        public override void Setup()
+        {
+            Register(outputSocket);
 
 
-        SetType(NodeType.Float);
-        SetHeader("float");
-        
-        valueField.text = "0";
-        HandleInputValue(valueField.text);
+            SetType(NodeType.Float);
+            SetHeader("float");
 
-        valueField.contentType = TMP_InputField.ContentType.DecimalNumber;
-        valueField.onValueChanged.AddListener(HandleInputValue);
-    }
+            valueField.text = "0";
+            HandleInputValue(valueField.text);
 
-    private void HandleInputValue(string value)
-    {
-        float floatValue = float.Parse(value);
-        outputSocket.SetValue(floatValue);
-    }
+            valueField.contentType = TMP_InputField.ContentType.DecimalNumber;
+            valueField.onValueChanged.AddListener(HandleInputValue);
+        }
 
-    public override void OnSerialize(Serializer serializer)
-    {
-        serializer.Add("floatValue", valueField.text);
-    }
+        private void HandleInputValue(string value)
+        {
+            float floatValue = float.Parse(value);
+            outputSocket.SetValue(floatValue);
+        }
 
-    public override void OnDeserialize(Serializer serializer)
-    {
-        var value = serializer.Get("floatValue");
-        valueField.SetTextWithoutNotify(value);
-        
-        HandleInputValue(value);
+        public override void OnSerialize(Serializer serializer)
+        {
+            serializer.Add("floatValue", valueField.text);
+        }
+
+        public override void OnDeserialize(Serializer serializer)
+        {
+            var value = serializer.Get("floatValue");
+            valueField.SetTextWithoutNotify(value);
+
+            HandleInputValue(value);
+        }
     }
 }

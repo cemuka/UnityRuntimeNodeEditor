@@ -3,26 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContextContainer : MonoBehaviour
+namespace UnityRuntimeNodeEditor
 {
-    public Transform content;
-    public int depthLevel;
-
-    private RectTransform _rect;
-    private List<ContextItem> _items;
-    private GameObject _menuItemPrefab;
-
-    public void Init(ContextMenuData[] nodes)
+    public class ContextContainer : MonoBehaviour
     {
-        _rect = this.GetComponent<RectTransform>();
-        _items = new List<ContextItem>();
-        _menuItemPrefab = Resources.Load<GameObject>("Prefabs/ContextItem");
+        public Transform content;
+        public int depthLevel;
 
-        foreach (var node in nodes)
+        private RectTransform _rect;
+        private List<ContextItem> _items;
+        private GameObject _menuItemPrefab;
+
+        public void Init(ContextMenuData[] nodes)
         {
-            depthLevel = node.Level;
-            var item = Instantiate(_menuItemPrefab, content).GetComponent<ContextItem>();
-            item.Init(node);
+            _rect = this.GetComponent<RectTransform>();
+            _items = new List<ContextItem>();
+            _menuItemPrefab = Resources.Load<GameObject>("Prefabs/ContextItem");
+
+            foreach (var node in nodes)
+            {
+                depthLevel = node.Level;
+                var item = Instantiate(_menuItemPrefab, content).GetComponent<ContextItem>();
+                item.Init(node);
+            }
         }
     }
 }

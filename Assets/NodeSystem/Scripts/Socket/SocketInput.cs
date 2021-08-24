@@ -1,10 +1,13 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SocketInput : Socket, IPointerClickHandler
+namespace UnityRuntimeNodeEditor
 {
-    public void OnPointerClick(PointerEventData eventData)
+    public class SocketInput : Socket, IPointerClickHandler
     {
-        SignalSystem.InvokeInputSocketClick(this, eventData);
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            SignalSystem.InvokeInputSocketClick(this, eventData);
+        }
     }
 }
