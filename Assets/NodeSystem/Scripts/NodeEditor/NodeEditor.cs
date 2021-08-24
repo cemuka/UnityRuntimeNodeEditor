@@ -85,11 +85,12 @@ public class NodeEditor : MonoBehaviour
     private void DisplayGraphContextMenu()
     {
         _graphCtx = new ContextMenuBuilder()
-                    .Add("float",        CreateFloatNode)
-                    .Add("math op",     CreateMatOpNode)
-                    .Add("group", CreateGroup)
-                    .Add("load",        LoadGraph)
-                    .Add("save",        SaveGraph)
+                    .Add("nodes/float",        CreateFloatNode)
+                   
+                    .Add("nodes/math op",     CreateMatOpNode)
+                    .Add("nodes/other/other/group", CreateGroup)
+                    .Add("other/load",        LoadGraph)
+                    .Add("other/save",        SaveGraph)
                     .Build();
 
         _contextMenu.Clear();

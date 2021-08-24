@@ -24,7 +24,7 @@ public class ContextItem : MonoBehaviour
             button.onClick.AddListener(
                 () =>   {
                     var container = Utility.CreatePrefab<ContextContainer>("Prefabs/ContextContainer", subContextTransform);
-                    container.Init(node.children[0].children.ToArray());
+                    container.Init(node.children/*[0].children*/.ToArray());
                     SignalSystem.InvokeMenuItemClicked(node, container);
                 }
             );
@@ -33,7 +33,7 @@ public class ContextItem : MonoBehaviour
         {
             button.onClick.AddListener(
                 () =>   {
-                    node.callback();
+                    node.callback?.Invoke();
                 }
             );
         }

@@ -12,23 +12,59 @@ public class ContextMenuBuilder
 
     public ContextMenuBuilder Add(string name)
     {
-        _root.children.Add(new ContextMenuData(name)
-        {
-            parent = _root,
-        });
+        //_root.children.Add(new ContextMenuData(name)
+        //{
+        //    parent = _root,
+        //});
+        BuildHierarchy(name, null);
         return this;
     }
 
     public ContextMenuBuilder Add(string name, Action callback)
     {
-        _root.children.Add(new ContextMenuData(name)
-        {
-            parent = _root,
-            callback = callback
-        });
+        //_root.children.Add(new ContextMenuData(name)
+        //{
+        //    parent = _root,
+        //    callback = callback
+        //});
+        BuildHierarchy(name, callback);
         return this;
     }
+    public void BuildHierarchy(string path, Action callback)
+    {
+        path = path.Replace("\\", "/");
+        string[] split = path.Split('/');
+        ContextMenuData menu_item = _root;
+        int index = 0;
 
+        while (menu_item != null && index < split.Length)
+        {
+            bool found = false;
+
+
+            for (int i = 0; i < menu_item.children.Count; ++i)
+            {
+                if (menu_item.children[i].name == split[index])
+                {
+                    menu_item = menu_item.children[i];
+                    ++index;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                var new_node = new ContextMenuData(split[index]) { parent = menu_item };
+                new_node.callback = callback;
+                menu_item.children.Add(new_node);
+                menu_item = new_node;
+                ++index;
+                found = true;
+            }
+        }
+        return;
+    }
 
     public ContextMenuBuilder AddChild(ContextMenuData child)
     {
@@ -61,5 +97,9 @@ public class ContextMenuData
         this.name = name;
         children = new List<ContextMenuData>();
     }
+
+
+
+
 
 }

@@ -1,4 +1,4 @@
-﻿namespace UIWidgets
+﻿namespace UnityRuntimeNodeEditor
 {
 	using System;
 	using UnityEngine;
@@ -12,7 +12,7 @@
 	/// E - east (right).
 	/// W - west (left).
 	/// </summary>
-	[AddComponentMenu("UI/New UI Widgets/Resizable")]
+	
 	public class Resizable : MonoBehaviour,
 		IInitializePotentialDragHandler, IBeginDragHandler, IEndDragHandler, IDragHandler,
 		IPointerEnterHandler, IPointerExitHandler
