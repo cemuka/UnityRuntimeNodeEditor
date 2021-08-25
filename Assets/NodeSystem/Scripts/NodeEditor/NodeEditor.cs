@@ -90,7 +90,7 @@ namespace UnityRuntimeNodeEditor
                         .Add("nodes/float", CreateFloatNode)
 
                         .Add("nodes/math op", CreateMatOpNode)
-                        .Add("nodes/other/other/other/other/other/other/other/other/other/other/other/other/other/other/other/group", CreateGroup)
+                        .Add("nodes/other/group", CreateGroup)
                         .Add("other/load", LoadGraph)
                         .Add("other/save", SaveGraph)
                         .Build();
