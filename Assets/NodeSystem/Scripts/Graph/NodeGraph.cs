@@ -299,6 +299,11 @@ namespace RuntimeNodeEditor
         //  helper methods
         private void DragNode(Node node, PointerEventData eventData)
         {
+            if (!node.CanMove())
+            {
+                return;
+            }
+
             if (eventData.button == PointerEventData.InputButton.Left)
             {
                 Vector2 pointerPos = ClampToWindow(eventData);

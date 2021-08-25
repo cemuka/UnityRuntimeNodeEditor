@@ -17,7 +17,7 @@ namespace RuntimeNodeEditor
             //{
             //    parent = _root,
             //});
-            BuildHierarchy(name, null);
+            BuildHierarchy(name);
             return this;
         }
 
@@ -28,17 +28,17 @@ namespace RuntimeNodeEditor
             //    parent = _root,
             //    callback = callback
             //});
-            BuildHierarchy(name, callback);
+            BuildHierarchy(name).callback = callback;
             return this;
         }
-        public void BuildHierarchy(string path, Action callback)
+        public ContextMenuData BuildHierarchy(string path)
         {
             path = path.Replace("\\", "/");
             string[] split = path.Split('/');
             ContextMenuData menu_item = _root;
             int index = 0;
 
-            while (menu_item != null && index < split.Length)
+            while (index < split.Length)
             {
                 bool found = false;
 
@@ -57,14 +57,14 @@ namespace RuntimeNodeEditor
                 if (!found)
                 {
                     var new_menu_item = new ContextMenuData(split[index]) { parent = menu_item };
-                    new_menu_item.callback = callback;
+                  //  new_menu_item.callback = callback;
                     menu_item.children.Add(new_menu_item);
                     menu_item = new_menu_item;
                     ++index;
                     found = true;
                 }
             }
-            return;
+            return menu_item;
         }
 
         public ContextMenuBuilder AddChild(ContextMenuData child)
