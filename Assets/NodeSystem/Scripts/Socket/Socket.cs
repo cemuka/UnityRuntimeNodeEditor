@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public class Socket : MonoBehaviour
     {

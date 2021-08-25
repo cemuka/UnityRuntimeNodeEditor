@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public class NodeGraph : MonoBehaviour
     {
@@ -284,33 +284,7 @@ namespace UnityRuntimeNodeEditor
 
         private void OnNodePointerDown(Node node, PointerEventData eventData)
         {
-            if (node is GroupNode gn)
-            {
-                var rect_n0 = gn.body.transform as RectTransform;
-                gn.Contains_Nodes.Clear();
-                for (int i = 0; i < nodes.Count; i++)
-                {
-                    if (nodes[i] == node)
-                    {
-                        continue;
-                    }
-                    var rect_n1 = nodes[i].body.transform as RectTransform;
-                    if (nodes[i] is GroupNode)
-                    {
-                        continue;
-                    }
-                    if (rect_n0.IsRectTransformOverlap(rect_n1))
-                        gn.Contains_Nodes
-                        .Add(nodes[i]);
-                }
-
-                gn.SetAsFirstSibling();
-
-            }
-            else
-            {
-                node.SetAsLastSibling();
-            }
+            node.SetAsLastSibling();
             RectTransformUtility.ScreenPointToLocalPointInRectangle(node.PanelRect, eventData.position,
                                                                     eventData.pressEventCamera, out _pointerOffset);
             DragNode(node, eventData);
@@ -332,23 +306,7 @@ namespace UnityRuntimeNodeEditor
                                                                                 eventData.pressEventCamera, out _localPointerPos);
                 if (success)
                 {
-                    var prev_pos = node.transform.position;
                     node.SetPosition(_localPointerPos - _pointerOffset);
-                    prev_pos = node.transform.position - prev_pos;
-
-                    if (node is GroupNode gn)
-                    {
-                        var rect_n0 = node.body.transform as RectTransform;
-                        for (int i = 0; i < gn.Contains_Nodes.Count; i++)
-                        {
-                            if (gn.Contains_Nodes[i] == node)
-                            {
-                                continue;
-                            }
-
-                            gn.Contains_Nodes[i].transform.position += prev_pos;
-                        }
-                    }
                 }
             }
         }

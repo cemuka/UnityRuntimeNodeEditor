@@ -1,4 +1,4 @@
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public enum NodeType
     {

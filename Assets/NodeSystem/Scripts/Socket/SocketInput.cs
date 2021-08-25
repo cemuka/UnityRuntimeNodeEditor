@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public class SocketInput : Socket, IPointerClickHandler
     {

@@ -2,23 +2,39 @@
     "name": "awesome graph",
     "nodes": [
         {
-            "id": "YhxiqVXtHM",
+            "id": "XXbBVxKAC4",
             "values": [
                 {
                     "key": "floatValue",
                     "value": "0"
                 }
             ],
-            "posX": -7.0,
-            "posY": 87.5,
+            "posX": -341.0,
+            "posY": 118.0,
             "path": "Prefabs/Nodes/FloatNode",
             "inputSocketIds": [],
             "outputSocketIds": [
-                "toD9PyVGs4"
+                "C4A7CyhPBD"
             ]
         },
         {
-            "id": "gi0o0dP8w-",
+            "id": "_6QnB4uFU3",
+            "values": [
+                {
+                    "key": "floatValue",
+                    "value": "0"
+                }
+            ],
+            "posX": -294.0,
+            "posY": -198.0,
+            "path": "Prefabs/Nodes/FloatNode",
+            "inputSocketIds": [],
+            "outputSocketIds": [
+                "ShMGTb3b9W"
+            ]
+        },
+        {
+            "id": "6Vly04LTWX",
             "values": [
                 {
                     "key": "outputValue",
@@ -29,16 +45,22 @@
                     "value": "0"
                 }
             ],
-            "posX": -29.0,
-            "posY": -57.5,
+            "posX": 228.0,
+            "posY": -168.0,
             "path": "Prefabs/Nodes/MathOperationNode",
             "inputSocketIds": [
-                "TTzX5AWHyJ"
+                "PGK2PT6sg0"
             ],
             "outputSocketIds": [
-                "PvzJ2uvPiD"
+                "cAj_hEnTqV"
             ]
         }
     ],
-    "connections": []
+    "connections": [
+        {
+            "id": "Ygj-tM89hh",
+            "outputSocketId": "ShMGTb3b9W",
+            "inputSocketId": "PGK2PT6sg0"
+        }
+    ]
 }

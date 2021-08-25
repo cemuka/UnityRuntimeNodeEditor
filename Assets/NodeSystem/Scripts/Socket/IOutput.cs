@@ -1,6 +1,6 @@
 using System;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public interface IOutput
     {

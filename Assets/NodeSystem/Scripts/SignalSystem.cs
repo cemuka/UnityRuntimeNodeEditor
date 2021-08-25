@@ -1,7 +1,7 @@
 using System;
 using UnityEngine.EventSystems;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public static class SignalSystem
     {
@@ -13,9 +13,7 @@ namespace UnityRuntimeNodeEditor
         public static event Action<Node, PointerEventData> NodePointerDownEvent;
         public static event Action<Node, PointerEventData> NodePointerDragEvent;
         public static event Action<ContextMenuData, ContextContainer> OnMenuItemClicked;
-        public static event Action<string, PointerEventData> LineClickEvent;
         public static event Action<string, PointerEventData> LineDownEvent;
-        public static event Action<string, PointerEventData> LineDragEvent;
 
         public static void InvokeSocketDragFrom(SocketOutput output)
         {
@@ -57,17 +55,9 @@ namespace UnityRuntimeNodeEditor
             OnMenuItemClicked?.Invoke(data, container);
         }
 
-        public static void InvokeLineClick(string line_id, PointerEventData eventData)
-        {
-            LineClickEvent?.Invoke(line_id, eventData);
-        }
         public static void InvokeLineDown(string line_id, PointerEventData eventData)
         {
             LineDownEvent?.Invoke(line_id, eventData);
-        }
-        public static void InvokeLineDrag(string line_id, PointerEventData eventData)
-        {
-            LineDragEvent?.Invoke(line_id, eventData);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public class NodeEditor : MonoBehaviour
     {
@@ -34,12 +34,6 @@ namespace UnityRuntimeNodeEditor
             _contextMenu = Utility.CreatePrefab<ContextMenu>("Prefabs/ContextMenu", contextMenuContainer);
             _contextMenu.Init();
             CloseContextMenu();
-
-
-
-
-
-
         }
 
         private void Update()
@@ -75,11 +69,11 @@ namespace UnityRuntimeNodeEditor
         }
 
         //link
-        private void OnLineDown(string line_id, PointerEventData eventData)
+        private void OnLineDown(string connId, PointerEventData eventData)
         {
             if (eventData.button == PointerEventData.InputButton.Right)
             {
-                DisplayLineContexMenu(line_id);
+                DisplayLineContexMenu(connId);
             }
         }
 
@@ -88,26 +82,25 @@ namespace UnityRuntimeNodeEditor
         {
             _graphCtx = new ContextMenuBuilder()
                         .Add("nodes/float", CreateFloatNode)
-
-                        .Add("nodes/math op", CreateMatOpNode)
-                        .Add("nodes/other/other/other/other/other/other/other/other/other/other/other/other/other/other/other/group", CreateGroup)
-                        .Add("other/load", LoadGraph)
-                        .Add("other/save", SaveGraph)
+                        .Add("nodes/math op",       CreateMatOpNode)
+                        .Add("graph/load",          LoadGraph)
+                        .Add("graph/save",          SaveGraph)
                         .Build();
 
             _contextMenu.Clear();
             _contextMenu.Show(_graphCtx, Utility.GetCtxMenuPointerPosition());
         }
-        private void DisplayLineContexMenu(string line_id)
+
+        private void DisplayLineContexMenu(string connId)
         {
             _nodeCtx = new ContextMenuBuilder()
-                .Add("delete that line", () => DisconnectConnection(line_id))
-
+                .Add("delete that line", () => DisconnectConnection(connId))
                 .Build();
 
             _contextMenu.Clear();
             _contextMenu.Show(_nodeCtx, Utility.GetCtxMenuPointerPosition());
         }
+
         private void DisplayNodeContexMenu(Node node)
         {
             _nodeCtx = new ContextMenuBuilder()
@@ -132,12 +125,14 @@ namespace UnityRuntimeNodeEditor
             graph.Create("Prefabs/Nodes/FloatNode", pos);
             CloseContextMenu();
         }
+
         private void CreateGroup()
         {
             var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
-            graph.Create("Prefabs/Nodes/GroupNode", pos);
+            graph.Create("Prefabs/Nodes/ResizeNode", pos);
             CloseContextMenu();
         }
+
         private void CreateMatOpNode()
         {
             var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
@@ -156,6 +151,7 @@ namespace UnityRuntimeNodeEditor
             CloseContextMenu();
             graph.Disconnect(line_id);
         }
+
         private void ClearConnections(Node node)
         {
             CloseContextMenu();

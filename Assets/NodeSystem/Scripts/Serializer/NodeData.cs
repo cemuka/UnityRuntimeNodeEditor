@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     [Serializable]
     public class NodeData

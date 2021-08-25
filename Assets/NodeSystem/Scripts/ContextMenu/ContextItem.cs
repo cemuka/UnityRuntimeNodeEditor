@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public class ContextItem : MonoBehaviour
     {

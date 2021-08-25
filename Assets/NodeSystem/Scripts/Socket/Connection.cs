@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public class Connection : IConnection
     {

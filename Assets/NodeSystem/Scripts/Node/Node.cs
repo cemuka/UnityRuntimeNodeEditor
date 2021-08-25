@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public class Node : MonoBehaviour
     {
         public string ID { get; private set; }
         public Vector2 Position => _panelRectTransform.anchoredPosition;
+        public RectTransform PanelRect => _panelRectTransform;
         public string Path { get; private set; }
+
         public List<SocketOutput> outputs;
         public List<SocketInput> inputs;
         public List<SocketOutput> connectedOutputs;
@@ -19,19 +21,6 @@ namespace UnityRuntimeNodeEditor
 
         public TMP_Text headerText;
         public GameObject body;
-        public RectTransform PanelRect
-        {
-            get
-            {
-                return _panelRectTransform;
-
-            }
-            set
-            {
-                _panelRectTransform = value;
-            }
-
-        }
 
         private NodeDraggablePanel _dragPanel;
         private NodeType _nodeType;
@@ -43,17 +32,8 @@ namespace UnityRuntimeNodeEditor
             Path = path;
 
             _panelRectTransform = body.transform.parent.GetComponent<RectTransform>();
-
-
-            if (this.GetType() == typeof(GroupNode))
-            {
-                _panelRectTransform = body.transform.parent.parent.GetComponent<RectTransform>();
-            }
-
             _dragPanel = body.AddComponent<NodeDraggablePanel>();
             _dragPanel.Init(this);
-
-            InitBeforeSetup();
 
 
             SetPosition(pos);
@@ -61,11 +41,6 @@ namespace UnityRuntimeNodeEditor
             inputs = new List<SocketInput>();
 
             connectedOutputs = new List<SocketOutput>();
-        }
-
-        public virtual void InitBeforeSetup()
-        {
-
         }
 
         public virtual void Setup() { }

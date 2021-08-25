@@ -2,7 +2,7 @@ using System;
 using UnityEngine.EventSystems;
 using UnityEngine;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public class SocketOutput : Socket, IOutput, IPointerClickHandler, IDragHandler, IEndDragHandler
     {

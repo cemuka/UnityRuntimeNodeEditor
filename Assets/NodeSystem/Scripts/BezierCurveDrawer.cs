@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI.Extensions;
 
-namespace UnityRuntimeNodeEditor
+namespace RuntimeNodeEditor
 {
     public class BezierCurveDrawer : MonoBehaviour
     {
@@ -23,8 +23,6 @@ namespace UnityRuntimeNodeEditor
 
         public void Init()
         {
-
-
             _connections = new Dictionary<string, ConnectionDrawData>();
             _lineContainer = lineContainer;
             _pointerLocator = pointerLocator;
@@ -53,9 +51,8 @@ namespace UnityRuntimeNodeEditor
         public void Add(string connId, SocketHandle from, SocketHandle target)
         {
             var line = CreateLine();
-            var trigger = line.gameObject.AddComponent<LineEventTrigger>();
-            trigger.ID = connId;
-            trigger.drawer = this;
+            var trigger = line.gameObject.AddComponent<LinePointerListener>();
+            trigger.connId = connId;
             _connections.Add(connId, new ConnectionDrawData(connId, from, target, line));
         }
 
