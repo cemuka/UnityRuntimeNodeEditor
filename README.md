@@ -7,7 +7,7 @@ My goal was make it in runtime with unity ui.
 - Load and save a graph using node serializer
 - Pan and zoom
 
-![node editor](./img/node_gif1.gif)
+![node editor](./img/node_gif2.gif)
 
 This project is actively in development.
 Current state is quite experimental.  
