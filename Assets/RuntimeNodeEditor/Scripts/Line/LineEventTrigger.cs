@@ -13,7 +13,7 @@ namespace RuntimeNodeEditor
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            SignalSystem.InvokeLineDown(connId, eventData);
+            SignalSystem.InvokeNodeConnectionPointerDown(connId, eventData);
         }
 
     }

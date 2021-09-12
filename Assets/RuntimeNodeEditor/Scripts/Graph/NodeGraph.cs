@@ -7,6 +7,10 @@ namespace RuntimeNodeEditor
 {
     public class NodeGraph : MonoBehaviour
     {
+        public RectTransform contextMenuContainer;
+        public RectTransform nodeContainer;
+        public GraphPointerListener pointerListener;
+
         public List<Node> nodes;
         public List<Connection> connections;
 
@@ -30,12 +34,12 @@ namespace RuntimeNodeEditor
             nodes = new List<Node>();
             connections = new List<Connection>();
 
-            SignalSystem.OutputSocketDragStartEvent += OnOutputDragStarted;
-            SignalSystem.OutputSocketDragDrop += OnOutputDragDroppedTo;
-            SignalSystem.InputSocketClickEvent += OnInputSocketClicked;
-            SignalSystem.OutputSocketClickEvent += OnOutputSocketClicked;
-            SignalSystem.NodePointerDownEvent += OnNodePointerDown;
-            SignalSystem.NodePointerDragEvent += OnNodePointerDrag;
+            SignalSystem.OutputSocketDragStartEvent     += OnOutputDragStarted;
+            SignalSystem.OutputSocketDragDrop           += OnOutputDragDroppedTo;
+            SignalSystem.InputSocketClickEvent          += OnInputSocketClicked;
+            SignalSystem.OutputSocketClickEvent         += OnOutputSocketClicked;
+            SignalSystem.NodePointerDownEvent           += OnNodePointerDown;
+            SignalSystem.NodePointerDragEvent           += OnNodePointerDrag;
 
             drawer.Init();
         }
@@ -104,7 +108,7 @@ namespace RuntimeNodeEditor
                 .ForEach(conn => Disconnect(conn));
         }
 
-        public void Save()
+        public void Save(string path)
         {
             var graph = new GraphData();
             var nodeDatas = new List<NodeData>();
@@ -154,7 +158,6 @@ namespace RuntimeNodeEditor
             graph.nodes = nodeDatas.ToArray();
             graph.connections = connDatas.ToArray();
 
-            var path = Application.dataPath + "/NodeSystem/Resources/Graphs/graph.json";
             System.IO.File.WriteAllText(path, JsonUtility.ToJson(graph, true));
         }
 
@@ -200,6 +203,7 @@ namespace RuntimeNodeEditor
 
         public void OnUpdate()
         {
+            pointerListener.OnUpdate();
             drawer.UpdateDraw();
         }
 

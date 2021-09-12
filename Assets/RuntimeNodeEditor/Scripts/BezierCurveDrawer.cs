@@ -11,7 +11,7 @@ namespace RuntimeNodeEditor
         public RectTransform pointerLocator;
         public RectTransform lineContainer;
         [Header("Bezier settings")]
-        public float vertexCount = 10;
+        public float vertexCount = 60;
 
         private static UILineRendererWithCollider _lineRenderer;
         private static bool _hasRequest;
