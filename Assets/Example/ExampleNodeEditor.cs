@@ -10,22 +10,42 @@ public class ExampleNodeEditor : NodeEditor
     {
         base.StartEditor();
 
-        _savePath = Application.dataPath + "/NodeSystem/Resources/Graphs/graph.json";
-        AddGraphContextMenuItem("nodes/float",          CreateFloatNode);
-        AddGraphContextMenuItem("nodes/math op",       CreateMatOpNode);
-        AddGraphContextMenuItem("graph/load",          ()=>LoadGraph(_savePath));
-        AddGraphContextMenuItem("graph/save",          ()=>SaveGraph(_savePath));
+        _savePath = Application.dataPath + "/Resources/graph.json";
 
+    }
+
+    protected override void OnGraphPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Middle)
+        {
+            var ctx = new ContextMenuBuilder()
+            .Add("nodes/float",          CreateFloatNode)
+            .Add("nodes/math op",       CreateMatOpNode)
+            .Add("graph/load",          ()=>LoadGraph(_savePath))
+            .Add("graph/save",          ()=>SaveGraph(_savePath))
+            .Build();
+
+            SetContextMenu(ctx);
+
+            switch (eventData.button)
+            {
+                case PointerEventData.InputButton.Right: DisplayContextMenu(); break;
+                case PointerEventData.InputButton.Left: CloseContextMenu(); break;
+            }
+        }
     }
    
     protected override void OnNodePointerClick(Node node, PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            AddNodeContextMenuItem("clear connections",    () => ClearConnections(node));
-            AddNodeContextMenuItem("delete",               () => DeleteNode(node));
+            var ctx = new ContextMenuBuilder()
+            .Add("clear connections",    () => ClearConnections(node))
+            .Add("delete",               () => DeleteNode(node))
+            .Build();
 
-            DisplayNodeContexMenu(node);
+            SetContextMenu(ctx);
+            DisplayContextMenu();
         }
     }
 
@@ -33,9 +53,12 @@ public class ExampleNodeEditor : NodeEditor
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            AddConnectionContextMenuItem("delete connection", () => DisconnectConnection(connId));
+            var ctx = new ContextMenuBuilder()
+            .Add("clear connection", () => DisconnectConnection(connId))
+            .Build();
 
-            DisplayConnectionContexMenu(connId);
+            SetContextMenu(ctx);
+            DisplayContextMenu();
         }
     }
 
@@ -43,41 +66,32 @@ public class ExampleNodeEditor : NodeEditor
     //  context item actions
     private void CreateFloatNode()
     {
-        var pos = Utility.GetLocalPointIn(graph.nodeContainer, Input.mousePosition);
-        graph.Create("Prefabs/Nodes/FloatNode", pos);
-        CloseContextMenu();
-    }
-
-    private void CreateGroup()
-    {
-        var pos = Utility.GetLocalPointIn(graph.nodeContainer, Input.mousePosition);
-        graph.Create("Prefabs/Nodes/ResizeNode", pos);
+        graph.Create("Prefabs/Nodes/FloatNode");
         CloseContextMenu();
     }
 
     private void CreateMatOpNode()
     {
-        var pos = Utility.GetLocalPointIn(graph.nodeContainer, Input.mousePosition);
-        graph.Create("Prefabs/Nodes/MathOperationNode", pos);
+        graph.Create("Prefabs/Nodes/MathOperationNode");
         CloseContextMenu();
     }
 
     private void DeleteNode(Node node)
     {
-        CloseContextMenu();
         graph.Delete(node);
+        CloseContextMenu();
     }
 
     private void DisconnectConnection(string line_id)
     {
-        CloseContextMenu();
         graph.Disconnect(line_id);
+        CloseContextMenu();
     }
 
     private void ClearConnections(Node node)
     {
-        CloseContextMenu();
         graph.ClearConnectionsOf(node);
+        CloseContextMenu();
     }
 
 }

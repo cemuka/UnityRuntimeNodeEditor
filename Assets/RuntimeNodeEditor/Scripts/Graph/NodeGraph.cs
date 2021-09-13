@@ -27,7 +27,7 @@ namespace RuntimeNodeEditor
         public RectTransform GraphContainer => _graphContainer;
 
 
-        public void Init(RectTransform nodeContainer)
+        public void Init()
         {
             _nodeContainer = nodeContainer;
             _graphContainer = this.GetComponent<RectTransform>();
@@ -42,6 +42,16 @@ namespace RuntimeNodeEditor
             SignalSystem.NodePointerDragEvent           += OnNodePointerDrag;
 
             drawer.Init();
+        }
+
+        public void Create(string prefabPath)
+        {
+            var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
+            var node = Utility.CreateNodePrefab<Node>(prefabPath);
+            node.Init(pos, CreateId, prefabPath);
+            node.Setup();
+            nodes.Add(node);
+            HandleSocketRegister(node);
         }
 
         public void Create(string prefabPath, Vector2 pos)

@@ -16,9 +16,8 @@ namespace RuntimeNodeEditor
         private float _minZoom;
         private float _maxZoom;
 
-
-        public static event Action<PointerEventData> GraphPointerClickEvent;
-        public static event Action<PointerEventData> GraphPointerDragEvent;
+        public event Action<PointerEventData> GraphPointerClickEvent;
+        public event Action<PointerEventData> GraphPointerDragEvent;
 
         public void Init(RectTransform background, float minZoom, float maxZoom)
         {
