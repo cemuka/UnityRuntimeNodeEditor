@@ -11,7 +11,7 @@ namespace RuntimeNodeEditor
         Multiply,
         Divide,
         Add,
-        Substract
+        Subtract
     }
 
     public enum SocketType
