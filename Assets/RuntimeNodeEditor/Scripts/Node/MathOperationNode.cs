@@ -30,7 +30,7 @@ namespace RuntimeNodeEditor
             new TMP_Dropdown.OptionData(MathOperations.Multiply.ToString()),
             new TMP_Dropdown.OptionData(MathOperations.Divide.ToString()),
             new TMP_Dropdown.OptionData(MathOperations.Add.ToString()),
-            new TMP_Dropdown.OptionData(MathOperations.Substract.ToString())
+            new TMP_Dropdown.OptionData(MathOperations.Subtract.ToString())
         });
 
             dropdown.onValueChanged.AddListener(selected =>
@@ -100,7 +100,7 @@ namespace RuntimeNodeEditor
                     default: return values.Aggregate((x, y) => x * y);
                     case MathOperations.Divide: return values.Aggregate((x, y) => x / y);
                     case MathOperations.Add: return values.Aggregate((x, y) => x + y);
-                    case MathOperations.Substract: return values.Aggregate((x, y) => x - y);
+                    case MathOperations.Subtract: return values.Aggregate((x, y) => x - y);
                 }
             }
             else
