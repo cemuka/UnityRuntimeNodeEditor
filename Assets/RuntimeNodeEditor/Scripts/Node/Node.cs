@@ -23,7 +23,6 @@ namespace RuntimeNodeEditor
         public GameObject body;
 
         private NodeDraggablePanel _dragPanel;
-        private NodeType _nodeType;
         private RectTransform _panelRectTransform;
 
         public void Init(Vector2 pos, string id, string path)
@@ -87,11 +86,6 @@ namespace RuntimeNodeEditor
         public void SetHeader(string name)
         {
             headerText.SetText(name);
-        }
-
-        public void SetType(NodeType type)
-        {
-            _nodeType = type;
         }
 
         public void SetPosition(Vector2 pos)

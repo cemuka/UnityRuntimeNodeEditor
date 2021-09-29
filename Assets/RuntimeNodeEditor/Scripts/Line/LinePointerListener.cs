@@ -7,13 +7,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 namespace RuntimeNodeEditor
 {
-    public class LinePointerListener : MonoBehaviour, IPointerDownHandler
+    public class LinePointerListener : MonoBehaviour, IPointerClickHandler
     {
         public string connId;
 
-        public void OnPointerDown(PointerEventData eventData)
+        public void OnPointerClick(PointerEventData eventData)
         {
-            SignalSystem.InvokeNodeConnectionPointerDown(connId, eventData);
+            SignalSystem.InvokeNodeConnectionPointerClick(connId, eventData);
         }
 
     }

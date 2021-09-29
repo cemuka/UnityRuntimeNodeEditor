@@ -16,22 +16,22 @@ public class ExampleNodeEditor : NodeEditor
 
     protected override void OnGraphPointerClick(PointerEventData eventData)
     {
-        if (eventData.button != PointerEventData.InputButton.Middle)
+        switch (eventData.button)
         {
-            var ctx = new ContextMenuBuilder()
-            .Add("nodes/float",          CreateFloatNode)
-            .Add("nodes/math op",       CreateMatOpNode)
-            .Add("graph/load",          ()=>LoadGraph(_savePath))
-            .Add("graph/save",          ()=>SaveGraph(_savePath))
-            .Build();
-
-            SetContextMenu(ctx);
-
-            switch (eventData.button)
+            case PointerEventData.InputButton.Right: 
             {
-                case PointerEventData.InputButton.Right: DisplayContextMenu(); break;
-                case PointerEventData.InputButton.Left: CloseContextMenu(); break;
+                var ctx = new ContextMenuBuilder()
+                .Add("nodes/float",          CreateFloatNode)
+                .Add("nodes/math op",       CreateMatOpNode)
+                .Add("graph/load",          ()=>LoadGraph(_savePath))
+                .Add("graph/save",          ()=>SaveGraph(_savePath))
+                .Build();
+
+                SetContextMenu(ctx);
+                DisplayContextMenu(); 
             }
+            break;
+            case PointerEventData.InputButton.Left: CloseContextMenu(); break;
         }
     }
    
@@ -49,7 +49,7 @@ public class ExampleNodeEditor : NodeEditor
         }
     }
 
-    protected override void OnNodeConnectionPointerDown(string connId, PointerEventData eventData)
+    protected override void OnNodeConnectionPointerClick(string connId, PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {

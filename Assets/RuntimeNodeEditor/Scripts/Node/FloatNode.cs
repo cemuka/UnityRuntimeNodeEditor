@@ -13,9 +13,6 @@ namespace RuntimeNodeEditor
         public override void Setup()
         {
             Register(outputSocket);
-
-
-            SetType(NodeType.Float);
             SetHeader("float");
 
             valueField.text = "0";

@@ -13,7 +13,7 @@ namespace RuntimeNodeEditor
         [Header("Bezier settings")]
         public float vertexCount = 60;
 
-        private static UILineRendererWithCollider _lineRenderer;
+        private static UILineRendererWithListener _lineRenderer;
         private static bool _hasRequest;
         private static Socket _draggingSocket;
         private static Dictionary<string, ConnectionDrawData> _connections;
@@ -76,7 +76,7 @@ namespace RuntimeNodeEditor
         }
 
         //  drawing
-        private void DrawConnection(SocketHandle port1, SocketHandle port2, UILineRendererWithCollider lineRenderer)
+        private void DrawConnection(SocketHandle port1, SocketHandle port2, UILineRendererWithListener lineRenderer)
         {
             var pointList = new List<Vector2>();
 
@@ -115,10 +115,10 @@ namespace RuntimeNodeEditor
             _lineRenderer.SetVerticesDirty();
         }
 
-        private static UILineRendererWithCollider CreateLine()
+        private static UILineRendererWithListener CreateLine()
         {
             var lineGO = new GameObject("BezierLine");
-            var linerenderer = lineGO.AddComponent<UILineRendererWithCollider>();
+            var linerenderer = lineGO.AddComponent<UILineRendererWithListener>();
             var lineRect = lineGO.GetComponent<RectTransform>();
 
             lineGO.transform.SetParent(_lineContainer);
@@ -148,9 +148,9 @@ namespace RuntimeNodeEditor
             public readonly string id;
             public readonly SocketHandle output;
             public readonly SocketHandle input;
-            public readonly UILineRendererWithCollider lineRenderer;
+            public readonly UILineRendererWithListener lineRenderer;
 
-            public ConnectionDrawData(string id, SocketHandle port1, SocketHandle port2, UILineRendererWithCollider lineRenderer)
+            public ConnectionDrawData(string id, SocketHandle port1, SocketHandle port2, UILineRendererWithListener lineRenderer)
             {
                 this.id = id;
                 this.output = port1;

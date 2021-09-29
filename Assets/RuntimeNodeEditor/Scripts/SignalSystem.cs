@@ -13,7 +13,7 @@ namespace RuntimeNodeEditor
         public static event Action<Node, PointerEventData> NodePointerDownEvent;
         public static event Action<Node, PointerEventData> NodePointerDragEvent;
         public static event Action<ContextMenuData, ContextContainer> OnMenuItemClicked;
-        public static event Action<string, PointerEventData> NodeConnectionPointerDownEvent;
+        public static event Action<string, PointerEventData> NodeConnectionPointerClickEvent;
 
         public static void InvokeSocketDragFrom(SocketOutput output)
         {
@@ -55,9 +55,9 @@ namespace RuntimeNodeEditor
             OnMenuItemClicked?.Invoke(data, container);
         }
 
-        public static void InvokeNodeConnectionPointerDown(string connId, PointerEventData eventData)
+        public static void InvokeNodeConnectionPointerClick(string connId, PointerEventData eventData)
         {
-            NodeConnectionPointerDownEvent?.Invoke(connId, eventData);
+            NodeConnectionPointerClickEvent?.Invoke(connId, eventData);
         }
     }
 }

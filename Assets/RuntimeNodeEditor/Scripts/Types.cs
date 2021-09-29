@@ -1,11 +1,5 @@
 namespace RuntimeNodeEditor
 {
-    public enum NodeType
-    {
-        Float,
-        Group
-    }
-
     public enum MathOperations
     {
         Multiply,

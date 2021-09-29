@@ -30,7 +30,7 @@ namespace RuntimeNodeEditor
             graph.pointerListener.GraphPointerClickEvent        += OnGraphPointerClick;
             graph.pointerListener.GraphPointerDragEvent         += OnGraphPointerDrag;
             SignalSystem.NodePointerClickEvent                  += OnNodePointerClick;
-            SignalSystem.NodeConnectionPointerDownEvent         += OnNodeConnectionPointerDown;
+            SignalSystem.NodeConnectionPointerClickEvent         += OnNodeConnectionPointerClick;
         }
 
         public void UpdateEditor()
@@ -51,7 +51,7 @@ namespace RuntimeNodeEditor
 
         protected virtual void OnNodePointerClick(Node node, PointerEventData eventData){}
         
-        protected virtual void OnNodeConnectionPointerDown(string connId, PointerEventData eventData){}
+        protected virtual void OnNodeConnectionPointerClick(string connId, PointerEventData eventData){}
 
         //  context methods
         protected void DisplayContextMenu()

@@ -9,7 +9,7 @@ namespace UnityEngine.UI.Extensions
     [AddComponentMenu("UI/Extensions/Primitives/UILineRendererWithCollider")]
     [RequireComponent(typeof(RectTransform))]
 //	[RequireComponent(typeof(PolygonCollider2D))]
-    public class UILineRendererWithCollider : UIPrimitiveBase
+    public class UILineRendererWithListener : UIPrimitiveBase
 	{
 		private enum SegmentType
 		{
