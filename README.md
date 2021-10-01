@@ -41,7 +41,7 @@ public class ApplicationStartup : MonoBehaviour
 }
 ```
 Populate context menu by overriding methods below
-```
+```c#
 protected override void OnGraphPointerClick(PointerEventData eventData)
 {
 }
