@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -46,7 +46,14 @@ namespace RuntimeNodeEditor
 
         public void Create(string prefabPath)
         {
-            var pos = Utility.GetLocalPointIn(nodeContainer, Input.mousePosition);
+	        var mousePosition = Vector2.zero;
+			#if ENABLE_LEGACY_INPUT_MANAGER
+	        mousePosition = Input.mousePosition;
+	        #endif
+	        #if ENABLE_INPUT_SYSTEM
+	        mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+	        #endif
+	        var pos = Utility.GetLocalPointIn(nodeContainer, mousePosition);
             var node = Utility.CreateNodePrefab<Node>(prefabPath);
             node.Init(pos, CreateId, prefabPath);
             node.Setup();

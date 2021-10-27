@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace RuntimeNodeEditor
 {
@@ -23,12 +23,20 @@ namespace RuntimeNodeEditor
 
         public static Vector2 GetCtxMenuPointerPosition()
         {
-            Vector2 localPointerPos;
-            var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_contextMenuContainer,
+	        Vector2 localPointerPos;
+	        var success = false;
+	        #if ENABLE_LEGACY_INPUT_MANAGER
+            success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_contextMenuContainer,
                                                                                   Input.mousePosition,
                                                                                   null,
                                                                                   out localPointerPos);
-
+	        #endif
+	        #if ENABLE_INPUT_SYSTEM
+	        success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_contextMenuContainer,
+		        						UnityEngine.InputSystem.Mouse.current.position.ReadValue(),
+		        						null,
+		        						out localPointerPos);
+	        #endif
             return localPointerPos;
         }
 
