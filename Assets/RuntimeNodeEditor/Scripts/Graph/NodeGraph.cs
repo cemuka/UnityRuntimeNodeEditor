@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -20,9 +20,10 @@ namespace RuntimeNodeEditor
         //  cache
         private SocketOutput _currentDraggingSocket;
         private Vector2 _pointerOffset;
-        private Vector2 _localPointerPos;
+	    private Vector2 _localPointerPos;
+	    private Vector2 _duplicateOffset;
         private RectTransform _nodeContainer;
-        private RectTransform _graphContainer;
+	    private RectTransform _graphContainer;
 
         public RectTransform GraphContainer => _graphContainer;
 
@@ -32,7 +33,8 @@ namespace RuntimeNodeEditor
             _nodeContainer = nodeContainer;
             _graphContainer = this.GetComponent<RectTransform>();
             nodes = new List<Node>();
-            connections = new List<Connection>();
+	        connections = new List<Connection>();
+	        _duplicateOffset = (Vector2.one * 10f);
 
             SignalSystem.OutputSocketDragStartEvent     += OnOutputDragStarted;
             SignalSystem.OutputSocketDragDrop           += OnOutputDragDroppedTo;
@@ -69,6 +71,15 @@ namespace RuntimeNodeEditor
             Destroy(node.gameObject);
             nodes.Remove(node);
         }
+        
+	    public void Duplicate(Node node)
+	    {
+		    Serializer info = new Serializer();
+		    node.OnSerialize(info);
+		    Create(node.Path, node.Position + _duplicateOffset);
+		    var newNode = nodes.Last();
+		    newNode.OnDeserialize(info);
+	    }
 
         public void Connect(SocketInput input, SocketOutput output)
         {
