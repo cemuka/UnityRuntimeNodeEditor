@@ -1,4 +1,4 @@
-using RuntimeNodeEditor;
+﻿using RuntimeNodeEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -40,6 +40,7 @@ public class ExampleNodeEditor : NodeEditor
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             var ctx = new ContextMenuBuilder()
+	            .Add("duplicate",    () => DuplicateNode(node))
             .Add("clear connections",    () => ClearConnections(node))
             .Add("delete",               () => DeleteNode(node))
             .Build();
@@ -81,6 +82,12 @@ public class ExampleNodeEditor : NodeEditor
         graph.Delete(node);
         CloseContextMenu();
     }
+    
+	private void DuplicateNode(Node node)
+	{
+		graph.Duplicate(node);
+		CloseContextMenu();
+	}
 
     private void DisconnectConnection(string line_id)
     {
