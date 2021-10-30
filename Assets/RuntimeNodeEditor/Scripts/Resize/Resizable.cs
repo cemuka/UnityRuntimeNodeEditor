@@ -4,6 +4,9 @@
 	using UnityEngine;
 	using UnityEngine.EventSystems;
 	using UnityEngine.UI;
+	#if ENABLE_INPUT_SYSTEM
+	using UnityEngine.InputSystem;
+	#endif
 
 	/// <summary>
 	/// Resizable.
@@ -693,16 +696,35 @@
 				return;
 			}
 
+			#if ENABLE_LEGACY_INPUT_MANAGER
 			if (!Input.mousePresent)
 			{
 				return;
 			}
+			#endif
+			
+			#if ENABLE_INPUT_SYSTEM
+			if (Mouse.current == null)
+			{
+				return;
+			}
+			#endif
 
 			Vector2 point;
+			#if ENABLE_LEGACY_INPUT_MANAGER
 			if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(RectTransform, Input.mousePosition, CurrentCamera, out point))
 			{
 				return;
 			}
+			#endif
+			
+			#if ENABLE_INPUT_SYSTEM
+			var mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+			if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(RectTransform, mousePosition, CurrentCamera, out point))
+			{
+				return;
+			}
+			#endif
 
 			var r = RectTransform.rect;
 			if (!r.Contains(point))

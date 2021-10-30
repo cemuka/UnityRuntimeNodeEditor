@@ -96,8 +96,14 @@ namespace RuntimeNodeEditor
 
         private static void DrawDragging(SocketHandle port)
         {
-            Vector2 localPointerPos;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(_lineContainer, Input.mousePosition, null, out localPointerPos);
+	        Vector2 localPointerPos;
+            #if ENABLE_LEGACY_INPUT_MANAGER
+	        RectTransformUtility.ScreenPointToLocalPointInRectangle(_lineContainer, Input.mousePosition, null, out localPointerPos);
+            #endif
+            #if ENABLE_INPUT_SYSTEM
+	        var mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+	        RectTransformUtility.ScreenPointToLocalPointInRectangle(_lineContainer, mousePosition, null, out localPointerPos);
+            #endif
             _pointerLocator.localPosition = localPointerPos;
 
             var pointList = new List<Vector2>();
