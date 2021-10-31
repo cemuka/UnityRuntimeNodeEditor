@@ -4,8 +4,11 @@
 Almost every node editor made in unity is using unity editor to make it.  
 My goal was make it in runtime with unity ui.
 
+- Prefab based workflow
+- Context Menu for graph, nodes and connections
 - Load and save a graph using node serializer
 - Pan and zoom
+- Legacy and new Input System 
 
 ![node editor](./img/node_gif2.gif)
 
@@ -83,10 +86,11 @@ protected override void OnNodePointerClick(Node node, PointerEventData eventData
 {
     if (eventData.button == PointerEventData.InputButton.Right)
     {
-        var ctx = new ContextMenuBuilder()
-        .Add("clear connections",    () => ClearConnections(node))
-        .Add("delete",               () => DeleteNode(node))
-        .Build();
+            var ctx = new ContextMenuBuilder()
+            .Add("duplicate",            () => DuplicateNode(node))
+            .Add("clear connections",    () => ClearConnections(node))
+            .Add("delete",               () => DeleteNode(node))
+            .Build();
 
         SetContextMenu(ctx);
         DisplayContextMenu();
@@ -145,9 +149,9 @@ public class MyAwesomeNode : Node
 To create a node from your editor, pass its path from `Resources` folder.
 ```c#
 //  context item actions
-private void CreateFloatNode()
+private void CreateMyNode()
 {
-    graph.Create("Prefabs/Nodes/FloatNode");
+    graph.Create("Prefabs/Nodes/MyAwesomeNode");    //  your prefab path in resources
     CloseContextMenu();
 }
 ```
@@ -155,8 +159,7 @@ private void CreateFloatNode()
 Check out the complete expample in `ExampleScene` for more details.
 
 
-This project is actively in development.
-Current state is quite experimental.  
+This project is actively in development. 
 Feel free to drop an issue for any suggestion or feedback.  
 
 

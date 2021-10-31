@@ -40,7 +40,7 @@ public class ExampleNodeEditor : NodeEditor
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             var ctx = new ContextMenuBuilder()
-	            .Add("duplicate",    () => DuplicateNode(node))
+            .Add("duplicate",            () => DuplicateNode(node))
             .Add("clear connections",    () => ClearConnections(node))
             .Add("delete",               () => DeleteNode(node))
             .Build();
