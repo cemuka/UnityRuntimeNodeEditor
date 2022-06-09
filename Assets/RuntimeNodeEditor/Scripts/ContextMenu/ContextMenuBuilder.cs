@@ -13,21 +13,12 @@ namespace RuntimeNodeEditor
 
         public ContextMenuBuilder Add(string name)
         {
-            //_root.children.Add(new ContextMenuData(name)
-            //{
-            //    parent = _root,
-            //});
             BuildHierarchy(name);
             return this;
         }
 
         public ContextMenuBuilder Add(string name, Action callback)
         {
-            //_root.children.Add(new ContextMenuData(name)
-            //{
-            //    parent = _root,
-            //    callback = callback
-            //});
             BuildHierarchy(name).callback = callback;
             return this;
         }

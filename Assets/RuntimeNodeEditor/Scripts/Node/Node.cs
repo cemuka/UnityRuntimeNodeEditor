@@ -7,23 +7,23 @@ namespace RuntimeNodeEditor
 {
     public class Node : MonoBehaviour
     {
-        public string ID { get; private set; }
-        public Vector2 Position => _panelRectTransform.anchoredPosition;
-        public RectTransform PanelRect => _panelRectTransform;
-        public string Path { get; private set; }
+        public string           ID          { get; private set; }
+        public Vector2          Position    { get => _panelRectTransform.anchoredPosition; }
+        public RectTransform    PanelRect   { get => _panelRectTransform; }
+        public string           Path        { get; private set; }
 
-        public List<SocketOutput> outputs;
-        public List<SocketInput> inputs;
-        public List<SocketOutput> connectedOutputs;
+        public List<SocketOutput>           outputs;
+        public List<SocketInput>            inputs;
+        public List<SocketOutput>           connectedOutputs;
 
         public event Action<SocketInput, IOutput> OnConnectionEvent;
         public event Action<SocketInput, IOutput> OnDisconnectEvent;
 
-        public TMP_Text headerText;
-        public GameObject body;
+        public TMP_Text                     headerText;
+        public GameObject                   body;
 
-        private NodeDraggablePanel _dragPanel;
-        private RectTransform _panelRectTransform;
+        private NodeDraggablePanel          _dragPanel;
+        private RectTransform               _panelRectTransform;
 
         public void Init(Vector2 pos, string id, string path)
         {

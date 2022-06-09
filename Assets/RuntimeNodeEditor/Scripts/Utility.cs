@@ -69,44 +69,6 @@ namespace RuntimeNodeEditor
             var p1 = QuadraticCurve(b, c, d, t);
             return Vector3.Lerp(p0, p1, t);
         }
-
-
-        public static Transform FindTopmostCanvas(Transform currentObject)
-        {
-            var canvases = currentObject.GetComponentsInParent<Canvas>();
-            if (canvases.Length == 0)
-            {
-                return null;
-            }
-
-            return canvases[canvases.Length - 1].transform;
-        }
-
-        public static void UpdateLayout(UnityEngine.UI.LayoutGroup layout)
-        {
-            if (layout == null)
-            {
-                return;
-            }
-
-            layout.CalculateLayoutInputHorizontal();
-            layout.SetLayoutHorizontal();
-            layout.CalculateLayoutInputVertical();
-            layout.SetLayoutVertical();
-        }
-
-
-        public static T GetOrAddComponent<T>(Component obj)
-            where T : Component
-        {
-            var component = obj.GetComponent<T>();
-            if (component == null)
-            {
-                component = obj.gameObject.AddComponent<T>();
-            }
-
-            return component;
-        }
     }
 
     public static class RectTransformExtensions

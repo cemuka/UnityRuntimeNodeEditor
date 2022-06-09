@@ -10,9 +10,4 @@ namespace RuntimeNodeEditor
 
         string IConnection.ConnId => connId;
     }
-
-    public interface IConnection
-    {
-        string ConnId { get; }
-    }
 }

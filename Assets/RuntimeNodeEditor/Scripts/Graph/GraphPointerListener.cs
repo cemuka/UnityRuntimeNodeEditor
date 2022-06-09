@@ -12,12 +12,12 @@ namespace RuntimeNodeEditor
 	public class GraphPointerListener : MonoBehaviour, IPointerClickHandler, IDragHandler
     {
 
-        private RectTransform _rectTransform;
-        private Vector2 _zoomCenterPos;
-        private float _currentZoom;
-        private float _mouseWheelSensitivity;
-        private float _minZoom;
-        private float _maxZoom;
+        private RectTransform   _rectTransform;
+        private Vector2         _zoomCenterPos;
+        private float           _currentZoom;
+        private float           _mouseWheelSensitivity;
+        private float           _minZoom;
+        private float           _maxZoom;
 
         public event Action<PointerEventData> GraphPointerClickEvent;
         public event Action<PointerEventData> GraphPointerDragEvent;
@@ -41,44 +41,27 @@ namespace RuntimeNodeEditor
             GraphPointerDragEvent?.Invoke(eventData);
         }
 
-        //     private void ConstraitPosition()
-        //     {
-        //         RectTransform rectTransform = (RectTransform)transform;
-
-        //         RectTransform parentTransform = (RectTransform)rectTransform.parent;
-        //         Vector2 viewportSize = new Vector2(parentTransform.rect.width, parentTransform.rect.height);
-        //         Vector2 contentSize = new Vector2(rectTransform.rect.width, rectTransform.rect.height);
-
-        //         Vector2 dragMax = new Vector2(0, rectTransform.sizeDelta.y - viewportSize.y);
-        //         Vector2 dragMin = new Vector2(-(rectTransform.sizeDelta.x - viewportSize.x), 0);
-
-        //         rectTransform.anchoredPosition = new Vector2(
-        //             Mathf.Min(Mathf.Max(dragMin.x, rectTransform.anchoredPosition.x), dragMax.x),
-        //             Mathf.Min(Mathf.Max(dragMin.y, rectTransform.anchoredPosition.y), dragMax.y)
-        //         );
-        //     }
-
         public void OnUpdate()
         {
             //pc input
 	        float scrollWheelInput = 0;
-	        #if ENABLE_LEGACY_INPUT_MANAGER
+#if ENABLE_LEGACY_INPUT_MANAGER
 	        scrollWheelInput = Input.mouseScrollDelta.y;
-	        #endif
-	        #if ENABLE_INPUT_SYSTEM
+#endif
+#if ENABLE_INPUT_SYSTEM
 	        scrollWheelInput = Mouse.current.scroll.y.ReadValue() * 0.001f; // Magic Number to match Input scroll values
-	        #endif
+#endif
 	        
             if (Mathf.Abs(scrollWheelInput) > float.Epsilon)
             {
                 _currentZoom *= 1 + scrollWheelInput * _mouseWheelSensitivity;
 	            _currentZoom = Mathf.Clamp(_currentZoom, _minZoom, _maxZoom);
-                #if ENABLE_LEGACY_INPUT_MANAGER
+#if ENABLE_LEGACY_INPUT_MANAGER
 	            _zoomCenterPos = (Vector2)Input.mousePosition;
-                #endif
-                #if ENABLE_INPUT_SYSTEM
+#endif
+#if ENABLE_INPUT_SYSTEM
 	            _zoomCenterPos = Mouse.current.position.ReadValue();
-                #endif
+#endif
 
                 Vector2 beforePointInContent;
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(_rectTransform, _zoomCenterPos, null, out beforePointInContent);

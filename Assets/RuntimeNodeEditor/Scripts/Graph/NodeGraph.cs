@@ -7,34 +7,33 @@ namespace RuntimeNodeEditor
 {
     public class NodeGraph : MonoBehaviour
     {
-        public RectTransform contextMenuContainer;
-        public RectTransform nodeContainer;
-        public GraphPointerListener pointerListener;
-
-        public List<Node> nodes;
-        public List<Connection> connections;
-
         //  scene references
-        public BezierCurveDrawer drawer;
+        public RectTransform        contextMenuContainer;
+        public RectTransform        nodeContainer;
+        public GraphPointerListener pointerListener;
+        public BezierCurveDrawer    drawer;
+
+        public List<Node>           nodes;
+        public List<Connection>     connections;
 
         //  cache
-        private SocketOutput _currentDraggingSocket;
-        private Vector2 _pointerOffset;
-	    private Vector2 _localPointerPos;
-	    private Vector2 _duplicateOffset;
-        private RectTransform _nodeContainer;
-	    private RectTransform _graphContainer;
+        private SocketOutput        _currentDraggingSocket;
+        private Vector2             _pointerOffset;
+	    private Vector2             _localPointerPos;
+	    private Vector2             _duplicateOffset;
+        private RectTransform       _nodeContainer;
+	    private RectTransform       _graphContainer;
 
         public RectTransform GraphContainer => _graphContainer;
 
 
         public void Init()
         {
-            _nodeContainer = nodeContainer;
-            _graphContainer = this.GetComponent<RectTransform>();
-            nodes = new List<Node>();
-	        connections = new List<Connection>();
-	        _duplicateOffset = (Vector2.one * 10f);
+            _nodeContainer      = nodeContainer;
+            _graphContainer     = this.GetComponent<RectTransform>();
+	        _duplicateOffset    = (Vector2.one * 10f);
+            nodes               = new List<Node>();
+	        connections         = new List<Connection>();
 
             SignalSystem.OutputSocketDragStartEvent     += OnOutputDragStarted;
             SignalSystem.OutputSocketDragDrop           += OnOutputDragDroppedTo;
@@ -49,12 +48,12 @@ namespace RuntimeNodeEditor
         public void Create(string prefabPath)
         {
 	        var mousePosition = Vector2.zero;
-			#if ENABLE_LEGACY_INPUT_MANAGER
+#if ENABLE_LEGACY_INPUT_MANAGER
 	        mousePosition = Input.mousePosition;
-	        #endif
-	        #if ENABLE_INPUT_SYSTEM
+#endif
+#if ENABLE_INPUT_SYSTEM
 	        mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
-	        #endif
+#endif
 	        var pos = Utility.GetLocalPointIn(nodeContainer, mousePosition);
             var node = Utility.CreateNodePrefab<Node>(prefabPath);
             node.Init(pos, CreateId, prefabPath);
@@ -412,6 +411,6 @@ namespace RuntimeNodeEditor
             }
         }
 
-        private string CreateId => Nanoid.Nanoid.Generate(size: 10);
+        private string CreateId => System.Guid.NewGuid().ToString();
     }
 }

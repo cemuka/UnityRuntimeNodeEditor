@@ -6,28 +6,26 @@ namespace RuntimeNodeEditor
 {
     public class BezierCurveDrawer : MonoBehaviour
     {
-
-
         public RectTransform pointerLocator;
         public RectTransform lineContainer;
         [Header("Bezier settings")]
         public float vertexCount = 60;
 
-        private static UILineRendererWithListener _lineRenderer;
-        private static bool _hasRequest;
-        private static Socket _draggingSocket;
+        private static RectTransform                _lineContainer;
+        private static RectTransform                _pointerLocator;
+        private static UILineRendererWithListener   _lineRenderer;
+        private static bool                         _hasRequest;
+        private static Socket                       _draggingSocket;
         private static Dictionary<string, ConnectionDrawData> _connections;
-        private static RectTransform _lineContainer;
-        private static RectTransform _pointerLocator;
 
 
         public void Init()
         {
-            _connections = new Dictionary<string, ConnectionDrawData>();
-            _lineContainer = lineContainer;
+            _connections    = new Dictionary<string, ConnectionDrawData>();
+            _lineContainer  = lineContainer;
             _pointerLocator = pointerLocator;
-            _lineRenderer = CreateLine();
-            _hasRequest = false;
+            _lineRenderer   = CreateLine();
+            _hasRequest     = false;
 
             CancelDrag();
         }
@@ -97,13 +95,13 @@ namespace RuntimeNodeEditor
         private static void DrawDragging(SocketHandle port)
         {
 	        Vector2 localPointerPos;
-            #if ENABLE_LEGACY_INPUT_MANAGER
+#if ENABLE_LEGACY_INPUT_MANAGER
 	        RectTransformUtility.ScreenPointToLocalPointInRectangle(_lineContainer, Input.mousePosition, null, out localPointerPos);
-            #endif
-            #if ENABLE_INPUT_SYSTEM
+#endif
+#if ENABLE_INPUT_SYSTEM
 	        var mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
 	        RectTransformUtility.ScreenPointToLocalPointInRectangle(_lineContainer, mousePosition, null, out localPointerPos);
-            #endif
+#endif
             _pointerLocator.localPosition = localPointerPos;
 
             var pointList = new List<Vector2>();
