@@ -6,9 +6,9 @@ public class ExampleNodeEditor : NodeEditor
 {
     private string _savePath;
 
-    public override void StartEditor()
+    public override void StartEditor(NodeGraph graph)
     {
-        base.StartEditor();
+        base.StartEditor(graph);
 
         _savePath = Application.dataPath + "/Resources/graph.json";
 
@@ -67,37 +67,37 @@ public class ExampleNodeEditor : NodeEditor
     //  context item actions
     private void CreateFloatNode()
     {
-        graph.Create("Prefabs/Nodes/FloatNode");
+        Graph.Create("Nodes/FloatNode");
         CloseContextMenu();
     }
 
     private void CreateMatOpNode()
     {
-        graph.Create("Prefabs/Nodes/MathOperationNode");
+        Graph.Create("Nodes/MathOperationNode");
         CloseContextMenu();
     }
 
     private void DeleteNode(Node node)
     {
-        graph.Delete(node);
+        Graph.Delete(node);
         CloseContextMenu();
     }
     
 	private void DuplicateNode(Node node)
 	{
-		graph.Duplicate(node);
+		Graph.Duplicate(node);
 		CloseContextMenu();
 	}
 
     private void DisconnectConnection(string line_id)
     {
-        graph.Disconnect(line_id);
+        Graph.Disconnect(line_id);
         CloseContextMenu();
     }
 
     private void ClearConnections(Node node)
     {
-        graph.ClearConnectionsOf(node);
+        Graph.ClearConnectionsOf(node);
         CloseContextMenu();
     }
 

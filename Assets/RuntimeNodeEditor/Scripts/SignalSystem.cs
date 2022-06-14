@@ -5,15 +5,15 @@ namespace RuntimeNodeEditor
 {
     public static class SignalSystem
     {
-        public static event Action<SocketOutput> OutputSocketDragStartEvent;
-        public static event Action<SocketInput> OutputSocketDragDrop;
-        public static event Action<SocketInput, PointerEventData> InputSocketClickEvent;
-        public static event Action<SocketOutput, PointerEventData> OutputSocketClickEvent;
-        public static event Action<Node, PointerEventData> NodePointerClickEvent;
-        public static event Action<Node, PointerEventData> NodePointerDownEvent;
-        public static event Action<Node, PointerEventData> NodePointerDragEvent;
-        public static event Action<ContextMenuData, ContextContainer> OnMenuItemClicked;
-        public static event Action<string, PointerEventData> NodeConnectionPointerClickEvent;
+        public static event Action<SocketOutput>                        OutputSocketDragStartEvent;
+        public static event Action<SocketInput>                         OutputSocketDragDrop;
+        public static event Action<SocketInput, PointerEventData>       InputSocketClickEvent;
+        public static event Action<SocketOutput, PointerEventData>      OutputSocketClickEvent;
+        public static event Action<Node, PointerEventData>              NodePointerClickEvent;
+        public static event Action<Node, PointerEventData>              NodePointerDownEvent;
+        public static event Action<Node, PointerEventData>              NodePointerDragEvent;
+        public static event Action<ContextMenuData, ContextContainer>   OnMenuItemClicked;
+        public static event Action<string, PointerEventData>            NodeConnectionPointerClickEvent;
 
         public static void InvokeSocketDragFrom(SocketOutput output)
         {

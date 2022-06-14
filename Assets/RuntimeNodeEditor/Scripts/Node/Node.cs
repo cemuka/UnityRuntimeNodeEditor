@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace RuntimeNodeEditor
 {
-    public class Node : MonoBehaviour
+    public abstract class Node : MonoBehaviour
     {
         public string           ID          { get; private set; }
         public Vector2          Position    { get => _panelRectTransform.anchoredPosition; }
@@ -51,13 +51,13 @@ namespace RuntimeNodeEditor
         }
         public void Register(SocketOutput output)
         {
-            output.Init(this);
+            output.SetOwner(this);
             outputs.Add(output);
         }
 
         public void Register(SocketInput input)
         {
-            input.Init(this);
+            input.SetOwner(this);
             inputs.Add(input);
         }
 

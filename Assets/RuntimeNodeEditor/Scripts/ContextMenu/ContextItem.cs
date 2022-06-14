@@ -13,6 +13,7 @@ namespace RuntimeNodeEditor
         public Button button;
         public Transform subContextIcon;
         public Transform subContextTransform;
+        public GameObject contextContainerPrefab;
 
         public void Init(ContextMenuData node)
         {
@@ -23,23 +24,18 @@ namespace RuntimeNodeEditor
 
             if (hasSubMenu)
             {
-                button.onClick.AddListener(
-                    () =>
-                    {
-                        var container = Utility.CreatePrefab<ContextContainer>("Prefabs/ContextContainer", subContextTransform);
-                        container.Init(node.children/*[0].children*/.ToArray());
-                        SignalSystem.InvokeMenuItemClicked(node, container);
-                    }
-                );
+                button.onClick.AddListener(() =>{
+                    var container = Instantiate(contextContainerPrefab, subContextTransform).GetComponent<ContextContainer>();
+
+                    container.Init(node.children.ToArray());
+                    SignalSystem.InvokeMenuItemClicked(node, container);
+                });
             }
             else
             {
-                button.onClick.AddListener(
-                    () =>
-                    {
-                        node.callback?.Invoke();
-                    }
-                );
+                button.onClick.AddListener(() =>{
+                    node.callback?.Invoke();
+                });
             }
         }
     }

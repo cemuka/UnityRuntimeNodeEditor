@@ -24,7 +24,7 @@ namespace RuntimeNodeEditor
         private RectTransform       _nodeContainer;
 	    private RectTransform       _graphContainer;
 
-        public RectTransform GraphContainer => _graphContainer;
+        public RectTransform        GraphContainer => _graphContainer;
 
 
         public void Init()
@@ -56,7 +56,7 @@ namespace RuntimeNodeEditor
 #endif
 	        var pos = Utility.GetLocalPointIn(nodeContainer, mousePosition);
             var node = Utility.CreateNodePrefab<Node>(prefabPath);
-            node.Init(pos, CreateId, prefabPath);
+            node.Init(pos, NewId(), prefabPath);
             node.Setup();
             nodes.Add(node);
             HandleSocketRegister(node);
@@ -65,7 +65,7 @@ namespace RuntimeNodeEditor
         public void Create(string prefabPath, Vector2 pos)
         {
             var node = Utility.CreateNodePrefab<Node>(prefabPath);
-            node.Init(pos, CreateId, prefabPath);
+            node.Init(pos, NewId(), prefabPath);
             node.Setup();
             nodes.Add(node);
             HandleSocketRegister(node);
@@ -91,7 +91,7 @@ namespace RuntimeNodeEditor
         {
             var connection = new Connection()
             {
-                connId = CreateId,
+                connId = NewId(),
                 input = input,
                 output = output
             };
@@ -100,20 +100,22 @@ namespace RuntimeNodeEditor
             output.Connect(connection);
 
             connections.Add(connection);
-            input.parentNode.Connect(input, output);
+            input.OwnerNode.Connect(input, output);
 
+            OnConnect(input, output);
             drawer.Add(connection.connId, output.handle, input.handle);
         }
 
         public void Disconnect(Connection conn)
         {
             drawer.Remove(conn.connId);
-            conn.input.parentNode.Disconnect(conn.input, conn.output);
+            conn.input.OwnerNode.Disconnect(conn.input, conn.output);
 
             conn.input.Disconnect();
             conn.output.Disconnect();
 
             connections.Remove(conn);
+            OnDisconnect(conn.input, conn.output);
         }
 
         public void Disconnect(IConnection conn)
@@ -130,7 +132,7 @@ namespace RuntimeNodeEditor
 
         public void ClearConnectionsOf(Node node)
         {
-            connections.Where(conn => conn.output.parentNode == node || conn.input.parentNode == node)
+            connections.Where(conn => conn.output.OwnerNode == node || conn.input.OwnerNode == node)
                 .ToList()
                 .ForEach(conn => Disconnect(conn));
         }
@@ -234,6 +236,11 @@ namespace RuntimeNodeEditor
             drawer.UpdateDraw();
         }
 
+        //  virtual events
+        public virtual void OnConnect(SocketInput input, SocketOutput output) { }
+
+        public virtual void OnDisconnect(SocketInput input, SocketOutput output) { }
+
         //  event handlers
         private void OnInputSocketClicked(SocketInput input, PointerEventData eventData)
         {
@@ -257,7 +264,6 @@ namespace RuntimeNodeEditor
 
         private void OnOutputDragDroppedTo(SocketInput target)
         {
-
             if (_currentDraggingSocket == null || target == null)
             {
                 _currentDraggingSocket = null;
@@ -280,12 +286,12 @@ namespace RuntimeNodeEditor
 
             if (target != null)
             {
-                //  check if input allows multiple connection
                 if (target.HasConnection())
                 {
-                    //  disconnect old connection
-                    if (target.connectionType != ConnectionType.Multiple)
+                    //  check if input allows multiple connection
+                    if (target.connectionType == ConnectionType.Single)
                     {
+                        //  disconnect old connection
                         Disconnect(target.connection);
                     }
                 }
@@ -364,12 +370,12 @@ namespace RuntimeNodeEditor
         {
             foreach (var i in node.inputs)
             {
-                i.socketId = CreateId;
+                i.socketId = NewId();
             }
 
             foreach (var o in node.outputs)
             {
-                o.socketId = CreateId;
+                o.socketId = NewId();
             }
         }
 
@@ -383,8 +389,6 @@ namespace RuntimeNodeEditor
             var ser = new Serializer();
             ser.Deserialize(data.values);
             node.OnDeserialize(ser);
-
-
         }
 
         private void LoadConn(ConnectionData data)
@@ -405,12 +409,12 @@ namespace RuntimeNodeEditor
                 output.Connect(connection);
 
                 connections.Add(connection);
-                input.parentNode.Connect(input, output);
+                input.OwnerNode.Connect(input, output);
 
                 drawer.Add(connection.connId, output.handle, input.handle);
             }
         }
 
-        private string CreateId => System.Guid.NewGuid().ToString();
+        private static string NewId() { return System.Guid.NewGuid().ToString(); }
     }
 }

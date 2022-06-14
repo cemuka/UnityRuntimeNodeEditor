@@ -222,3 +222,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   content: {fileID: 7851094903810425514}
+  menuItemPrefab: {fileID: 4665947460419117275, guid: bc17fdbeefdb54ecfb2d2e4776376828,
+    type: 3}
+  depthLevel: 0

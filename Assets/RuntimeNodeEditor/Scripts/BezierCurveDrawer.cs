@@ -121,20 +121,15 @@ namespace RuntimeNodeEditor
 
         private static UILineRendererWithListener CreateLine()
         {
-            var lineGO = new GameObject("BezierLine");
-            var linerenderer = lineGO.AddComponent<UILineRendererWithListener>();
-            var lineRect = lineGO.GetComponent<RectTransform>();
+            var lineGO          = new GameObject("BezierLine");
+            var linerenderer    = lineGO.AddComponent<UILineRendererWithListener>();
+            var lineRect        = lineGO.GetComponent<RectTransform>();
 
             lineGO.transform.SetParent(_lineContainer);
 
             lineRect.localPosition = Vector3.zero;
             lineRect.localScale = Vector3.one;
-            lineRect.anchorMin = Vector2.zero;
-            lineRect.anchorMax = Vector2.one;
-            lineRect.Left(0);
-            lineRect.Right(0);
-            lineRect.Top(0);
-            lineRect.Bottom(0);
+            lineRect.Stretch();
 
             linerenderer.lineThickness = 4f;
             linerenderer.color = Color.yellow;

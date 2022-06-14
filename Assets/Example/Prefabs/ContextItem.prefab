@@ -343,6 +343,8 @@ MonoBehaviour:
   button: {fileID: 2875846647977310343}
   subContextIcon: {fileID: 1384219375001510668}
   subContextTransform: {fileID: 6068735687274117336}
+  contextContainerPrefab: {fileID: 7851094904423997867, guid: 6297f6540edc14f319b68bcfe9fd3ba4,
+    type: 3}
 --- !u!1 &5026233053616565513
 GameObject:
   m_ObjectHideFlags: 0

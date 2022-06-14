@@ -8,12 +8,6 @@ namespace RuntimeNodeEditor
         Subtract
     }
 
-    public enum SocketType
-    {
-        Input,
-        Output
-    }
-
     public enum ConnectionType
     {
         Single,

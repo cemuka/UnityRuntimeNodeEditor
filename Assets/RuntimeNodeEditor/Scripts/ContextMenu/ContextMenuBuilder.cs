@@ -11,18 +11,18 @@ namespace RuntimeNodeEditor
             _root = new ContextMenuData("");
         }
 
-        public ContextMenuBuilder Add(string name)
-        {
-            BuildHierarchy(name);
-            return this;
-        }
-
         public ContextMenuBuilder Add(string name, Action callback)
         {
             BuildHierarchy(name).callback = callback;
             return this;
         }
-        public ContextMenuData BuildHierarchy(string path)
+
+        public ContextMenuData Build()
+        {
+            return _root;
+        }
+
+        private ContextMenuData BuildHierarchy(string path)
         {
             path = path.Replace("\\", "/");
             string[] split = path.Split('/');
@@ -48,7 +48,6 @@ namespace RuntimeNodeEditor
                 if (!found)
                 {
                     var new_menu_item = new ContextMenuData(split[index]) { parent = menu_item };
-                  //  new_menu_item.callback = callback;
                     menu_item.children.Add(new_menu_item);
                     menu_item = new_menu_item;
                     ++index;
@@ -57,22 +56,7 @@ namespace RuntimeNodeEditor
             }
             return menu_item;
         }
-
-        public ContextMenuBuilder AddChild(ContextMenuData child)
-        {
-            int lastIndex = _root.children.Count - 1;
-            var targetNode = _root.children[lastIndex];
-            child.parent = targetNode;
-            targetNode.children.Add(child);
-            return this;
-        }
-
-        public ContextMenuData Build()
-        {
-            return _root;
-        }
     }
-
 
     public class ContextMenuData
     {
@@ -89,10 +73,5 @@ namespace RuntimeNodeEditor
             this.name = name;
             children = new List<ContextMenuData>();
         }
-
-
-
-
-
     }
 }

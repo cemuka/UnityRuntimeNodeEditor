@@ -8,8 +8,8 @@ namespace RuntimeNodeEditor
 {
     public class ContextMenu : MonoBehaviour
     {
+        public GameObject contextContainerPrefab;
         private RectTransform _rect;
-        private GameObject _menuItemPrefab;
         private ContextContainer _root;
 
         private List<ContextContainer> _subContainers;
@@ -53,7 +53,7 @@ namespace RuntimeNodeEditor
 
         public void Show(ContextMenuData context, Vector2 pos)
         {
-            _root = Utility.CreatePrefab<ContextContainer>("Prefabs/ContextContainer", _rect);
+            _root = Instantiate(contextContainerPrefab, _rect).GetComponent<ContextContainer>();
             _root.Init(context.children.ToArray());
             _rect.localPosition = pos;
             gameObject.SetActive(true);

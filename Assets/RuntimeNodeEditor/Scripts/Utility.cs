@@ -97,6 +97,19 @@ namespace RuntimeNodeEditor
             return rt;
         }
 
+        public static RectTransform Stretch(this RectTransform rt)
+        {
+            rt.anchorMin    = Vector2.zero;
+            rt.anchorMax    = Vector2.one;
+            rt.pivot        = Vector2.one * 0.5f;
+            rt.Left(0f);
+            rt.Right(0f);
+            rt.Top(0f);
+            rt.Bottom(0f);
+
+            return rt;
+        }
+
         public static bool IsRectTransformOverlap(this RectTransform rect1, RectTransform rect2)
         {
             float rect1MinX = rect1.position.x - rect1.rect.width / 2;

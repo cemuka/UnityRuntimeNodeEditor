@@ -1,0 +1,119 @@
+{
+    "name": "awesome graph",
+    "nodes": [
+        {
+            "id": "af06632d-18ac-4e84-abce-0f6dba511e7e",
+            "values": [
+                {
+                    "key": "floatValue",
+                    "value": "3"
+                }
+            ],
+            "posX": -394.0,
+            "posY": 170.0,
+            "path": "Prefabs/Nodes/FloatNode",
+            "inputSocketIds": [],
+            "outputSocketIds": [
+                "6e72b2e6-455f-46ed-ba15-37d92997ecc2"
+            ]
+        },
+        {
+            "id": "dfa2d7e3-9b76-4d4c-a888-82edda4d1b97",
+            "values": [
+                {
+                    "key": "floatValue",
+                    "value": "3"
+                }
+            ],
+            "posX": -415.0,
+            "posY": 13.0,
+            "path": "Prefabs/Nodes/FloatNode",
+            "inputSocketIds": [],
+            "outputSocketIds": [
+                "ec451a12-d613-4edd-8534-25a08f77f385"
+            ]
+        },
+        {
+            "id": "948ca2c4-e20f-455f-834a-920d6b3d9630",
+            "values": [
+                {
+                    "key": "outputValue",
+                    "value": "9"
+                },
+                {
+                    "key": "opType",
+                    "value": "0"
+                }
+            ],
+            "posX": -111.0,
+            "posY": 98.0,
+            "path": "Prefabs/Nodes/MathOperationNode",
+            "inputSocketIds": [
+                "11905b1d-ef66-41fb-9851-f077144a8782"
+            ],
+            "outputSocketIds": [
+                "7a1a4bdd-d1fe-49a1-b8c3-043f8c7992e6"
+            ]
+        },
+        {
+            "id": "33d78d17-b1e8-470c-b31b-c2d634f47317",
+            "values": [
+                {
+                    "key": "floatValue",
+                    "value": "2"
+                }
+            ],
+            "posX": -103.0,
+            "posY": -79.0,
+            "path": "Prefabs/Nodes/FloatNode",
+            "inputSocketIds": [],
+            "outputSocketIds": [
+                "256e158a-4973-417a-a8ec-d185e9908b45"
+            ]
+        },
+        {
+            "id": "4f30df6b-fe1a-41e8-be16-d94c084d9375",
+            "values": [
+                {
+                    "key": "outputValue",
+                    "value": "18"
+                },
+                {
+                    "key": "opType",
+                    "value": "0"
+                }
+            ],
+            "posX": 186.0,
+            "posY": 9.0,
+            "path": "Prefabs/Nodes/MathOperationNode",
+            "inputSocketIds": [
+                "4498d430-e27d-4949-aa64-636d2d70da1f"
+            ],
+            "outputSocketIds": [
+                "b9c11b81-9b45-4185-94a2-6e6832d192ab"
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "id": "9e3797fb-3354-48a7-9cbe-1bc8f492e0c0",
+            "outputSocketId": "6e72b2e6-455f-46ed-ba15-37d92997ecc2",
+            "inputSocketId": "11905b1d-ef66-41fb-9851-f077144a8782"
+        },
+        {
+            "id": "df2a0e77-4c09-4b0a-9610-be62ec59ec02",
+            "outputSocketId": "ec451a12-d613-4edd-8534-25a08f77f385",
+            "inputSocketId": "11905b1d-ef66-41fb-9851-f077144a8782"
+        },
+        {
+            "id": "7858f567-60d5-4025-8ac4-282e2e422e6d",
+            "outputSocketId": "256e158a-4973-417a-a8ec-d185e9908b45",
+            "inputSocketId": "4498d430-e27d-4949-aa64-636d2d70da1f"
+        },
+        {
+            "id": "07c3fa97-6ca3-458f-8191-71730f94fad8",
+            "outputSocketId": "7a1a4bdd-d1fe-49a1-b8c3-043f8c7992e6",
+            "inputSocketId": "4498d430-e27d-4949-aa64-636d2d70da1f"
+        }
+    ]
+}

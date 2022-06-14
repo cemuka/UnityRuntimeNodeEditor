@@ -1,23 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 namespace RuntimeNodeEditor
 {
     public class Socket : MonoBehaviour
     {
-        public string socketId;
-        public IConnection connection;
-        public SocketHandle handle;
-        public ConnectionType connectionType;
-        [HideInInspector] public Node parentNode;
+        public Node             OwnerNode { get { return _ownerNode; } }
+        
+        public string           socketId;
+        public IConnection      connection;
+        public SocketHandle     handle;
+        public ConnectionType   connectionType;
+        private Node            _ownerNode;
 
-        public void Init(Node parent)
+        public void SetOwner(Node owner)
         {
-            this.parentNode = parent;
+            _ownerNode = owner;
         }
 
         public bool HasConnection()
