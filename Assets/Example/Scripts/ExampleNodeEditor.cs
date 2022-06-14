@@ -10,7 +10,7 @@ public class ExampleNodeEditor : NodeEditor
     {
         base.StartEditor(graph);
 
-        _savePath = Application.dataPath + "/Resources/graph.json";
+        _savePath = Application.dataPath + "/Example/Resources/graph.json";
 
     }
 

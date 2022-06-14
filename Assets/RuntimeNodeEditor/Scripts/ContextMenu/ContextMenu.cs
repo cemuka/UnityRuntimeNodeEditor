@@ -3,12 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace RuntimeNodeEditor
 {
     public class ContextMenu : MonoBehaviour
     {
         public GameObject contextContainerPrefab;
+        public GameObject contextItemPrefab;
         private RectTransform _rect;
         private ContextContainer _root;
 
@@ -53,15 +55,53 @@ namespace RuntimeNodeEditor
 
         public void Show(ContextMenuData context, Vector2 pos)
         {
-            _root = Instantiate(contextContainerPrefab, _rect).GetComponent<ContextContainer>();
-            _root.Init(context.children.ToArray());
             _rect.localPosition = pos;
+            _root = Instantiate(contextContainerPrefab, _rect).GetComponent<ContextContainer>();
+            PopulateContainer(_root, context.children.ToArray());
+
             gameObject.SetActive(true);
         }
 
         public void Hide()
         {
             gameObject.SetActive(false);
+        }
+    
+        private void InitContextItem(ContextItem item, ContextMenuData node)
+        {
+            item.nameText.text = node.name;
+
+            bool hasSubMenu = node.children.Count > 0;
+            item.subContextIcon.gameObject.SetActive(hasSubMenu);
+
+            if (hasSubMenu)
+            {
+                item.button.onClick.AddListener(()=> CreateSubContext(node, item.subContextTransform));
+            }
+            else
+            {
+                item.button.onClick.AddListener(() =>{
+                    node.callback?.Invoke();
+                });
+            }
+        }
+
+        private void CreateSubContext(ContextMenuData node, Transform holder)
+        {
+            var container = Instantiate(contextContainerPrefab, holder).GetComponent<ContextContainer>();
+
+            PopulateContainer(container, node.children.ToArray());
+            SignalSystem.InvokeMenuItemClicked(node, container);
+        }
+
+        private void PopulateContainer(ContextContainer container, ContextMenuData[] data)
+        {
+            foreach (var node in data)
+            {
+                container.depthLevel = node.Level;
+                var contextItem = Instantiate(contextItemPrefab, container.content).GetComponent<ContextItem>();
+                InitContextItem(contextItem, node);
+            }
         }
     }
 }

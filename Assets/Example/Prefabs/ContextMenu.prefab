@@ -50,3 +50,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contextContainerPrefab: {fileID: 7851094904423997867, guid: 6297f6540edc14f319b68bcfe9fd3ba4,
     type: 3}
+  contextItemPrefab: {fileID: 4665947460419117275, guid: bc17fdbeefdb54ecfb2d2e4776376828,
+    type: 3}

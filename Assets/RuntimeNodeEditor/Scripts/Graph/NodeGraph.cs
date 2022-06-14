@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -221,6 +224,10 @@ namespace RuntimeNodeEditor
                 {
                     LoadConn(data);
                 }
+            }
+            else
+            {
+                Debug.Log("Specified file not exist.");
             }
         }
 
