@@ -23,8 +23,9 @@ namespace RuntimeNodeEditor
 
         private NodeDraggablePanel          _dragPanel;
         private RectTransform               _panelRectTransform;
+        private SignalSystem                _signal;
 
-        public void Init(Vector2 pos, string id, string path)
+        public void Init(SignalSystem signal, Vector2 pos, string id, string path)
         {
             ID                  = id;
             LoadPath            = path;
@@ -32,9 +33,10 @@ namespace RuntimeNodeEditor
             Inputs              = new List<SocketInput>();
             ConnectedOutputs    = new List<SocketOutput>();
 
+            _signal             = signal;
             _panelRectTransform = gameObject.GetComponent<RectTransform>();
             _dragPanel          = draggableBody.AddComponent<NodeDraggablePanel>();
-            _dragPanel.Init(this);
+            _dragPanel.Init(this, _signal);
             SetPosition(pos);
         }
 
@@ -47,13 +49,13 @@ namespace RuntimeNodeEditor
         }
         public void Register(SocketOutput output)
         {
-            output.SetOwner(this);
+            output.SetOwner(this, _signal);
             Outputs.Add(output);
         }
 
         public void Register(SocketInput input)
         {
-            input.SetOwner(this);
+            input.SetOwner(this, _signal);
             Inputs.Add(input);
         }
 

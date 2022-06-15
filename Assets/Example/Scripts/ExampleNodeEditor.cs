@@ -11,10 +11,14 @@ public class ExampleNodeEditor : NodeEditor
         base.StartEditor(graph);
 
         _savePath = Application.dataPath + "/Example/Resources/graph.json";
-
+        
+        Graph.pointerListener.GraphPointerClickEvent        += OnGraphPointerClick;
+        Graph.pointerListener.GraphPointerDragEvent         += OnGraphPointerDrag;
+        Graph.SignalSystem.NodePointerClickEvent            += OnNodePointerClick;
+        Graph.SignalSystem.NodeConnectionPointerClickEvent  += OnNodeConnectionPointerClick;
     }
 
-    protected override void OnGraphPointerClick(PointerEventData eventData)
+    private void OnGraphPointerClick(PointerEventData eventData)
     {
         switch (eventData.button)
         {
@@ -35,7 +39,15 @@ public class ExampleNodeEditor : NodeEditor
         }
     }
    
-    protected override void OnNodePointerClick(Node node, PointerEventData eventData)
+    private void OnGraphPointerDrag(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Middle)
+        {
+            Graph.GraphContainer.localPosition += new Vector3(eventData.delta.x, eventData.delta.y);
+        }
+    }
+
+    private void OnNodePointerClick(Node node, PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
@@ -50,7 +62,7 @@ public class ExampleNodeEditor : NodeEditor
         }
     }
 
-    protected override void OnNodeConnectionPointerClick(string connId, PointerEventData eventData)
+    private void OnNodeConnectionPointerClick(string connId, PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {

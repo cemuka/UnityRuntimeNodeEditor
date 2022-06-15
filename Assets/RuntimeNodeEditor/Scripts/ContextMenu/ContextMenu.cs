@@ -15,16 +15,18 @@ namespace RuntimeNodeEditor
         private ContextContainer _root;
 
         private List<ContextContainer> _subContainers;
+        private SignalSystem _signal;
 
-        public void Init()
+        public void Init(SignalSystem signal)
         {
             _rect = this.GetComponent<RectTransform>();
             _subContainers = new List<ContextContainer>();
-
-            SignalSystem.OnMenuItemClicked += OnMenuItemClicked;
+            
+            _signal = signal;
+            _signal.OnMenuItemClicked += OnMenuItemClicked;
         }
 
-        private void OnMenuItemClicked(ContextMenuData data, ContextContainer container)
+        public void OnMenuItemClicked(ContextMenuData data, ContextContainer container)
         {
             List<ContextContainer> toRemove = new List<ContextContainer>();
             foreach (var item in _subContainers)
@@ -91,7 +93,7 @@ namespace RuntimeNodeEditor
             var container = Instantiate(contextContainerPrefab, holder).GetComponent<ContextContainer>();
 
             PopulateContainer(container, node.children.ToArray());
-            SignalSystem.InvokeMenuItemClicked(node, container);
+            _signal.InvokeMenuItemClicked(node, container);
         }
 
         private void PopulateContainer(ContextContainer container, ContextMenuData[] data)

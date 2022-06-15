@@ -7,7 +7,7 @@ namespace RuntimeNodeEditor
     {
         public void OnPointerClick(PointerEventData eventData)
         {
-            SignalSystem.InvokeInputSocketClick(this, eventData);
+            Signal.InvokeInputSocketClick(this, eventData);
         }
     }
 }

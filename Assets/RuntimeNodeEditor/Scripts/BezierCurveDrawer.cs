@@ -11,21 +11,23 @@ namespace RuntimeNodeEditor
         [Header("Bezier settings")]
         public float vertexCount = 60;
 
-        private static RectTransform                _lineContainer;
-        private static RectTransform                _pointerLocator;
-        private static UILineRendererWithListener   _lineRenderer;
-        private static bool                         _hasRequest;
-        private static Socket                       _draggingSocket;
-        private static Dictionary<string, ConnectionDrawData> _connections;
+        private RectTransform                _lineContainer;
+        private RectTransform                _pointerLocator;
+        private UILineRendererWithListener   _lineRenderer;
+        private bool                         _hasRequest;
+        private Socket                       _draggingSocket;
+        private Dictionary<string, ConnectionDrawData> _connections;
+        private SignalSystem _signal;
 
 
-        public void Init()
+        public void Init(SignalSystem signal)
         {
             _connections    = new Dictionary<string, ConnectionDrawData>();
             _lineContainer  = lineContainer;
             _pointerLocator = pointerLocator;
             _lineRenderer   = CreateLine();
             _hasRequest     = false;
+            _signal         = signal;
 
             CancelDrag();
         }
@@ -92,7 +94,7 @@ namespace RuntimeNodeEditor
             lineRenderer.SetVerticesDirty();
         }
 
-        private static void DrawDragging(SocketHandle port)
+        private void DrawDragging(SocketHandle port)
         {
 	        Vector2 localPointerPos;
 #if ENABLE_LEGACY_INPUT_MANAGER
@@ -119,7 +121,7 @@ namespace RuntimeNodeEditor
             _lineRenderer.SetVerticesDirty();
         }
 
-        private static UILineRendererWithListener CreateLine()
+        private UILineRendererWithListener CreateLine()
         {
             var lineGO          = new GameObject("BezierLine");
             var linerenderer    = lineGO.AddComponent<UILineRendererWithListener>();
@@ -138,7 +140,7 @@ namespace RuntimeNodeEditor
             return linerenderer;
         }
 
-        private static Vector2 GetLocalPoint(Vector3 pos)
+        private Vector2 GetLocalPoint(Vector3 pos)
         {
             return Utility.GetLocalPointIn(_lineContainer, pos);
         }

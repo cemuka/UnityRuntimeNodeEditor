@@ -3,59 +3,59 @@ using UnityEngine.EventSystems;
 
 namespace RuntimeNodeEditor
 {
-    public static class SignalSystem
+    public class SignalSystem
     {
-        public static event Action<SocketOutput>                        OutputSocketDragStartEvent;
-        public static event Action<SocketInput>                         OutputSocketDragDrop;
-        public static event Action<SocketInput, PointerEventData>       InputSocketClickEvent;
-        public static event Action<SocketOutput, PointerEventData>      OutputSocketClickEvent;
-        public static event Action<Node, PointerEventData>              NodePointerClickEvent;
-        public static event Action<Node, PointerEventData>              NodePointerDownEvent;
-        public static event Action<Node, PointerEventData>              NodePointerDragEvent;
-        public static event Action<ContextMenuData, ContextContainer>   OnMenuItemClicked;
-        public static event Action<string, PointerEventData>            NodeConnectionPointerClickEvent;
+        public event Action<SocketOutput>                        OutputSocketDragStartEvent;
+        public event Action<SocketInput>                         OutputSocketDragDrop;
+        public event Action<SocketInput, PointerEventData>       InputSocketClickEvent;
+        public event Action<SocketOutput, PointerEventData>      OutputSocketClickEvent;
+        public event Action<Node, PointerEventData>              NodePointerClickEvent;
+        public event Action<Node, PointerEventData>              NodePointerDownEvent;
+        public event Action<Node, PointerEventData>              NodePointerDragEvent;
+        public event Action<ContextMenuData, ContextContainer>   OnMenuItemClicked;
+        public event Action<string, PointerEventData>            NodeConnectionPointerClickEvent;
 
-        public static void InvokeSocketDragFrom(SocketOutput output)
+        public void InvokeSocketDragFrom(SocketOutput output)
         {
             OutputSocketDragStartEvent?.Invoke(output);
         }
 
-        public static void InvokeOutputSocketDragDropTo(SocketInput input)
+        public void InvokeOutputSocketDragDropTo(SocketInput input)
         {
             OutputSocketDragDrop?.Invoke(input);
         }
 
-        public static void InvokeInputSocketClick(SocketInput input, PointerEventData eventData)
+        public void InvokeInputSocketClick(SocketInput input, PointerEventData eventData)
         {
             InputSocketClickEvent?.Invoke(input, eventData);
         }
 
-        public static void InvokeOutputSocketClick(SocketOutput output, PointerEventData eventData)
+        public void InvokeOutputSocketClick(SocketOutput output, PointerEventData eventData)
         {
             OutputSocketClickEvent?.Invoke(output, eventData);
         }
 
-        public static void InvokeNodePointerClick(Node node, PointerEventData eventData)
+        public void InvokeNodePointerClick(Node node, PointerEventData eventData)
         {
             NodePointerClickEvent?.Invoke(node, eventData);
         }
 
-        public static void InvokeNodePointerDown(Node node, PointerEventData eventData)
+        public void InvokeNodePointerDown(Node node, PointerEventData eventData)
         {
             NodePointerDownEvent?.Invoke(node, eventData);
         }
 
-        public static void InvokeNodePointerDrag(Node node, PointerEventData eventData)
+        public void InvokeNodePointerDrag(Node node, PointerEventData eventData)
         {
             NodePointerDragEvent?.Invoke(node, eventData);
         }
 
-        public static void InvokeMenuItemClicked(ContextMenuData data, ContextContainer container)
+        public void InvokeMenuItemClicked(ContextMenuData data, ContextContainer container)
         {
             OnMenuItemClicked?.Invoke(data, container);
         }
 
-        public static void InvokeNodeConnectionPointerClick(string connId, PointerEventData eventData)
+        public void InvokeNodeConnectionPointerClick(string connId, PointerEventData eventData)
         {
             NodeConnectionPointerClickEvent?.Invoke(connId, eventData);
         }

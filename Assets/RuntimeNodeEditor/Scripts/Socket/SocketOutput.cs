@@ -26,12 +26,12 @@ namespace RuntimeNodeEditor
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            SignalSystem.InvokeOutputSocketClick(this, eventData);
+            Signal.InvokeOutputSocketClick(this, eventData);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            SignalSystem.InvokeSocketDragFrom(this);
+            Signal.InvokeSocketDragFrom(this);
         }
 
         public void OnEndDrag(PointerEventData eventData)
@@ -41,12 +41,12 @@ namespace RuntimeNodeEditor
                 var input = item.GetComponent<SocketInput>();
                 if (input != null)
                 {
-                    SignalSystem.InvokeOutputSocketDragDropTo(input);
+                    Signal.InvokeOutputSocketDragDropTo(input);
                     return;
                 }
             }
 
-            SignalSystem.InvokeOutputSocketDragDropTo(null);
+            Signal.InvokeOutputSocketDragDropTo(null);
         }
     }
 }

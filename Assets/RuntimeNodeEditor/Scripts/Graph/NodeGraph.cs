@@ -10,6 +10,9 @@ namespace RuntimeNodeEditor
 {
     public class NodeGraph : MonoBehaviour
     {
+        public RectTransform        GraphContainer => _graphContainer;
+        public SignalSystem         SignalSystem   => _signalSystem;
+
         //  scene references
         public RectTransform        contextMenuContainer;
         public RectTransform        nodeContainer;
@@ -27,25 +30,25 @@ namespace RuntimeNodeEditor
         private RectTransform       _nodeContainer;
 	    private RectTransform       _graphContainer;
 
-        public RectTransform        GraphContainer => _graphContainer;
-
+        private SignalSystem _signalSystem;
 
         public void Init()
         {
-            _nodeContainer      = nodeContainer;
-            _graphContainer     = this.GetComponent<RectTransform>();
-	        _duplicateOffset    = (Vector2.one * 10f);
-            nodes               = new List<Node>();
-	        connections         = new List<Connection>();
+            _nodeContainer                              = nodeContainer;
+            _graphContainer                             = this.GetComponent<RectTransform>();
+	        _duplicateOffset                            = (Vector2.one * 10f);
+            nodes                                       = new List<Node>();
+	        connections                                 = new List<Connection>();
+            _signalSystem                               = new SignalSystem();
 
-            SignalSystem.OutputSocketDragStartEvent     += OnOutputDragStarted;
-            SignalSystem.OutputSocketDragDrop           += OnOutputDragDroppedTo;
-            SignalSystem.InputSocketClickEvent          += OnInputSocketClicked;
-            SignalSystem.OutputSocketClickEvent         += OnOutputSocketClicked;
-            SignalSystem.NodePointerDownEvent           += OnNodePointerDown;
-            SignalSystem.NodePointerDragEvent           += OnNodePointerDrag;
+            _signalSystem.OutputSocketDragStartEvent     += OnOutputDragStarted;
+            _signalSystem.OutputSocketDragDrop           += OnOutputDragDroppedTo;
+            _signalSystem.InputSocketClickEvent          += OnInputSocketClicked;
+            _signalSystem.OutputSocketClickEvent         += OnOutputSocketClicked;
+            _signalSystem.NodePointerDownEvent           += OnNodePointerDown;
+            _signalSystem.NodePointerDragEvent           += OnNodePointerDrag;
 
-            drawer.Init();
+            drawer.Init(_signalSystem);
         }
 
         public void Create(string prefabPath)
@@ -59,7 +62,7 @@ namespace RuntimeNodeEditor
 #endif
 	        var pos = Utility.GetLocalPointIn(nodeContainer, mousePosition);
             var node = Utility.CreateNodePrefab<Node>(prefabPath);
-            node.Init(pos, NewId(), prefabPath);
+            node.Init(_signalSystem, pos, NewId(), prefabPath);
             node.Setup();
             nodes.Add(node);
             HandleSocketRegister(node);
@@ -68,7 +71,7 @@ namespace RuntimeNodeEditor
         public void Create(string prefabPath, Vector2 pos)
         {
             var node = Utility.CreateNodePrefab<Node>(prefabPath);
-            node.Init(pos, NewId(), prefabPath);
+            node.Init(_signalSystem, pos, NewId(), prefabPath);
             node.Setup();
             nodes.Add(node);
             HandleSocketRegister(node);
@@ -389,7 +392,7 @@ namespace RuntimeNodeEditor
         private void LoadNode(NodeData data)
         {
             var node = Utility.CreateNodePrefab<Node>(data.path);
-            node.Init(new Vector2(data.posX, data.posY), data.id, data.path);
+            node.Init(_signalSystem, new Vector2(data.posX, data.posY), data.id, data.path);
             node.Setup();
             nodes.Add(node);
 

@@ -27,13 +27,8 @@ namespace RuntimeNodeEditor
 
 
             _contextMenu = Instantiate(contextMenuPrefab, _graph.contextMenuContainer).GetComponent<ContextMenu>();
-            _contextMenu.Init();
+            _contextMenu.Init(Graph.SignalSystem);
             CloseContextMenu();
-
-            _graph.pointerListener.GraphPointerClickEvent   += OnGraphPointerClick;
-            _graph.pointerListener.GraphPointerDragEvent    += OnGraphPointerDrag;
-            SignalSystem.NodePointerClickEvent              += OnNodePointerClick;
-            SignalSystem.NodeConnectionPointerClickEvent    += OnNodeConnectionPointerClick;
         }
 
         public void UpdateEditor()
@@ -41,29 +36,14 @@ namespace RuntimeNodeEditor
             _graph.OnUpdate();
         }
 
-        //  event handlers
-        protected virtual void OnGraphPointerClick(PointerEventData eventData){}
-        
-        protected virtual void OnGraphPointerDrag(PointerEventData eventData)
-        {
-            if (eventData.button == PointerEventData.InputButton.Right)
-            {
-                _graph.GraphContainer.localPosition += new Vector3(eventData.delta.x, eventData.delta.y);
-            }
-        }
-
-        protected virtual void OnNodePointerClick(Node node, PointerEventData eventData){}
-        
-        protected virtual void OnNodeConnectionPointerClick(string connId, PointerEventData eventData){}
-
         //  context methods
-        protected void DisplayContextMenu()
+        public void DisplayContextMenu()
         {
             _contextMenu.Clear();
             _contextMenu.Show(_contextMenuData, Utility.GetCtxMenuPointerPosition());
         }
 
-        protected void CloseContextMenu()
+        public void CloseContextMenu()
         {
             _contextMenu.Hide();
             _contextMenu.Clear();

@@ -10,10 +10,16 @@ namespace RuntimeNodeEditor
     public class LinePointerListener : MonoBehaviour, IPointerClickHandler
     {
         public string connId;
+        private SignalSystem _signal;
+
+        public void Init(SignalSystem signal)
+        {
+            _signal = signal;
+        }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            SignalSystem.InvokeNodeConnectionPointerClick(connId, eventData);
+            _signal.InvokeNodeConnectionPointerClick(connId, eventData);
         }
 
     }
