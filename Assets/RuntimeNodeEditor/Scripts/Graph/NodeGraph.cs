@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -12,11 +9,6 @@ namespace RuntimeNodeEditor
     {
         public RectTransform            GraphContainer          => _graphContainer;
         public GraphPointerListener     GraphPointerListener    => pointerListener;
-
-        public INodeEvents       NodeEvents              => _signalSystem;
-        public ISocketEvents     SocketEventListener     => _signalSystem;
-        public IConnectionEvents ConnectionEvents        => _signalSystem;
-        public IContextMenuEvents     ContextMenuListener     => _signalSystem;
 
         //  scene references
         public RectTransform        contextMenuContainer;
@@ -59,16 +51,10 @@ namespace RuntimeNodeEditor
 
         public void Create(string prefabPath)
         {
-	        var mousePosition = Vector2.zero;
-#if ENABLE_LEGACY_INPUT_MANAGER
-	        mousePosition = Input.mousePosition;
-#endif
-#if ENABLE_INPUT_SYSTEM
-	        mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
-#endif
+	        var mousePosition = Utility.GetMousePosition();
 	        var pos = Utility.GetLocalPointIn(nodeContainer, mousePosition);
             var node = Utility.CreateNodePrefab<Node>(prefabPath, nodeContainer);
-            node.Init(_signalSystem, pos, NewId(), prefabPath);
+            node.Init(_signalSystem, _signalSystem, pos, NewId(), prefabPath);
             node.Setup();
             nodes.Add(node);
             HandleSocketRegister(node);
@@ -77,7 +63,7 @@ namespace RuntimeNodeEditor
         public void Create(string prefabPath, Vector2 pos)
         {
             var node = Utility.CreateNodePrefab<Node>(prefabPath, nodeContainer);
-            node.Init(_signalSystem, pos, NewId(), prefabPath);
+            node.Init(_signalSystem, _signalSystem, pos, NewId(), prefabPath);
             node.Setup();
             nodes.Add(node);
             HandleSocketRegister(node);
@@ -248,7 +234,6 @@ namespace RuntimeNodeEditor
 
         public void OnUpdate()
         {
-            pointerListener.OnUpdate();
             drawer.UpdateDraw();
         }
 
@@ -398,7 +383,8 @@ namespace RuntimeNodeEditor
         private void LoadNode(NodeData data)
         {
             var node = Utility.CreateNodePrefab<Node>(data.path, nodeContainer);
-            node.Init(_signalSystem, new Vector2(data.posX, data.posY), data.id, data.path);
+            var pos  = new Vector2(data.posX, data.posY);
+            node.Init(_signalSystem, _signalSystem, pos, data.id, data.path);
             node.Setup();
             nodes.Add(node);
 

@@ -3,13 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-#if ENABLE_INPUT_SYSTEM
-using UnityEngine.InputSystem;
-#endif
 
 namespace RuntimeNodeEditor
 {
-	public class GraphPointerListener : MonoBehaviour, IPointerClickHandler, IDragHandler
+	public class GraphPointerListener : MonoBehaviour, IPointerClickHandler, IDragHandler, IScrollHandler
     {
 
         private RectTransform   _rectTransform;
@@ -40,27 +37,13 @@ namespace RuntimeNodeEditor
             _signalSystem.InvokeGraphPointerDrag(eventData);
         }
 
-        public void OnUpdate()
+        public void OnScroll(PointerEventData eventData)
         {
-            //pc input
-	        float scrollWheelInput = 0;
-#if ENABLE_LEGACY_INPUT_MANAGER
-	        scrollWheelInput = Input.mouseScrollDelta.y;
-#endif
-#if ENABLE_INPUT_SYSTEM
-	        scrollWheelInput = Mouse.current.scroll.y.ReadValue() * 0.001f; // Magic Number to match Input scroll values
-#endif
-	        
-            if (Mathf.Abs(scrollWheelInput) > float.Epsilon)
+            if (Mathf.Abs(eventData.scrollDelta.y) > float.Epsilon)
             {
-                _currentZoom *= 1 + scrollWheelInput * _mouseWheelSensitivity;
+                _currentZoom *= 1 + eventData.scrollDelta.y * _mouseWheelSensitivity;
 	            _currentZoom = Mathf.Clamp(_currentZoom, _minZoom, _maxZoom);
-#if ENABLE_LEGACY_INPUT_MANAGER
-	            _zoomCenterPos = (Vector2)Input.mousePosition;
-#endif
-#if ENABLE_INPUT_SYSTEM
-	            _zoomCenterPos = Mouse.current.position.ReadValue();
-#endif
+	            _zoomCenterPos = Utility.GetMousePosition();
 
                 Vector2 beforePointInContent;
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(_rectTransform, _zoomCenterPos, null, out beforePointInContent);

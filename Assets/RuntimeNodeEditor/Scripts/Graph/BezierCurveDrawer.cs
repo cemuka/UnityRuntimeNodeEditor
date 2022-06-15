@@ -17,10 +17,10 @@ namespace RuntimeNodeEditor
         private bool                         _hasRequest;
         private Socket                       _draggingSocket;
         private Dictionary<string, ConnectionDrawData> _connections;
-        private SignalSystem _signal;
+        private IConnectionEvents _signal;
 
 
-        public void Init(SignalSystem signal)
+        public void Init(IConnectionEvents signal)
         {
             _connections    = new Dictionary<string, ConnectionDrawData>();
             _lineContainer  = lineContainer;
@@ -97,13 +97,9 @@ namespace RuntimeNodeEditor
         private void DrawDragging(SocketHandle port)
         {
 	        Vector2 localPointerPos;
-#if ENABLE_LEGACY_INPUT_MANAGER
-	        RectTransformUtility.ScreenPointToLocalPointInRectangle(_lineContainer, Input.mousePosition, null, out localPointerPos);
-#endif
-#if ENABLE_INPUT_SYSTEM
-	        var mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+	        var mousePosition = Utility.GetMousePosition();
 	        RectTransformUtility.ScreenPointToLocalPointInRectangle(_lineContainer, mousePosition, null, out localPointerPos);
-#endif
+
             _pointerLocator.localPosition = localPointerPos;
 
             var pointList = new List<Vector2>();

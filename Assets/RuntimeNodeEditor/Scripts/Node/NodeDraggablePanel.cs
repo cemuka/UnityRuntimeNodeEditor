@@ -7,9 +7,9 @@ namespace RuntimeNodeEditor
     public class NodeDraggablePanel : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IDragHandler
     {
         private Node _ownerNode;
-        private SignalSystem _signal;
+        private INodeEvents _signal;
 
-        public void Init(Node owner, SignalSystem signal)
+        public void Init(Node owner, INodeEvents signal)
         {
             _ownerNode = owner;
             _signal = signal;

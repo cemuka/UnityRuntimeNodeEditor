@@ -105,6 +105,8 @@ namespace RuntimeNodeEditor
         event Action<Node, PointerEventData> NodePointerDragEvent;
 
         void InvokeNodePointerClick(Node node, PointerEventData eventData);
+        void InvokeNodePointerDown(Node node, PointerEventData eventData);
+        void InvokeNodePointerDrag(Node node, PointerEventData eventData);
     }
 
     public interface ISocketEvents

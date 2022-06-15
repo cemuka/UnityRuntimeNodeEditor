@@ -4,6 +4,18 @@ namespace RuntimeNodeEditor
 {
     public class Utility
     {
+        public static Vector2 GetMousePosition()
+        {
+	        var mousePosition = Vector2.zero;
+#if ENABLE_LEGACY_INPUT_MANAGER
+	        mousePosition = Input.mousePosition;
+#endif
+#if ENABLE_INPUT_SYSTEM
+	        mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
+#endif
+            return mousePosition;
+        }
+
         public static Vector2 GetLocalPointIn(RectTransform container, Vector3 pos, Camera eventCamera = null)
         {
             var point = Vector2.zero;
@@ -15,18 +27,18 @@ namespace RuntimeNodeEditor
         {
 	        Vector2 localPointerPos;
 	        var success = false;
-	        #if ENABLE_LEGACY_INPUT_MANAGER
+#if ENABLE_LEGACY_INPUT_MANAGER
             success = RectTransformUtility.ScreenPointToLocalPointInRectangle(rect,
                                                                                   Input.mousePosition,
                                                                                   null,
                                                                                   out localPointerPos);
-	        #endif
-	        #if ENABLE_INPUT_SYSTEM
+#endif
+#if ENABLE_INPUT_SYSTEM
 	        success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_contextMenuContainer,
 		        						UnityEngine.InputSystem.Mouse.current.position.ReadValue(),
 		        						null,
 		        						out localPointerPos);
-	        #endif
+#endif
             return localPointerPos;
         }
 
