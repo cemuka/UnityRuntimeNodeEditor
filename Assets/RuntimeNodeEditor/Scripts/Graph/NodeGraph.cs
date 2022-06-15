@@ -10,9 +10,13 @@ namespace RuntimeNodeEditor
 {
     public class NodeGraph : MonoBehaviour
     {
-        public RectTransform        GraphContainer          => _graphContainer;
-        public GraphPointerListener GraphPointerListener    => pointerListener;
-        public SignalSystem         EventListener           => _signalSystem;
+        public RectTransform            GraphContainer          => _graphContainer;
+        public GraphPointerListener     GraphPointerListener    => pointerListener;
+
+        public INodeEvents       NodeEvents              => _signalSystem;
+        public ISocketEvents     SocketEventListener     => _signalSystem;
+        public IConnectionEvents ConnectionEvents        => _signalSystem;
+        public IContextMenuEvents     ContextMenuListener     => _signalSystem;
 
         //  scene references
         public RectTransform        contextMenuContainer;
@@ -31,24 +35,25 @@ namespace RuntimeNodeEditor
         private RectTransform       _nodeContainer;
 	    private RectTransform       _graphContainer;
 
-        private SignalSystem _signalSystem;
+        private SignalSystem        _signalSystem;
 
-        public void Init()
+        public void Init(SignalSystem signalSystem, float minZoom, float maxZoom)
         {
             _nodeContainer                              = nodeContainer;
             _graphContainer                             = this.GetComponent<RectTransform>();
 	        _duplicateOffset                            = (Vector2.one * 10f);
             nodes                                       = new List<Node>();
 	        connections                                 = new List<Connection>();
-            _signalSystem                               = new SignalSystem();
+            _signalSystem                               = signalSystem;
 
-            _signalSystem.OutputSocketDragStartEvent     += OnOutputDragStarted;
-            _signalSystem.OutputSocketDragDrop           += OnOutputDragDroppedTo;
-            _signalSystem.InputSocketClickEvent          += OnInputSocketClicked;
-            _signalSystem.OutputSocketClickEvent         += OnOutputSocketClicked;
-            _signalSystem.NodePointerDownEvent           += OnNodePointerDown;
-            _signalSystem.NodePointerDragEvent           += OnNodePointerDrag;
+            _signalSystem.OutputSocketDragStartEvent    += OnOutputDragStarted;
+            _signalSystem.OutputSocketDragDrop          += OnOutputDragDroppedTo;
+            _signalSystem.InputSocketClickEvent         += OnInputSocketClicked;
+            _signalSystem.OutputSocketClickEvent        += OnOutputSocketClicked;
+            _signalSystem.NodePointerDownEvent          += OnNodePointerDown;
+            _signalSystem.NodePointerDragEvent          += OnNodePointerDrag;
 
+            pointerListener.Init(_signalSystem, _graphContainer, minZoom, maxZoom);
             drawer.Init(_signalSystem);
         }
 

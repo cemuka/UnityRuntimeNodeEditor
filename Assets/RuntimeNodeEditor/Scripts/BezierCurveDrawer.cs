@@ -52,7 +52,7 @@ namespace RuntimeNodeEditor
         {
             var line = CreateLine();
             var trigger = line.gameObject.AddComponent<LinePointerListener>();
-            trigger.connId = connId;
+            trigger.Init(_signal, connId);
             _connections.Add(connId, new ConnectionDrawData(connId, from, target, line));
         }
 

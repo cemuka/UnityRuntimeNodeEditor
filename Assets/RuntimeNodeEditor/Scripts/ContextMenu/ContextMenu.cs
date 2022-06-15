@@ -15,9 +15,9 @@ namespace RuntimeNodeEditor
         private ContextContainer _root;
 
         private List<ContextContainer> _subContainers;
-        private SignalSystem _signal;
+        private IContextMenuEvents _signal;
 
-        public void Init(SignalSystem signal)
+        public void Init(IContextMenuEvents signal)
         {
             _rect = this.GetComponent<RectTransform>();
             _subContainers = new List<ContextContainer>();

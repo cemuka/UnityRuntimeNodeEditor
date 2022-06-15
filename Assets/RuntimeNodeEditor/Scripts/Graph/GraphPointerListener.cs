@@ -18,12 +18,11 @@ namespace RuntimeNodeEditor
         private float           _mouseWheelSensitivity;
         private float           _minZoom;
         private float           _maxZoom;
+        private SignalSystem    _signalSystem;
 
-        public event Action<PointerEventData> GraphPointerClickEvent;
-        public event Action<PointerEventData> GraphPointerDragEvent;
-
-        public void Init(RectTransform background, float minZoom, float maxZoom)
+        public void Init(SignalSystem signalSystem, RectTransform background, float minZoom, float maxZoom)
         {
+            _signalSystem = signalSystem;
             _rectTransform = background;
             _minZoom = minZoom;
             _maxZoom = maxZoom;
@@ -33,12 +32,12 @@ namespace RuntimeNodeEditor
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            GraphPointerClickEvent?.Invoke(eventData);
+            _signalSystem.InvokeGraphPointerClick(eventData);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            GraphPointerDragEvent?.Invoke(eventData);
+            _signalSystem.InvokeGraphPointerDrag(eventData);
         }
 
         public void OnUpdate()
@@ -77,7 +76,7 @@ namespace RuntimeNodeEditor
             }
         }
 
-        public static void SetPivot(RectTransform rectTransform, Vector2 pivot)
+        public void SetPivot(RectTransform rectTransform, Vector2 pivot)
         {
             Vector2 size = rectTransform.rect.size;
             Vector2 deltaPivot = rectTransform.pivot - pivot;

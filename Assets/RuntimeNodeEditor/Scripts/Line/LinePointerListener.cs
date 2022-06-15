@@ -12,9 +12,10 @@ namespace RuntimeNodeEditor
         public string connId;
         private SignalSystem _signal;
 
-        public void Init(SignalSystem signal)
+        public void Init(SignalSystem signal, string connId)
         {
             _signal = signal;
+            this.connId = connId;
         }
 
         public void OnPointerClick(PointerEventData eventData)

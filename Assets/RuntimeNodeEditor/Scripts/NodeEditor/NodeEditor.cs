@@ -10,6 +10,7 @@ namespace RuntimeNodeEditor
     public class NodeEditor : MonoBehaviour
     {
         public NodeGraph                Graph  { get { return _graph; } }
+        public SignalSystem             Events { get { return _signalSystem; } }
         public float                    minZoom;
         public float                    maxZoom;
         public GameObject               contextMenuPrefab;
@@ -17,16 +18,16 @@ namespace RuntimeNodeEditor
         private NodeGraph               _graph;
         private ContextMenu             _contextMenu;
         private ContextMenuData         _contextMenuData;
+        private SignalSystem            _signalSystem;
 
         public virtual void StartEditor(NodeGraph graph)
         {
+            _signalSystem = new SignalSystem();
             _graph = graph;
-            _graph.Init();
-            _graph.pointerListener.Init(_graph.GraphContainer, minZoom, maxZoom);
-
-
             _contextMenu = Instantiate(contextMenuPrefab, _graph.contextMenuContainer).GetComponent<ContextMenu>();
-            _contextMenu.Init(Graph.EventListener);
+
+            _graph.Init(_signalSystem, minZoom, maxZoom);
+            _contextMenu.Init(_signalSystem);
             CloseContextMenu();
         }
 

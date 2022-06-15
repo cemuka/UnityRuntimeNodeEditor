@@ -13,12 +13,10 @@ public class ExampleNodeEditor : NodeEditor
 
         _savePath = Application.dataPath + "/Example/Resources/graph.json";
         
-        Graph.GraphPointerListener.GraphPointerClickEvent    += OnGraphPointerClick;
-        Graph.GraphPointerListener.GraphPointerDragEvent     += OnGraphPointerDrag;
-        Graph.EventListener.NodePointerClickEvent            += OnNodePointerClick;
-        Graph.EventListener.NodeConnectionPointerClickEvent  += OnNodeConnectionPointerClick;
-        Graph.EventListener.SocketConnect                    += OnSocketConnection;
-        Graph.EventListener.SocketDisconnect                 += OnSocketDisconnection;
+        Events.GraphPointerClickEvent           += OnGraphPointerClick;
+        Events.GraphPointerDragEvent            += OnGraphPointerDrag;
+        Events.NodePointerClickEvent            += OnNodePointerClick;
+        Events.NodeConnectionPointerClickEvent  += OnNodeConnectionPointerClick;
     }
 
     private void OnGraphPointerClick(PointerEventData eventData)
@@ -76,16 +74,6 @@ public class ExampleNodeEditor : NodeEditor
             SetContextMenu(ctx);
             DisplayContextMenu();
         }
-    }
-
-    private void OnSocketConnection(SocketInput input, SocketOutput output)
-    {
-        Debug.Log("connect");
-    }
-
-    private void OnSocketDisconnection(SocketInput input, SocketOutput output)
-    {
-        Debug.Log("disconnect");
     }
 
 
