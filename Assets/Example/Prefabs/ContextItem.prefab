@@ -68,7 +68,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 204, y: 0}
+  m_AnchoredPosition: {x: 164, y: 0}
   m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &4665947459889676419
@@ -245,7 +245,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 30}
+  m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4665947460419117278
 CanvasRenderer:
@@ -343,8 +343,6 @@ MonoBehaviour:
   button: {fileID: 2875846647977310343}
   subContextIcon: {fileID: 1384219375001510668}
   subContextTransform: {fileID: 6068735687274117336}
-  contextContainerPrefab: {fileID: 7851094904423997867, guid: 6297f6540edc14f319b68bcfe9fd3ba4,
-    type: 3}
 --- !u!1 &5026233053616565513
 GameObject:
   m_ObjectHideFlags: 0

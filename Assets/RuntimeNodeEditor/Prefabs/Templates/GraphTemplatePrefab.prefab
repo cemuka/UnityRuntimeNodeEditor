@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 8282471357308101436}
   - component: {fileID: 5108278652701065061}
   m_Layer: 5
-  m_Name: NodeEditor
+  m_Name: GraphTemplatePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
