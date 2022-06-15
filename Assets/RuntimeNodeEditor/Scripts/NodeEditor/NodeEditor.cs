@@ -23,11 +23,10 @@ namespace RuntimeNodeEditor
             _graph = graph;
             _graph.Init();
             _graph.pointerListener.Init(_graph.GraphContainer, minZoom, maxZoom);
-            Utility.Initialize(_graph.nodeContainer, _graph.contextMenuContainer);
 
 
             _contextMenu = Instantiate(contextMenuPrefab, _graph.contextMenuContainer).GetComponent<ContextMenu>();
-            _contextMenu.Init(Graph.SignalSystem);
+            _contextMenu.Init(Graph.EventListener);
             CloseContextMenu();
         }
 
@@ -40,7 +39,7 @@ namespace RuntimeNodeEditor
         public void DisplayContextMenu()
         {
             _contextMenu.Clear();
-            _contextMenu.Show(_contextMenuData, Utility.GetCtxMenuPointerPosition());
+            _contextMenu.Show(_contextMenuData, Utility.GetCtxMenuPointerPosition(Graph.contextMenuContainer));
         }
 
         public void CloseContextMenu()

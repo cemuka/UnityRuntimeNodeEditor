@@ -1,4 +1,5 @@
-﻿using RuntimeNodeEditor;
+﻿using System;
+using RuntimeNodeEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -12,10 +13,12 @@ public class ExampleNodeEditor : NodeEditor
 
         _savePath = Application.dataPath + "/Example/Resources/graph.json";
         
-        Graph.pointerListener.GraphPointerClickEvent        += OnGraphPointerClick;
-        Graph.pointerListener.GraphPointerDragEvent         += OnGraphPointerDrag;
-        Graph.SignalSystem.NodePointerClickEvent            += OnNodePointerClick;
-        Graph.SignalSystem.NodeConnectionPointerClickEvent  += OnNodeConnectionPointerClick;
+        Graph.GraphPointerListener.GraphPointerClickEvent    += OnGraphPointerClick;
+        Graph.GraphPointerListener.GraphPointerDragEvent     += OnGraphPointerDrag;
+        Graph.EventListener.NodePointerClickEvent            += OnNodePointerClick;
+        Graph.EventListener.NodeConnectionPointerClickEvent  += OnNodeConnectionPointerClick;
+        Graph.EventListener.SocketConnect                    += OnSocketConnection;
+        Graph.EventListener.SocketDisconnect                 += OnSocketDisconnection;
     }
 
     private void OnGraphPointerClick(PointerEventData eventData)
@@ -73,6 +76,16 @@ public class ExampleNodeEditor : NodeEditor
             SetContextMenu(ctx);
             DisplayContextMenu();
         }
+    }
+
+    private void OnSocketConnection(SocketInput input, SocketOutput output)
+    {
+        Debug.Log("connect");
+    }
+
+    private void OnSocketDisconnection(SocketInput input, SocketOutput output)
+    {
+        Debug.Log("disconnect");
     }
 
 

@@ -4,16 +4,6 @@ namespace RuntimeNodeEditor
 {
     public class Utility
     {
-        private static RectTransform _nodeContainer;
-        private static RectTransform _contextMenuContainer;
-
-        public static void Initialize(RectTransform nodeContainer, RectTransform contextMenuContainer)
-        {
-            _nodeContainer = nodeContainer;
-            _contextMenuContainer = contextMenuContainer;
-        }
-
-
         public static Vector2 GetLocalPointIn(RectTransform container, Vector3 pos, Camera eventCamera = null)
         {
             var point = Vector2.zero;
@@ -21,12 +11,12 @@ namespace RuntimeNodeEditor
             return point;
         }
 
-        public static Vector2 GetCtxMenuPointerPosition()
+        public static Vector2 GetCtxMenuPointerPosition(RectTransform rect)
         {
 	        Vector2 localPointerPos;
 	        var success = false;
 	        #if ENABLE_LEGACY_INPUT_MANAGER
-            success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_contextMenuContainer,
+            success = RectTransformUtility.ScreenPointToLocalPointInRectangle(rect,
                                                                                   Input.mousePosition,
                                                                                   null,
                                                                                   out localPointerPos);
@@ -42,7 +32,7 @@ namespace RuntimeNodeEditor
 
 
 
-        public static T CreatePrefab<T>(string path, Transform parent)
+        public static T CreatePrefab<T>(string path, RectTransform parent)
         {
             var prefab = Resources.Load<GameObject>(path);
             var instance = GameObject.Instantiate(prefab, parent);
@@ -51,9 +41,9 @@ namespace RuntimeNodeEditor
             return component;
         }
 
-        public static T CreateNodePrefab<T>(string path)
+        public static T CreateNodePrefab<T>(string path, RectTransform parent)
         {
-            return CreatePrefab<T>(path, _nodeContainer);
+            return CreatePrefab<T>(path, parent);
         }
 
         public static Vector3 QuadraticCurve(Vector3 a, Vector3 b, Vector3 c, float t)

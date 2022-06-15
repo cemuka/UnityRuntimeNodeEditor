@@ -10,8 +10,9 @@ namespace RuntimeNodeEditor
 {
     public class NodeGraph : MonoBehaviour
     {
-        public RectTransform        GraphContainer => _graphContainer;
-        public SignalSystem         SignalSystem   => _signalSystem;
+        public RectTransform        GraphContainer          => _graphContainer;
+        public GraphPointerListener GraphPointerListener    => pointerListener;
+        public SignalSystem         EventListener           => _signalSystem;
 
         //  scene references
         public RectTransform        contextMenuContainer;
@@ -61,7 +62,7 @@ namespace RuntimeNodeEditor
 	        mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
 #endif
 	        var pos = Utility.GetLocalPointIn(nodeContainer, mousePosition);
-            var node = Utility.CreateNodePrefab<Node>(prefabPath);
+            var node = Utility.CreateNodePrefab<Node>(prefabPath, nodeContainer);
             node.Init(_signalSystem, pos, NewId(), prefabPath);
             node.Setup();
             nodes.Add(node);
@@ -70,7 +71,7 @@ namespace RuntimeNodeEditor
 
         public void Create(string prefabPath, Vector2 pos)
         {
-            var node = Utility.CreateNodePrefab<Node>(prefabPath);
+            var node = Utility.CreateNodePrefab<Node>(prefabPath, nodeContainer);
             node.Init(_signalSystem, pos, NewId(), prefabPath);
             node.Setup();
             nodes.Add(node);
@@ -391,7 +392,7 @@ namespace RuntimeNodeEditor
 
         private void LoadNode(NodeData data)
         {
-            var node = Utility.CreateNodePrefab<Node>(data.path);
+            var node = Utility.CreateNodePrefab<Node>(data.path, nodeContainer);
             node.Init(_signalSystem, new Vector2(data.posX, data.posY), data.id, data.path);
             node.Setup();
             nodes.Add(node);
