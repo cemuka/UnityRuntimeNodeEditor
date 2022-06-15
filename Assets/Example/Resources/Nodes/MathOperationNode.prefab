@@ -263,8 +263,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b548f5db84a5445aaa55ed2641d7452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  outputs: []
+  inputs: []
+  connectedOutputs: []
   headerText: {fileID: 4050287918490397133}
-  body: {fileID: 6290086045451085351}
+  draggableBody: {fileID: 6290086045451085351}
   resultText: {fileID: 5609598211738666783}
   dropdown: {fileID: 323220027982280517}
   inputSocket: {fileID: 3144920582833568803}

@@ -73,7 +73,7 @@ namespace RuntimeNodeEditor
         private void OnConnectedValueUpdated()
         {
             List<float> incomingValues = new List<float>();
-            foreach (var c in connectedOutputs)
+            foreach (var c in ConnectedOutputs)
             {
                 incomingValues.Add(c.GetValue<float>());
             }

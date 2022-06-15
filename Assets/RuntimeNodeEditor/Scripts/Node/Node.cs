@@ -7,39 +7,35 @@ namespace RuntimeNodeEditor
 {
     public abstract class Node : MonoBehaviour
     {
-        public string           ID          { get; private set; }
-        public Vector2          Position    { get => _panelRectTransform.anchoredPosition; }
-        public RectTransform    PanelRect   { get => _panelRectTransform; }
-        public string           Path        { get; private set; }
-
-        public List<SocketOutput>           outputs;
-        public List<SocketInput>            inputs;
-        public List<SocketOutput>           connectedOutputs;
+        public string               ID          { get; private set; }
+        public Vector2              Position    { get => _panelRectTransform.anchoredPosition; }
+        public RectTransform        PanelRect   { get => _panelRectTransform; }
+        public string               LoadPath    { get; private set; }
+        public List<SocketOutput>   Outputs     { get; private set; }
+        public List<SocketInput>    Inputs      { get; private set; }
+        public List<SocketOutput>   ConnectedOutputs { get; private set; }
 
         public event Action<SocketInput, IOutput> OnConnectionEvent;
         public event Action<SocketInput, IOutput> OnDisconnectEvent;
 
         public TMP_Text                     headerText;
-        public GameObject                   body;
+        public GameObject                   draggableBody;
 
         private NodeDraggablePanel          _dragPanel;
         private RectTransform               _panelRectTransform;
 
         public void Init(Vector2 pos, string id, string path)
         {
-            ID = id;
-            Path = path;
+            ID                  = id;
+            LoadPath            = path;
+            Outputs             = new List<SocketOutput>();
+            Inputs              = new List<SocketInput>();
+            ConnectedOutputs    = new List<SocketOutput>();
 
-            _panelRectTransform = body.transform.parent.GetComponent<RectTransform>();
-            _dragPanel = body.AddComponent<NodeDraggablePanel>();
+            _panelRectTransform = gameObject.GetComponent<RectTransform>();
+            _dragPanel          = draggableBody.AddComponent<NodeDraggablePanel>();
             _dragPanel.Init(this);
-
-
             SetPosition(pos);
-            outputs = new List<SocketOutput>();
-            inputs = new List<SocketInput>();
-
-            connectedOutputs = new List<SocketOutput>();
         }
 
         public virtual void Setup() { }
@@ -52,24 +48,24 @@ namespace RuntimeNodeEditor
         public void Register(SocketOutput output)
         {
             output.SetOwner(this);
-            outputs.Add(output);
+            Outputs.Add(output);
         }
 
         public void Register(SocketInput input)
         {
             input.SetOwner(this);
-            inputs.Add(input);
+            Inputs.Add(input);
         }
 
         public void Connect(SocketInput input, SocketOutput output)
         {
-            connectedOutputs.Add(output);
+            ConnectedOutputs.Add(output);
             OnConnectionEvent?.Invoke(input, output);
         }
 
         public void Disconnect(SocketInput input, SocketOutput output)
         {
-            connectedOutputs.Remove(output);
+            ConnectedOutputs.Remove(output);
             OnDisconnectEvent?.Invoke(input, output);
         }
 

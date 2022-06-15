@@ -85,7 +85,7 @@ namespace RuntimeNodeEditor
 	    {
 		    Serializer info = new Serializer();
 		    node.OnSerialize(info);
-		    Create(node.Path, node.Position + _duplicateOffset);
+		    Create(node.LoadPath, node.Position + _duplicateOffset);
 		    var newNode = nodes.Last();
 		    newNode.OnDeserialize(info);
 	    }
@@ -156,16 +156,16 @@ namespace RuntimeNodeEditor
                 data.values = ser.Serialize();
                 data.posX = node.Position.x;
                 data.posY = node.Position.y;
-                data.path = node.Path;
+                data.path = node.LoadPath;
 
                 var inputIds = new List<string>();
-                foreach (var input in node.inputs)
+                foreach (var input in node.Inputs)
                 {
                     inputIds.Add(input.socketId);
                 }
 
                 var outputIds = new List<string>();
-                foreach (var output in node.outputs)
+                foreach (var output in node.Outputs)
                 {
                     outputIds.Add(output.socketId);
                 }
@@ -211,12 +211,12 @@ namespace RuntimeNodeEditor
 
                     for (int i = 0; i < nodeData.inputSocketIds.Length; i++)
                     {
-                        node.inputs[i].socketId = nodeData.inputSocketIds[i];
+                        node.Inputs[i].socketId = nodeData.inputSocketIds[i];
                     }
 
                     for (int i = 0; i < nodeData.outputSocketIds.Length; i++)
                     {
-                        node.outputs[i].socketId = nodeData.outputSocketIds[i];
+                        node.Outputs[i].socketId = nodeData.outputSocketIds[i];
                     }
                 }
 
@@ -375,12 +375,12 @@ namespace RuntimeNodeEditor
 
         private void HandleSocketRegister(Node node)
         {
-            foreach (var i in node.inputs)
+            foreach (var i in node.Inputs)
             {
                 i.socketId = NewId();
             }
 
-            foreach (var o in node.outputs)
+            foreach (var o in node.Outputs)
             {
                 o.socketId = NewId();
             }
@@ -400,8 +400,8 @@ namespace RuntimeNodeEditor
 
         private void LoadConn(ConnectionData data)
         {
-            var input = nodes.SelectMany(n => n.inputs).FirstOrDefault(i => i.socketId == data.inputSocketId);
-            var output = nodes.SelectMany(n => n.outputs).FirstOrDefault(o => o.socketId == data.outputSocketId);
+            var input = nodes.SelectMany(n => n.Inputs).FirstOrDefault(i => i.socketId == data.inputSocketId);
+            var output = nodes.SelectMany(n => n.Outputs).FirstOrDefault(o => o.socketId == data.outputSocketId);
 
             if (input != null && output != null)
             {

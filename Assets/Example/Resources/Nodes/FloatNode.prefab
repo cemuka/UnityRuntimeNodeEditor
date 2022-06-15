@@ -355,7 +355,7 @@ MonoBehaviour:
   inputs: []
   connectedOutputs: []
   headerText: {fileID: 4050287918490397133}
-  body: {fileID: 6290086045451085351}
+  draggableBody: {fileID: 6290086045451085351}
   valueField: {fileID: 8191792925013298783}
   outputSocket: {fileID: 6278127011514429466}
 --- !u!1 &8966638480194106887

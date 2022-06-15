@@ -6,26 +6,26 @@ namespace RuntimeNodeEditor
 {
     public class NodeDraggablePanel : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IDragHandler
     {
-        private Node _parentNode;
+        private Node _ownerNode;
 
-        public void Init(Node parent)
+        public void Init(Node owner)
         {
-            _parentNode = parent;
+            _ownerNode = owner;
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            SignalSystem.InvokeNodePointerClick(_parentNode, eventData);
+            SignalSystem.InvokeNodePointerClick(_ownerNode, eventData);
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            SignalSystem.InvokeNodePointerDown(_parentNode, eventData);
+            SignalSystem.InvokeNodePointerDown(_ownerNode, eventData);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            SignalSystem.InvokeNodePointerDrag(_parentNode, eventData);
+            SignalSystem.InvokeNodePointerDrag(_ownerNode, eventData);
         }
 
     }
