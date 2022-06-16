@@ -13,6 +13,7 @@ namespace RuntimeNodeEditor
         //  scene references
         public RectTransform        contextMenuContainer;
         public RectTransform        nodeContainer;
+        public RectTransform        background;
         public GraphPointerListener pointerListener;
         public BezierCurveDrawer    drawer;
 
@@ -38,12 +39,12 @@ namespace RuntimeNodeEditor
 	        connections                                 = new List<Connection>();
             _signalSystem                               = signalSystem;
 
-            _signalSystem.OutputSocketDragStartEvent    += OnOutputDragStarted;
-            _signalSystem.OutputSocketDragDrop          += OnOutputDragDroppedTo;
-            _signalSystem.InputSocketClickEvent         += OnInputSocketClicked;
-            _signalSystem.OutputSocketClickEvent        += OnOutputSocketClicked;
-            _signalSystem.NodePointerDownEvent          += OnNodePointerDown;
-            _signalSystem.NodePointerDragEvent          += OnNodePointerDrag;
+            _signalSystem.OnOutputSocketDragStartEvent    += OnOutputDragStarted;
+            _signalSystem.OnOutputSocketDragDrop          += OnOutputDragDroppedTo;
+            _signalSystem.OnInputSocketClickEvent         += OnInputSocketClicked;
+            _signalSystem.OnOutputSocketClickEvent        += OnOutputSocketClicked;
+            _signalSystem.OnNodePointerDownEvent          += OnNodePointerDown;
+            _signalSystem.OnNodePointerDragEvent          += OnNodePointerDrag;
 
             pointerListener.Init(_signalSystem, _graphContainer, minZoom, maxZoom);
             drawer.Init(_signalSystem);
@@ -51,9 +52,9 @@ namespace RuntimeNodeEditor
 
         public void Create(string prefabPath)
         {
-	        var mousePosition = Utility.GetMousePosition();
-	        var pos = Utility.GetLocalPointIn(nodeContainer, mousePosition);
-            var node = Utility.CreateNodePrefab<Node>(prefabPath, nodeContainer);
+	        var mousePosition   = Utility.GetMousePosition();
+	        var pos             = Utility.GetLocalPointIn(nodeContainer, mousePosition);
+            var node            = Utility.CreateNodePrefab<Node>(prefabPath, nodeContainer);
             node.Init(_signalSystem, _signalSystem, pos, NewId(), prefabPath);
             node.Setup();
             nodes.Add(node);
@@ -62,7 +63,7 @@ namespace RuntimeNodeEditor
 
         public void Create(string prefabPath, Vector2 pos)
         {
-            var node = Utility.CreateNodePrefab<Node>(prefabPath, nodeContainer);
+            var node            = Utility.CreateNodePrefab<Node>(prefabPath, nodeContainer);
             node.Init(_signalSystem, _signalSystem, pos, NewId(), prefabPath);
             node.Setup();
             nodes.Add(node);
@@ -89,9 +90,9 @@ namespace RuntimeNodeEditor
         {
             var connection = new Connection()
             {
-                connId = NewId(),
-                input = input,
-                output = output
+                connId  = NewId(),
+                input   = input,
+                output  = output
             };
 
             input.Connect(connection);
@@ -100,20 +101,23 @@ namespace RuntimeNodeEditor
             connections.Add(connection);
             input.OwnerNode.Connect(input, output);
 
-            OnConnect(input, output);
+            _signalSystem.InvokeSocketConnection(input, output);
             drawer.Add(connection.connId, output.handle, input.handle);
         }
 
         public void Disconnect(Connection conn)
         {
-            drawer.Remove(conn.connId);
-            conn.input.OwnerNode.Disconnect(conn.input, conn.output);
+            var input   = conn.input;
+            var output  = conn.output;
 
-            conn.input.Disconnect();
-            conn.output.Disconnect();
+            drawer.Remove(conn.connId);
+            input.OwnerNode.Disconnect(input, output);
+
+            input.Disconnect();
+            output.Disconnect();
 
             connections.Remove(conn);
-            OnDisconnect(conn.input, conn.output);
+            _signalSystem.InvokeSocketDisconnection(input, output);
         }
 
         public void Disconnect(IConnection conn)
@@ -137,9 +141,9 @@ namespace RuntimeNodeEditor
 
         public void Save(string path)
         {
-            var graph = new GraphData();
-            var nodeDatas = new List<NodeData>();
-            var connDatas = new List<ConnectionData>();
+            var graph       = new GraphData();
+            var nodeDatas   = new List<NodeData>();
+            var connDatas   = new List<ConnectionData>();
 
             foreach (var node in nodes)
             {
@@ -237,13 +241,8 @@ namespace RuntimeNodeEditor
             drawer.UpdateDraw();
         }
 
-        //  virtual events
-        public virtual void OnConnect(SocketInput input, SocketOutput output) { }
-
-        public virtual void OnDisconnect(SocketInput input, SocketOutput output) { }
-
         //  event handlers
-        private void OnInputSocketClicked(SocketInput input, PointerEventData eventData)
+        protected virtual void OnInputSocketClicked(SocketInput input, PointerEventData eventData)
         {
             if (eventData.button == PointerEventData.InputButton.Right)
             {
@@ -253,7 +252,7 @@ namespace RuntimeNodeEditor
             }
         }
 
-        private void OnOutputSocketClicked(SocketOutput output, PointerEventData eventData)
+        protected virtual void OnOutputSocketClicked(SocketOutput output, PointerEventData eventData)
         {
             if (eventData.button == PointerEventData.InputButton.Right)
             {
@@ -263,7 +262,7 @@ namespace RuntimeNodeEditor
             }
         }
 
-        private void OnOutputDragDroppedTo(SocketInput target)
+        protected virtual void OnOutputDragDroppedTo(SocketInput target)
         {
             if (_currentDraggingSocket == null || target == null)
             {
@@ -304,7 +303,7 @@ namespace RuntimeNodeEditor
             drawer.CancelDrag();
         }
 
-        private void OnOutputDragStarted(SocketOutput socketOnDrag)
+        protected virtual void OnOutputDragStarted(SocketOutput socketOnDrag)
         {
             _currentDraggingSocket = socketOnDrag;
             drawer.StartDrag(_currentDraggingSocket);
@@ -320,7 +319,7 @@ namespace RuntimeNodeEditor
             }
         }
 
-        private void OnNodePointerDown(Node node, PointerEventData eventData)
+        protected virtual void OnNodePointerDown(Node node, PointerEventData eventData)
         {
             node.SetAsLastSibling();
             RectTransformUtility.ScreenPointToLocalPointInRectangle(node.PanelRect, eventData.position,
@@ -328,7 +327,7 @@ namespace RuntimeNodeEditor
             DragNode(node, eventData);
         }
 
-        private void OnNodePointerDrag(Node node, PointerEventData eventData)
+        protected virtual void OnNodePointerDrag(Node node, PointerEventData eventData)
         {
             DragNode(node, eventData);
         }
@@ -344,7 +343,7 @@ namespace RuntimeNodeEditor
 
             if (eventData.button == PointerEventData.InputButton.Left)
             {
-                Vector2 pointerPos = ClampToWindow(eventData);
+                Vector2 pointerPos = ClampToNodeContainer(eventData);
                 var success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_nodeContainer, pointerPos,
                                                                                 eventData.pressEventCamera, out _localPointerPos);
                 if (success)
@@ -354,7 +353,7 @@ namespace RuntimeNodeEditor
             }
         }
 
-        private Vector2 ClampToWindow(PointerEventData eventData)
+        private Vector2 ClampToNodeContainer(PointerEventData eventData)
         {
             var rawPointerPos = eventData.position;
             var canvasCorners = new Vector3[4];

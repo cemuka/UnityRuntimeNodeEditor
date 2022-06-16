@@ -4,10 +4,13 @@
 Almost every node editor made in unity is using unity editor to make it.  
 My goal was make it in runtime with unity ui.
 
-- Prefab based workflow
-- Context Menu for graph, nodes and connections
+- Socket based connection
 - Load and save a graph using node serializer
+- Context Menu for graph, nodes and connections
+- Event based notification
 - Pan and zoom
+- Multiple editors can be spawned in a scene
+- Create graph by api or custom prefab
 - Legacy and new Input System 
 
 ![node editor](./img/node_gif2.gif)
@@ -18,23 +21,28 @@ Simply extend the `NodeEditor`.
 ```c#
 public class ExampleNodeEditor : NodeEditor
 {
-    public override void StartEditor()
+    public override void StartEditor(NodeGraph graph)
     {
-        base.StartEditor();
+        base.StartEditor(graph);
 
         //  make your custom initialization here
     }
 }
 ```
 
+Create graph using the api, graph will stretch to holder object. (no prefab involves)
+
 ```c#
 public class ApplicationStartup : MonoBehaviour
 {
-    public ExampleNodeEditor editor;    //  asigned in unity from hierarchy
+    public RectTransform        editorHolder;
+    public ExampleNodeEditor    editor;    //  asigned in unity from hierarchy
 
     private void Start()
     {
-        editor.StartEditor();
+        var graph = editor.CreateGraph<NodeGraph>(editorHolder);
+        // var graph = editor.CreateGraph<NodeGraph>(editorHolder, myAwsomeColor);
+        editor.StartEditor(graph);
     }
 
     private void Update()
@@ -42,19 +50,53 @@ public class ApplicationStartup : MonoBehaviour
         editor.UpdateEditor();
     }
 }
+
 ```
-Populate context menu by overriding methods below
+You may want to use your own custom graph and prefab as well.
+
 ```c#
-protected override void OnGraphPointerClick(PointerEventData eventData)
+public class ApplicationStartup : MonoBehaviour
 {
-}
+    public RectTransform        editorHolder;
+    public MyCustomGraph        graph;
+    public ExampleNodeEditor    editor;
 
-protected override void OnNodePointerClick(Node node, PointerEventData eventData)
-{
-}
+    private void Start()
+    {
+        editor.StartEditor(graph);
+    }
 
-protected override void OnNodeConnectionPointerClick(string connId, PointerEventData eventData)
+    private void Update()
+    {
+        editor.UpdateEditor();
+    }
+}
+```  
+Graph actions are event based.  
+
+![node editor](./img/events.png)
+
+
+
+You'll find a complete example in the Example folder. Let's walkthrough over.
+
+Listen events from editor
+```c#
+public class ExampleNodeEditor : NodeEditor
 {
+    private string _savePath;
+
+    public override void StartEditor(NodeGraph graph)
+    {
+        base.StartEditor(graph);
+
+        _savePath = Application.dataPath + "/Example/Resources/graph.json";
+        
+        Events.OnGraphPointerClickEvent           += OnGraphPointerClick;
+        Events.OnGraphPointerDragEvent            += OnGraphPointerDrag;
+        Events.OnNodePointerClickEvent            += OnNodePointerClick;
+        Events.OnConnectionPointerClickEvent      += OnNodeConnectionPointerClick;
+    }
 }
 ```
 - graph context menu
@@ -112,7 +154,7 @@ protected override void OnNodeConnectionPointerClick(string connId, PointerEvent
     }
 }
 ```
-Graph and nodes are all saved as prefab. Instead of handwriting graph and node visual elements, the simplest way I could find is making them a prefab and style as much as I can from the unity editor. Maintaining unityUI may get quickly overwhelming(layouts, nested rectTransforms, calculation of pointer position for nested objects, nested layout component issues, etc.)
+
 
 That's been said, to create a new node:
 ```c#

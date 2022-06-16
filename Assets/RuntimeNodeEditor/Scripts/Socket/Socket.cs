@@ -5,19 +5,19 @@ namespace RuntimeNodeEditor
     public class Socket : MonoBehaviour
     {
         public Node             OwnerNode { get { return _ownerNode; } }
-        public ISocketEvents    Signal    { get { return _signal; } }
+        public ISocketEvents    Events    { get { return _socketEvents; } }
         
         public string           socketId;
         public IConnection      connection;
         public SocketHandle     handle;
         public ConnectionType   connectionType;
         private Node            _ownerNode;
-        private ISocketEvents   _signal;
+        private ISocketEvents   _socketEvents;
 
-        public void SetOwner(Node owner, ISocketEvents signal)
+        public void SetOwner(Node owner, ISocketEvents events)
         {
             _ownerNode = owner;
-            _signal = signal;
+            _socketEvents = events;
         }
 
         public bool HasConnection()

@@ -57,6 +57,8 @@ namespace RuntimeNodeEditor
                     _rectTransform.localScale = Vector3.one * _currentZoom;
                 }
             }
+
+            _signalSystem.InvokeGraphPointerScroll(eventData);
         }
 
         public void SetPivot(RectTransform rectTransform, Vector2 pivot)

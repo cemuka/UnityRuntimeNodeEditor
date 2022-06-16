@@ -1,5 +1,4 @@
-﻿using System;
-using RuntimeNodeEditor;
+﻿using RuntimeNodeEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -13,10 +12,10 @@ public class ExampleNodeEditor : NodeEditor
 
         _savePath = Application.dataPath + "/Example/Resources/graph.json";
         
-        Events.GraphPointerClickEvent           += OnGraphPointerClick;
-        Events.GraphPointerDragEvent            += OnGraphPointerDrag;
-        Events.NodePointerClickEvent            += OnNodePointerClick;
-        Events.NodeConnectionPointerClickEvent  += OnNodeConnectionPointerClick;
+        Events.OnGraphPointerClickEvent           += OnGraphPointerClick;
+        Events.OnGraphPointerDragEvent            += OnGraphPointerDrag;
+        Events.OnNodePointerClickEvent            += OnNodePointerClick;
+        Events.OnConnectionPointerClickEvent      += OnNodeConnectionPointerClick;
     }
 
     private void OnGraphPointerClick(PointerEventData eventData)

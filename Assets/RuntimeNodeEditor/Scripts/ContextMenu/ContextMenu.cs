@@ -15,15 +15,15 @@ namespace RuntimeNodeEditor
         private ContextContainer _root;
 
         private List<ContextContainer> _subContainers;
-        private IContextMenuEvents _signal;
+        private IContextMenuEvents _menuEvents;
 
-        public void Init(IContextMenuEvents signal)
+        public void Init(IContextMenuEvents events)
         {
             _rect = this.GetComponent<RectTransform>();
             _subContainers = new List<ContextContainer>();
             
-            _signal = signal;
-            _signal.OnMenuItemClicked += OnMenuItemClicked;
+            _menuEvents = events;
+            _menuEvents.OnMenuItemClicked += OnMenuItemClicked;
         }
 
         public void OnMenuItemClicked(ContextMenuData data, ContextContainer container)
@@ -93,7 +93,7 @@ namespace RuntimeNodeEditor
             var container = Instantiate(contextContainerPrefab, holder).GetComponent<ContextContainer>();
 
             PopulateContainer(container, node.children.ToArray());
-            _signal.InvokeMenuItemClicked(node, container);
+            _menuEvents.InvokeMenuItemClicked(node, container);
         }
 
         private void PopulateContainer(ContextContainer container, ContextMenuData[] data)

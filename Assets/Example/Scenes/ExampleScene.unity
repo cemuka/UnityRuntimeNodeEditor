@@ -495,7 +495,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   editorHolder1: {fileID: 1266083422}
+  editorHolder2: {fileID: 0}
   editor1: {fileID: 705905105}
+  editor2: {fileID: 0}
 --- !u!1 &1266083421
 GameObject:
   m_ObjectHideFlags: 0

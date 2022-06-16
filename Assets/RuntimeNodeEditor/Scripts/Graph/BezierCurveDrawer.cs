@@ -17,17 +17,17 @@ namespace RuntimeNodeEditor
         private bool                         _hasRequest;
         private Socket                       _draggingSocket;
         private Dictionary<string, ConnectionDrawData> _connections;
-        private IConnectionEvents _signal;
+        private IConnectionEvents _events;
 
 
-        public void Init(IConnectionEvents signal)
+        public void Init(IConnectionEvents events)
         {
             _connections    = new Dictionary<string, ConnectionDrawData>();
             _lineContainer  = lineContainer;
             _pointerLocator = pointerLocator;
             _lineRenderer   = CreateLine();
             _hasRequest     = false;
-            _signal         = signal;
+            _events         = events;
 
             CancelDrag();
         }
@@ -52,7 +52,7 @@ namespace RuntimeNodeEditor
         {
             var line = CreateLine();
             var trigger = line.gameObject.AddComponent<LinePointerListener>();
-            trigger.Init(_signal, connId);
+            trigger.Init(_events, connId);
             _connections.Add(connId, new ConnectionDrawData(connId, from, target, line));
         }
 

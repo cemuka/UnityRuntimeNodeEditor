@@ -18,13 +18,17 @@ namespace RuntimeNodeEditor
 
         public virtual void StartEditor(NodeGraph graph)
         {
-            _signalSystem = new SignalSystem();
-            _graph = graph;
-            _contextMenu = Instantiate(contextMenuPrefab, _graph.contextMenuContainer).GetComponent<ContextMenu>();
+            _signalSystem   = new SignalSystem();
+            _graph          = graph;
 
-            _graph.Init(_signalSystem, minZoom, maxZoom);
-            _contextMenu.Init(_signalSystem);
-            CloseContextMenu();
+            if (contextMenuPrefab != null)
+            {
+                _contextMenu    = Instantiate(contextMenuPrefab, _graph.contextMenuContainer).GetComponent<ContextMenu>();
+
+                _graph.Init(_signalSystem, minZoom, maxZoom);
+                _contextMenu.Init(_signalSystem);
+                CloseContextMenu();
+            }
         }
 
         public void UpdateEditor()
@@ -65,7 +69,12 @@ namespace RuntimeNodeEditor
         }
 
         //  create graph in scene
-        public TGraphComponent CreateGraph<TGraphComponent>(Transform holder) where TGraphComponent : NodeGraph
+        public TGraphComponent CreateGraph<TGraphComponent>(RectTransform holder) where TGraphComponent : NodeGraph
+        {
+            return CreateGraph<TGraphComponent>(holder, Color.gray);
+        }
+        
+        public TGraphComponent CreateGraph<TGraphComponent>(RectTransform holder, Color bgColor) where TGraphComponent : NodeGraph
         {
             //  Create a parent
             var parent = new GameObject("NodeGraph");
@@ -77,8 +86,8 @@ namespace RuntimeNodeEditor
             //      - add background child, stretch
             var bg = new GameObject("Background");
             bg.transform.SetParent(parent.transform);
-            bg.AddComponent<RectTransform>().Stretch();
-            bg.AddComponent<Image>().color = Color.gray;
+            var bgRect = bg.AddComponent<RectTransform>().Stretch();
+            bg.AddComponent<Image>().color = bgColor;
 
             //      - add pointer listener child, stretch
             var pointerListener = new GameObject("PointerListener");
@@ -127,6 +136,7 @@ namespace RuntimeNodeEditor
             var nodeGraph = graph.AddComponent<TGraphComponent>();
             nodeGraph.contextMenuContainer = ctxContainerRect;
             nodeGraph.nodeContainer = nodeContainerRect;
+            nodeGraph.background = bgRect;
             nodeGraph.pointerListener = listener;
             nodeGraph.drawer = bezierDrawer;
 

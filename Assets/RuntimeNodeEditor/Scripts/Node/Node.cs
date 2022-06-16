@@ -23,10 +23,10 @@ namespace RuntimeNodeEditor
 
         private NodeDraggablePanel          _dragPanel;
         private RectTransform               _panelRectTransform;
-        private INodeEvents                 _nodeSignal;
-        private ISocketEvents               _socketSignal;
+        private INodeEvents                 _nodeEvents;
+        private ISocketEvents               _socketEvents;
 
-        public void Init(INodeEvents nodeSignal, ISocketEvents socketSignal, Vector2 pos, string id, string path)
+        public void Init(INodeEvents nodeEvents, ISocketEvents socketEvents, Vector2 pos, string id, string path)
         {
             ID                  = id;
             LoadPath            = path;
@@ -34,30 +34,30 @@ namespace RuntimeNodeEditor
             Inputs              = new List<SocketInput>();
             ConnectedOutputs    = new List<SocketOutput>();
 
-            _nodeSignal         = nodeSignal;
-            _socketSignal       = socketSignal;
+            _nodeEvents         = nodeEvents;
+            _socketEvents       = socketEvents;
             _panelRectTransform = gameObject.GetComponent<RectTransform>();
             _dragPanel          = draggableBody.AddComponent<NodeDraggablePanel>();
-            _dragPanel.Init(this, _nodeSignal);
+            _dragPanel.Init(this, _nodeEvents);
             SetPosition(pos);
         }
 
         public virtual void Setup() { }
 
-
         public virtual bool CanMove()
         {
             return true;
         }
+        
         public void Register(SocketOutput output)
         {
-            output.SetOwner(this, _socketSignal);
+            output.SetOwner(this, _socketEvents);
             Outputs.Add(output);
         }
 
         public void Register(SocketInput input)
         {
-            input.SetOwner(this, _socketSignal);
+            input.SetOwner(this, _socketEvents);
             Inputs.Add(input);
         }
 
@@ -97,6 +97,7 @@ namespace RuntimeNodeEditor
         {
             _panelRectTransform.SetAsLastSibling();
         }
+        
         public void SetAsFirstSibling()
         {
             _panelRectTransform.SetAsFirstSibling();

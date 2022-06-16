@@ -5,87 +5,93 @@ namespace RuntimeNodeEditor
 {
     public class SignalSystem : INodeEvents, ISocketEvents, IConnectionEvents, IContextMenuEvents
     {
-        public event Action<PointerEventData> GraphPointerClickEvent;
-        public event Action<PointerEventData> GraphPointerDragEvent;
+        public event Action<PointerEventData> OnGraphPointerClickEvent;
+        public event Action<PointerEventData> OnGraphPointerDragEvent;
+        public event Action<PointerEventData> OnGraphPointeScrollEvent;
 
         public void InvokeGraphPointerClick(PointerEventData eventData)
         {
-            GraphPointerClickEvent?.Invoke(eventData);
+            OnGraphPointerClickEvent?.Invoke(eventData);
         }
 
         public void InvokeGraphPointerDrag(PointerEventData eventData)
         {
-            GraphPointerDragEvent?.Invoke(eventData);
+            OnGraphPointerDragEvent?.Invoke(eventData);
+        }
+
+        public void InvokeGraphPointerScroll(PointerEventData eventData)
+        {
+            OnGraphPointeScrollEvent?.Invoke(eventData);
         }
 
         //  INodePointerListener
-        public event Action<Node, PointerEventData>              NodePointerClickEvent;
-        public event Action<Node, PointerEventData>              NodePointerDownEvent;
-        public event Action<Node, PointerEventData>              NodePointerDragEvent;
+        public event Action<Node, PointerEventData> OnNodePointerClickEvent;
+        public event Action<Node, PointerEventData> OnNodePointerDownEvent;
+        public event Action<Node, PointerEventData> OnNodePointerDragEvent;
         
         public void InvokeNodePointerClick(Node node, PointerEventData eventData)
         {
-            NodePointerClickEvent?.Invoke(node, eventData);
+            OnNodePointerClickEvent?.Invoke(node, eventData);
         }
 
         public void InvokeNodePointerDown(Node node, PointerEventData eventData)
         {
-            NodePointerDownEvent?.Invoke(node, eventData);
+            OnNodePointerDownEvent?.Invoke(node, eventData);
         }
 
         public void InvokeNodePointerDrag(Node node, PointerEventData eventData)
         {
-            NodePointerDragEvent?.Invoke(node, eventData);
+            OnNodePointerDragEvent?.Invoke(node, eventData);
         }
         
 
 
         //  ISocketPointerListener
-        public event Action<SocketOutput>                        OutputSocketDragStartEvent;
-        public event Action<SocketInput>                         OutputSocketDragDrop;
-        public event Action<SocketInput, PointerEventData>       InputSocketClickEvent;
-        public event Action<SocketOutput, PointerEventData>      OutputSocketClickEvent;
+        public event Action<SocketOutput>                        OnOutputSocketDragStartEvent;
+        public event Action<SocketInput>                         OnOutputSocketDragDrop;
+        public event Action<SocketInput, PointerEventData>       OnInputSocketClickEvent;
+        public event Action<SocketOutput, PointerEventData>      OnOutputSocketClickEvent;
         
         public void InvokeSocketDragFrom(SocketOutput output)
         {
-            OutputSocketDragStartEvent?.Invoke(output);
+            OnOutputSocketDragStartEvent?.Invoke(output);
         }
 
         public void InvokeOutputSocketDragDropTo(SocketInput input)
         {
-            OutputSocketDragDrop?.Invoke(input);
+            OnOutputSocketDragDrop?.Invoke(input);
         }
 
         public void InvokeInputSocketClick(SocketInput input, PointerEventData eventData)
         {
-            InputSocketClickEvent?.Invoke(input, eventData);
+            OnInputSocketClickEvent?.Invoke(input, eventData);
         }
 
         public void InvokeOutputSocketClick(SocketOutput output, PointerEventData eventData)
         {
-            OutputSocketClickEvent?.Invoke(output, eventData);
+            OnOutputSocketClickEvent?.Invoke(output, eventData);
         }
 
 
 
         //  IConnectionEventListener
-        public event Action<string, PointerEventData>            NodeConnectionPointerClickEvent;
-        public event Action<SocketInput, SocketOutput>           SocketConnect;
-        public event Action<SocketInput, SocketOutput>           SocketDisconnect;
+        public event Action<string, PointerEventData>            OnConnectionPointerClickEvent;
+        public event Action<SocketInput, SocketOutput>           OnSocketConnect;
+        public event Action<SocketInput, SocketOutput>           OnSocketDisconnect;
         
-        public void InvokeNodeConnectionPointerClick(string connId, PointerEventData eventData)
+        public void InvokeConnectionPointerClick(string connId, PointerEventData eventData)
         {
-            NodeConnectionPointerClickEvent?.Invoke(connId, eventData);
+            OnConnectionPointerClickEvent?.Invoke(connId, eventData);
         }
     
         public void InvokeSocketConnection(SocketInput input, SocketOutput output)
         {
-            SocketConnect?.Invoke(input, output);
+            OnSocketConnect?.Invoke(input, output);
         }
 
         public void InvokeSocketDisconnection(SocketInput input, SocketOutput output)
         {
-            SocketDisconnect?.Invoke(input, output);
+            OnSocketDisconnect?.Invoke(input, output);
         }
 
         //  IContextMenuListener
@@ -100,9 +106,9 @@ namespace RuntimeNodeEditor
 
     public interface INodeEvents
     {
-        event Action<Node, PointerEventData> NodePointerClickEvent;
-        event Action<Node, PointerEventData> NodePointerDownEvent;
-        event Action<Node, PointerEventData> NodePointerDragEvent;
+        event Action<Node, PointerEventData> OnNodePointerClickEvent;
+        event Action<Node, PointerEventData> OnNodePointerDownEvent;
+        event Action<Node, PointerEventData> OnNodePointerDragEvent;
 
         void InvokeNodePointerClick(Node node, PointerEventData eventData);
         void InvokeNodePointerDown(Node node, PointerEventData eventData);
@@ -111,10 +117,10 @@ namespace RuntimeNodeEditor
 
     public interface ISocketEvents
     {
-        event Action<SocketOutput>                        OutputSocketDragStartEvent;
-        event Action<SocketInput>                         OutputSocketDragDrop;
-        event Action<SocketInput, PointerEventData>       InputSocketClickEvent;
-        event Action<SocketOutput, PointerEventData>      OutputSocketClickEvent;
+        event Action<SocketOutput>                        OnOutputSocketDragStartEvent;
+        event Action<SocketInput>                         OnOutputSocketDragDrop;
+        event Action<SocketInput, PointerEventData>       OnInputSocketClickEvent;
+        event Action<SocketOutput, PointerEventData>      OnOutputSocketClickEvent;
 
         void InvokeSocketDragFrom(SocketOutput output);
         void InvokeOutputSocketDragDropTo(SocketInput input);
@@ -124,11 +130,11 @@ namespace RuntimeNodeEditor
 
     public interface IConnectionEvents
     {
-        event Action<string,      PointerEventData>       NodeConnectionPointerClickEvent;
-        event Action<SocketInput, SocketOutput>           SocketConnect;
-        event Action<SocketInput, SocketOutput>           SocketDisconnect;
+        event Action<string,      PointerEventData>       OnConnectionPointerClickEvent;
+        event Action<SocketInput, SocketOutput>           OnSocketConnect;
+        event Action<SocketInput, SocketOutput>           OnSocketDisconnect;
 
-        void InvokeNodeConnectionPointerClick(string connId, PointerEventData eventData);
+        void InvokeConnectionPointerClick(string connId, PointerEventData eventData);
         void InvokeSocketConnection(SocketInput input, SocketOutput output);
         void InvokeSocketDisconnection(SocketInput input, SocketOutput output);
     }

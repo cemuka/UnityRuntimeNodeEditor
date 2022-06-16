@@ -5,17 +5,17 @@ namespace RuntimeNodeEditor
     public class LinePointerListener : MonoBehaviour, IPointerClickHandler
     {
         public string connId;
-        private IConnectionEvents _signal;
+        private IConnectionEvents _connectionEvents;
 
-        public void Init(IConnectionEvents signal, string connId)
+        public void Init(IConnectionEvents connectionEvents, string connId)
         {
-            _signal = signal;
+            _connectionEvents = connectionEvents;
             this.connId = connId;
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            _signal.InvokeNodeConnectionPointerClick(connId, eventData);
+            _connectionEvents.InvokeConnectionPointerClick(connId, eventData);
         }
 
     }
