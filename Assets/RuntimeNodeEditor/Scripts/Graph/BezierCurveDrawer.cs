@@ -9,15 +9,17 @@ namespace RuntimeNodeEditor
         public RectTransform pointerLocator;
         public RectTransform lineContainer;
         [Header("Bezier settings")]
-        public float vertexCount = 60;
+        public float vertexCount = 60f;
+        public float lineThickness = 4f;  
+        public Color connectionColor = Color.yellow;
 
         private RectTransform                _lineContainer;
         private RectTransform                _pointerLocator;
         private UILineRendererWithListener   _lineRenderer;
         private bool                         _hasRequest;
         private Socket                       _draggingSocket;
+        private IConnectionEvents            _events;
         private Dictionary<string, ConnectionDrawData> _connections;
-        private IConnectionEvents _events;
 
 
         public void Init(IConnectionEvents events)
@@ -104,9 +106,9 @@ namespace RuntimeNodeEditor
 
             var pointList = new List<Vector2>();
 
-            for (float i = 0; i < 120; i++)
+            for (float i = 0; i < vertexCount; i++)
             {
-                var t = i / 120;
+                var t = i / vertexCount;
                 pointList.Add(Utility.QuadraticCurve(GetLocalPoint(port.handle1.position),
                                                      GetLocalPoint(port.handle2.position),
                                                      GetLocalPoint(_pointerLocator.position),
@@ -119,6 +121,11 @@ namespace RuntimeNodeEditor
 
         private UILineRendererWithListener CreateLine()
         {
+            return CreateLine(connectionColor);
+        }
+
+        private UILineRendererWithListener CreateLine(Color color)
+        {
             var lineGO          = new GameObject("BezierLine");
             var linerenderer    = lineGO.AddComponent<UILineRendererWithListener>();
             var lineRect        = lineGO.GetComponent<RectTransform>();
@@ -129,9 +136,9 @@ namespace RuntimeNodeEditor
             lineRect.localScale = Vector3.one;
             lineRect.Stretch();
 
-            linerenderer.lineThickness = 4f;
-            linerenderer.color = Color.yellow;
-            linerenderer.raycastTarget = false;
+            linerenderer.lineThickness  = lineThickness;
+            linerenderer.color          = color;
+            linerenderer.raycastTarget  = false;
 
             return linerenderer;
         }
@@ -140,6 +147,7 @@ namespace RuntimeNodeEditor
         {
             return Utility.GetLocalPointIn(_lineContainer, pos);
         }
+
         private class ConnectionDrawData
         {
             public readonly string id;

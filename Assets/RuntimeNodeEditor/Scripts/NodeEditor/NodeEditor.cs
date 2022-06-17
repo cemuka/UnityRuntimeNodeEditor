@@ -71,10 +71,10 @@ namespace RuntimeNodeEditor
         //  create graph in scene
         public TGraphComponent CreateGraph<TGraphComponent>(RectTransform holder) where TGraphComponent : NodeGraph
         {
-            return CreateGraph<TGraphComponent>(holder, Color.gray);
+            return CreateGraph<TGraphComponent>(holder, Color.gray, Color.yellow);
         }
         
-        public TGraphComponent CreateGraph<TGraphComponent>(RectTransform holder, Color bgColor) where TGraphComponent : NodeGraph
+        public TGraphComponent CreateGraph<TGraphComponent>(RectTransform holder, Color bgColor, Color connectionColor) where TGraphComponent : NodeGraph
         {
             //  Create a parent
             var parent = new GameObject("NodeGraph");
@@ -129,7 +129,7 @@ namespace RuntimeNodeEditor
             var bezierDrawer = graph.AddComponent<BezierCurveDrawer>();
             bezierDrawer.pointerLocator = pLocatorRect;
             bezierDrawer.lineContainer = lineContainerRect;
-            bezierDrawer.vertexCount = 60;
+            bezierDrawer.connectionColor = connectionColor;
             
             var listener = pointerListener.AddComponent<GraphPointerListener>();
             
