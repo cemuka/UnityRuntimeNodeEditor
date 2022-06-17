@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 namespace RuntimeNodeEditor
 {
-    public class SignalSystem : INodeEvents, ISocketEvents, IConnectionEvents, IContextMenuEvents
+    public class SignalSystem : INodeEvents, ISocketEvents, IConnectionEvents
     {
         public event Action<PointerEventData> OnGraphPointerClickEvent;
         public event Action<PointerEventData> OnGraphPointerDragEvent;
@@ -93,15 +93,6 @@ namespace RuntimeNodeEditor
         {
             OnSocketDisconnect?.Invoke(input, output);
         }
-
-        //  IContextMenuListener
-        public event Action<ContextMenuData, ContextContainer>   OnMenuItemClicked;
-
-        public void InvokeMenuItemClicked(ContextMenuData data, ContextContainer container)
-        {
-            OnMenuItemClicked?.Invoke(data, container);
-        }
-
     }
 
     public interface INodeEvents
@@ -137,12 +128,5 @@ namespace RuntimeNodeEditor
         void InvokeConnectionPointerClick(string connId, PointerEventData eventData);
         void InvokeSocketConnection(SocketInput input, SocketOutput output);
         void InvokeSocketDisconnection(SocketInput input, SocketOutput output);
-    }
-
-    public interface IContextMenuEvents
-    {
-        event Action<ContextMenuData, ContextContainer>   OnMenuItemClicked;
-
-        void InvokeMenuItemClicked(ContextMenuData data, ContextContainer container);
     }
 }

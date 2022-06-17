@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,7 @@ namespace RuntimeNodeEditor
         
         private NodeGraph               _graph;
         private ContextMenu             _contextMenu;
-        private ContextMenuData         _contextMenuData;
+        private ContextItemData         _contextMenuData;
         private SignalSystem            _signalSystem;
 
         public virtual void StartEditor(NodeGraph graph)
@@ -26,7 +27,7 @@ namespace RuntimeNodeEditor
                 _contextMenu    = Instantiate(contextMenuPrefab, _graph.contextMenuContainer).GetComponent<ContextMenu>();
 
                 _graph.Init(_signalSystem, minZoom, maxZoom);
-                _contextMenu.Init(_signalSystem);
+                _contextMenu.Init();
                 CloseContextMenu();
             }
         }
@@ -49,7 +50,7 @@ namespace RuntimeNodeEditor
             _contextMenu.Clear();
         }
 
-        public void SetContextMenu(ContextMenuData ctx)
+        public void SetContextMenu(ContextItemData ctx)
         {
             _contextMenuData = ctx;
         }

@@ -4,11 +4,11 @@ namespace RuntimeNodeEditor
 {
     public class ContextMenuBuilder
     {
-        private ContextMenuData _root;
+        private ContextItemData _root;
 
         public ContextMenuBuilder()
         {
-            _root = new ContextMenuData("");
+            _root = new ContextItemData("");
         }
 
         public ContextMenuBuilder Add(string name, Action callback)
@@ -17,16 +17,16 @@ namespace RuntimeNodeEditor
             return this;
         }
 
-        public ContextMenuData Build()
+        public ContextItemData Build()
         {
             return _root;
         }
 
-        private ContextMenuData BuildHierarchy(string path)
+        private ContextItemData BuildHierarchy(string path)
         {
             path = path.Replace("\\", "/");
             string[] split = path.Split('/');
-            ContextMenuData menu_item = _root;
+            ContextItemData menu_item = _root;
             int index = 0;
 
             while (index < split.Length)
@@ -47,7 +47,7 @@ namespace RuntimeNodeEditor
 
                 if (!found)
                 {
-                    var new_menu_item = new ContextMenuData(split[index]) { parent = menu_item };
+                    var new_menu_item = new ContextItemData(split[index]) { parent = menu_item };
                     menu_item.children.Add(new_menu_item);
                     menu_item = new_menu_item;
                     ++index;
@@ -58,20 +58,22 @@ namespace RuntimeNodeEditor
         }
     }
 
-    public class ContextMenuData
+    public class ContextItemData
     {
         public string name;
-        public ContextMenuData parent;
-        public List<ContextMenuData> children;
+        public ContextItemData parent;
+        public List<ContextItemData> children;
         public Action callback;
 
         public bool IsRoot => parent == null;
         public int Level => IsRoot ? 0 : parent.Level + 1;
 
-        public ContextMenuData(string name)
+        public bool IsTerminal => children.Count == 0;
+
+        public ContextItemData(string name)
         {
             this.name = name;
-            children = new List<ContextMenuData>();
+            children = new List<ContextItemData>();
         }
     }
 }

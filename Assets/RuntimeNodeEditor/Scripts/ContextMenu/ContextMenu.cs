@@ -9,24 +9,23 @@ namespace RuntimeNodeEditor
 {
     public class ContextMenu : MonoBehaviour
     {
+        public event Action<ContextItemData, ContextContainer>   OnMenuItemClick;
+
         public GameObject contextContainerPrefab;
         public GameObject contextItemPrefab;
         private RectTransform _rect;
         private ContextContainer _root;
 
         private List<ContextContainer> _subContainers;
-        private IContextMenuEvents _menuEvents;
 
-        public void Init(IContextMenuEvents events)
+        public void Init()
         {
             _rect = this.GetComponent<RectTransform>();
             _subContainers = new List<ContextContainer>();
-            
-            _menuEvents = events;
-            _menuEvents.OnMenuItemClicked += OnMenuItemClicked;
+            OnMenuItemClick += OnMenuItemClicked;
         }
 
-        public void OnMenuItemClicked(ContextMenuData data, ContextContainer container)
+        public void OnMenuItemClicked(ContextItemData data, ContextContainer container)
         {
             List<ContextContainer> toRemove = new List<ContextContainer>();
             foreach (var item in _subContainers)
@@ -55,7 +54,7 @@ namespace RuntimeNodeEditor
             }
         }
 
-        public void Show(ContextMenuData context, Vector2 pos)
+        public void Show(ContextItemData context, Vector2 pos)
         {
             _rect.localPosition = pos;
             _root = Instantiate(contextContainerPrefab, _rect).GetComponent<ContextContainer>();
@@ -69,11 +68,11 @@ namespace RuntimeNodeEditor
             gameObject.SetActive(false);
         }
     
-        private void InitContextItem(ContextItem item, ContextMenuData node)
+        private void InitContextItem(ContextItem item, ContextItemData node)
         {
             item.nameText.text = node.name;
 
-            bool hasSubMenu = node.children.Count > 0;
+            bool hasSubMenu = node.IsTerminal == false;
             item.subContextIcon.gameObject.SetActive(hasSubMenu);
 
             if (hasSubMenu)
@@ -84,19 +83,22 @@ namespace RuntimeNodeEditor
             {
                 item.button.onClick.AddListener(() =>{
                     node.callback?.Invoke();
+                    
+                    Clear();
+                    Hide();
                 });
             }
         }
 
-        private void CreateSubContext(ContextMenuData node, Transform holder)
+        private void CreateSubContext(ContextItemData node, Transform holder)
         {
             var container = Instantiate(contextContainerPrefab, holder).GetComponent<ContextContainer>();
 
             PopulateContainer(container, node.children.ToArray());
-            _menuEvents.InvokeMenuItemClicked(node, container);
+            OnMenuItemClick?.Invoke(node, container);
         }
 
-        private void PopulateContainer(ContextContainer container, ContextMenuData[] data)
+        private void PopulateContainer(ContextContainer container, ContextItemData[] data)
         {
             foreach (var node in data)
             {
