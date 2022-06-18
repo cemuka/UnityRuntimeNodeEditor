@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 
-namespace RuntimeNodeEditor
+namespace RuntimeNodeEditor.Examples
 {
     public class FloatNode : Node
     {

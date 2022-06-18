@@ -25,6 +25,12 @@ It can be setup with a minimal configuration and its event based flow allows use
 
 ## Core concepts
 
+- Socket and Connection
+- Node
+- NodeGraph
+- NodeEditor
+- ContextMenu
+
 ### Socket and Connection
 
 > `output(value)` --> connection --> `input`

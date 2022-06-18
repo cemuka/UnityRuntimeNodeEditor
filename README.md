@@ -15,6 +15,10 @@ My goal was make it in runtime with unity ui.
 
 ![node editor](./img/node_gif2.gif)
 
+A simpler sample added  
+
+![node editor](./img/color.png)
+
 ## Example
 Simply extend the `NodeEditor`.
 

@@ -21,12 +21,11 @@ namespace RuntimeNodeEditor
         {
             _signalSystem   = new SignalSystem();
             _graph          = graph;
+            _graph.Init(_signalSystem, minZoom, maxZoom);
 
             if (contextMenuPrefab != null)
             {
                 _contextMenu    = Instantiate(contextMenuPrefab, _graph.contextMenuContainer).GetComponent<ContextMenu>();
-
-                _graph.Init(_signalSystem, minZoom, maxZoom);
                 _contextMenu.Init();
                 CloseContextMenu();
             }
