@@ -55,7 +55,7 @@ namespace RuntimeNodeEditor
         public void OnDisconnect(SocketInput input, IOutput output)
         {
             output.ValueUpdated -= OnConnectedValueUpdated;
-            _incomingOutputs.Add(output);
+            _incomingOutputs.Remove(output);
 
             OnConnectedValueUpdated();
         }
