@@ -8,7 +8,6 @@ namespace RuntimeNodeEditor
         public ISocketEvents    Events    { get { return _socketEvents; } }
         
         public string           socketId;
-        public Connection       connection;
         public SocketHandle     handle;
         public ConnectionType   connectionType;
         private Node            _ownerNode;
@@ -18,21 +17,11 @@ namespace RuntimeNodeEditor
         {
             _ownerNode = owner;
             _socketEvents = events;
+            Setup();
         }
 
-        public bool HasConnection()
-        {
-            return connection != null;
-        }
+        public virtual void Setup() { }
+        public abstract bool HasConnection();
 
-        public void Connect(Connection conn)
-        {
-            connection = conn;
-        }
-
-        public void Disconnect()
-        {
-            connection = null;
-        }
     }
 }

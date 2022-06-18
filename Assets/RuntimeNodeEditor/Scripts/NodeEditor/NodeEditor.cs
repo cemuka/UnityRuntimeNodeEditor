@@ -30,12 +30,7 @@ namespace RuntimeNodeEditor
                 CloseContextMenu();
             }
         }
-
-        public void UpdateEditor()
-        {
-            _graph.OnUpdate();
-        }
-
+        
         //  context methods
         public void DisplayContextMenu()
         {

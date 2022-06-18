@@ -108,11 +108,19 @@ namespace RuntimeNodeEditor
             drawer.Remove(conn.connId);
             input.OwnerNode.Disconnect(input, output);
 
-            input.Disconnect();
+            input.Disconnect(conn);
             output.Disconnect();
 
             connections.Remove(conn);
             _signalSystem.InvokeSocketDisconnection(input, output);
+        }
+
+        public void Disconnect(SocketInput input)
+        {
+            foreach (var conn in input.Connections)
+            {
+                Disconnect(conn);   
+            }
         }
 
         public void Disconnect(string id)
@@ -225,10 +233,10 @@ namespace RuntimeNodeEditor
             nodesToClear.ForEach(n => Delete(n));
         }
 
-        public void OnUpdate()
-        {
-            drawer.UpdateDraw();
-        }
+        // public void OnUpdate()
+        // {
+        //     drawer.UpdateDraw();
+        // }
 
         //  event handlers
         protected virtual void OnInputSocketClicked(SocketInput input, PointerEventData eventData)
@@ -260,12 +268,13 @@ namespace RuntimeNodeEditor
 
                 return;
             }
-            //  if sockets connected already
-            //  do nothing
+
+            // check if output connected to this target input already 
             if (_currentDraggingSocket.HasConnection() && target.HasConnection())
             {
-                if (_currentDraggingSocket.connection == target.connection)
+                if (target.Connections.Contains(_currentDraggingSocket.connection) )
                 {
+                    //  then do nothing
                     _currentDraggingSocket = null;
                     drawer.CancelDrag();
 
@@ -281,11 +290,12 @@ namespace RuntimeNodeEditor
                     if (target.connectionType == ConnectionType.Single)
                     {
                         //  disconnect old connection
-                        Disconnect(target.connection);
+                        Disconnect(target);
                     }
                 }
 
                 Connect(target, _currentDraggingSocket);
+                drawer.UpdateDraw();
             }
 
             _currentDraggingSocket = null;
@@ -296,6 +306,7 @@ namespace RuntimeNodeEditor
         {
             _currentDraggingSocket = socketOnDrag;
             drawer.StartDrag(_currentDraggingSocket);
+            drawer.UpdateDraw();
 
             //  check socket connection type
             if (_currentDraggingSocket.HasConnection())
@@ -338,6 +349,7 @@ namespace RuntimeNodeEditor
                 if (success)
                 {
                     node.SetPosition(_localPointerPos - _pointerOffset);
+                    drawer.UpdateDraw();
                 }
             }
         }

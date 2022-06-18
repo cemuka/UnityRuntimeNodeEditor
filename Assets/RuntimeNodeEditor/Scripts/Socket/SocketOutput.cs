@@ -6,7 +6,8 @@ namespace RuntimeNodeEditor
 {
     public class SocketOutput : Socket, IOutput, IPointerClickHandler, IDragHandler, IEndDragHandler
     {
-        private object _value;
+        public  Connection  connection;
+        private object      _value;
 
         public void SetValue(object value)
         {
@@ -47,6 +48,21 @@ namespace RuntimeNodeEditor
             }
 
             Events.InvokeOutputSocketDragDropTo(null);
+        }
+    
+        public void Connect(Connection conn)
+        {
+            connection = conn;
+        }
+
+        public void Disconnect()
+        {
+            connection = null;
+        }
+
+        public override bool HasConnection()
+        {
+            return connection != null;
         }
     }
 }

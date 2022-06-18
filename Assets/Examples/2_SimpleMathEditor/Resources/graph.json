@@ -1,0 +1,114 @@
+{
+    "name": "awesome graph",
+    "nodes": [
+        {
+            "id": "08b1632f-a42f-4f59-8feb-ba46be3d06bb",
+            "values": [
+                {
+                    "key": "floatValue",
+                    "value": "3"
+                }
+            ],
+            "posX": -433.0,
+            "posY": 188.0,
+            "path": "Nodes/FloatNode",
+            "inputSocketIds": [],
+            "outputSocketIds": [
+                "ff7e13df-395e-48e3-9edf-7f3d6f37599f"
+            ]
+        },
+        {
+            "id": "8fdc3099-689d-4251-b543-4fd7d190d133",
+            "values": [
+                {
+                    "key": "floatValue",
+                    "value": "3"
+                }
+            ],
+            "posX": -436.0,
+            "posY": 75.0,
+            "path": "Nodes/FloatNode",
+            "inputSocketIds": [],
+            "outputSocketIds": [
+                "37ae006e-b8e1-4fb8-a683-393d0b4a48d0"
+            ]
+        },
+        {
+            "id": "8908becc-cf9e-4df3-9ae0-1fcebd565fa2",
+            "values": [
+                {
+                    "key": "outputValue",
+                    "value": "9"
+                },
+                {
+                    "key": "opType",
+                    "value": "0"
+                }
+            ],
+            "posX": 385.0,
+            "posY": 36.0,
+            "path": "Nodes/MathOperationNode",
+            "inputSocketIds": [
+                "2231df32-5ddc-495c-b355-0ec35a9cfc62"
+            ],
+            "outputSocketIds": [
+                "8910cf0f-0476-4699-bfd0-703429b2e0d4"
+            ]
+        },
+        {
+            "id": "a36f318d-a2a0-42a3-b6b9-6f4b6e7bc61b",
+            "values": [
+                {
+                    "key": "floatValue",
+                    "value": "1"
+                }
+            ],
+            "posX": -439.0,
+            "posY": -32.0,
+            "path": "Nodes/FloatNode",
+            "inputSocketIds": [],
+            "outputSocketIds": [
+                "d10a14b1-ec86-4fbe-80d9-a6594b5ba36a"
+            ]
+        },
+        {
+            "id": "f896c31e-0264-4894-889d-c7dc1c412fa1",
+            "values": [
+                {
+                    "key": "outputValue",
+                    "value": "0"
+                },
+                {
+                    "key": "opType",
+                    "value": "0"
+                }
+            ],
+            "posX": -44.0,
+            "posY": -153.0,
+            "path": "Nodes/MathOperationNode",
+            "inputSocketIds": [
+                "2159a291-f6cb-4b4e-9a60-a47f7186d923"
+            ],
+            "outputSocketIds": [
+                "e6ee0ce8-80cb-4905-bf75-f4fd86e9cb30"
+            ]
+        }
+    ],
+    "connections": [
+        {
+            "id": "6b98143e-c25d-4530-90a2-7bd7a06e2fc1",
+            "outputSocketId": "ff7e13df-395e-48e3-9edf-7f3d6f37599f",
+            "inputSocketId": "2231df32-5ddc-495c-b355-0ec35a9cfc62"
+        },
+        {
+            "id": "39c7781b-402b-4caf-a07c-bca6f83cae65",
+            "outputSocketId": "37ae006e-b8e1-4fb8-a683-393d0b4a48d0",
+            "inputSocketId": "2231df32-5ddc-495c-b355-0ec35a9cfc62"
+        },
+        {
+            "id": "ec717103-828a-465d-a6e4-c51389af4b48",
+            "outputSocketId": "d10a14b1-ec86-4fbe-80d9-a6594b5ba36a",
+            "inputSocketId": "2231df32-5ddc-495c-b355-0ec35a9cfc62"
+        }
+    ]
+}

@@ -12,10 +12,5 @@ namespace RuntimeNodeEditor.Examples
             var graph = colorEditor.CreateGraph<NodeGraph>(editorHolder);
             colorEditor.StartEditor(graph);
         }
-
-        private void Update()
-        {
-            colorEditor.UpdateEditor();
-        }
     }
 }

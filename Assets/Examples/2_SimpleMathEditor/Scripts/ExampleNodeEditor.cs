@@ -12,7 +12,7 @@ namespace RuntimeNodeEditor.Examples
         {
             base.StartEditor(graph);
 
-            _savePath = Application.dataPath + "/Example/Resources/graph.json";
+            _savePath = Application.dataPath + "/Examples/2_SimpleMathEditor/Resources/graph.json";
             
             Events.OnGraphPointerClickEvent           += OnGraphPointerClick;
             Events.OnGraphPointerDragEvent            += OnGraphPointerDrag;

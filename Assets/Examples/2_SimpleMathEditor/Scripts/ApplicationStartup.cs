@@ -14,10 +14,5 @@ namespace RuntimeNodeEditor.Examples
             var graph = editor.CreateGraph<NodeGraph>(editorHolder);
             editor.StartEditor(graph);
         }
-
-        private void Update()
-        {
-            editor.UpdateEditor();
-        }
     }
 }
