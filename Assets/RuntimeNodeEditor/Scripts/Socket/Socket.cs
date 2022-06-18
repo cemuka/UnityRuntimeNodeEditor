@@ -2,13 +2,13 @@
 
 namespace RuntimeNodeEditor
 {
-    public class Socket : MonoBehaviour
+    public abstract class Socket : MonoBehaviour
     {
         public Node             OwnerNode { get { return _ownerNode; } }
         public ISocketEvents    Events    { get { return _socketEvents; } }
         
         public string           socketId;
-        public IConnection      connection;
+        public Connection       connection;
         public SocketHandle     handle;
         public ConnectionType   connectionType;
         private Node            _ownerNode;
@@ -25,7 +25,7 @@ namespace RuntimeNodeEditor
             return connection != null;
         }
 
-        public void Connect(IConnection conn)
+        public void Connect(Connection conn)
         {
             connection = conn;
         }

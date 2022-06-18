@@ -2,12 +2,17 @@ using UnityEngine;
 
 namespace RuntimeNodeEditor
 {
-    public class Connection : IConnection
+    public class Connection 
     {
-        public string connId;
-        public SocketInput input;
-        public SocketOutput output;
+        public readonly string connId;
+        public readonly SocketInput input;
+        public readonly SocketOutput output;
 
-        string IConnection.ConnId => connId;
+        public Connection(string connId, SocketInput input, SocketOutput output)
+        {
+            this.connId = connId;
+            this.input = input;
+            this.output = output;
+        }
     }
 }

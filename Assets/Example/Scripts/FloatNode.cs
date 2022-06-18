@@ -16,13 +16,13 @@ namespace RuntimeNodeEditor
             SetHeader("float");
 
             valueField.text = "0";
-            HandleInputValue(valueField.text);
+            HandleFieldValue(valueField.text);
 
             valueField.contentType = TMP_InputField.ContentType.DecimalNumber;
-            valueField.onValueChanged.AddListener(HandleInputValue);
+            valueField.onEndEdit.AddListener(HandleFieldValue);
         }
 
-        private void HandleInputValue(string value)
+        private void HandleFieldValue(string value)
         {
             float floatValue = float.Parse(value);
             outputSocket.SetValue(floatValue);
@@ -38,7 +38,7 @@ namespace RuntimeNodeEditor
             var value = serializer.Get("floatValue");
             valueField.SetTextWithoutNotify(value);
 
-            HandleInputValue(value);
+            HandleFieldValue(value);
         }
     }
 }

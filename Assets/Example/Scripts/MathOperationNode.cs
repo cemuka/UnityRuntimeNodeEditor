@@ -14,9 +14,13 @@ namespace RuntimeNodeEditor
         public SocketInput inputSocket;
         public SocketOutput outputSocket;
 
+        private List<IOutput> _incomingOutputs;
+
 
         public override void Setup()
         {
+            _incomingOutputs = new List<IOutput>();
+
             Register(outputSocket);
             Register(inputSocket);
 
@@ -43,6 +47,7 @@ namespace RuntimeNodeEditor
         public void OnConnection(SocketInput input, IOutput output)
         {
             output.ValueUpdated += OnConnectedValueUpdated;
+            _incomingOutputs.Add(output);
 
             OnConnectedValueUpdated();
         }
@@ -50,6 +55,7 @@ namespace RuntimeNodeEditor
         public void OnDisconnect(SocketInput input, IOutput output)
         {
             output.ValueUpdated -= OnConnectedValueUpdated;
+            _incomingOutputs.Add(output);
 
             OnConnectedValueUpdated();
         }
@@ -73,7 +79,7 @@ namespace RuntimeNodeEditor
         private void OnConnectedValueUpdated()
         {
             List<float> incomingValues = new List<float>();
-            foreach (var c in ConnectedOutputs)
+            foreach (var c in _incomingOutputs)
             {
                 incomingValues.Add(c.GetValue<float>());
             }

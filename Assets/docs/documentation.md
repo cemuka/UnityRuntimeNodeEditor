@@ -1,5 +1,16 @@
 
-Welcome to the RuntimeNodeEditor documentation.
+Welcome to the RuntimeNodeEditor documentation. 
+
+## Quick overview
+
+- RuntimeNodeEditor is a unityUI based node editor and works in playmode.
+
+- Socket based connections
+- 
+
+
+
+
 
 ## Your first editor
 

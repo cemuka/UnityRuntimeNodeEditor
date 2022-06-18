@@ -88,12 +88,7 @@ namespace RuntimeNodeEditor
 
         public void Connect(SocketInput input, SocketOutput output)
         {
-            var connection = new Connection()
-            {
-                connId  = NewId(),
-                input   = input,
-                output  = output
-            };
+            var connection = new Connection(NewId(), input, output);
 
             input.Connect(connection);
             output.Connect(connection);
@@ -118,12 +113,6 @@ namespace RuntimeNodeEditor
 
             connections.Remove(conn);
             _signalSystem.InvokeSocketDisconnection(input, output);
-        }
-
-        public void Disconnect(IConnection conn)
-        {
-            var connection = connections.FirstOrDefault<Connection>(c => c.connId == conn.ConnId);
-            Disconnect(connection);
         }
 
         public void Disconnect(string id)
@@ -399,12 +388,7 @@ namespace RuntimeNodeEditor
 
             if (input != null && output != null)
             {
-                var connection = new Connection()
-                {
-                    connId = data.id,
-                    input = input,
-                    output = output
-                };
+                var connection = new Connection(data.id, input, output);
 
                 input.Connect(connection);
                 output.Connect(connection);

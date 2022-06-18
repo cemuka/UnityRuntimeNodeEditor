@@ -13,7 +13,6 @@ namespace RuntimeNodeEditor
         public string               LoadPath    { get; private set; }
         public List<SocketOutput>   Outputs     { get; private set; }
         public List<SocketInput>    Inputs      { get; private set; }
-        public List<SocketOutput>   ConnectedOutputs { get; private set; }
 
         public event Action<SocketInput, IOutput> OnConnectionEvent;
         public event Action<SocketInput, IOutput> OnDisconnectEvent;
@@ -32,7 +31,6 @@ namespace RuntimeNodeEditor
             LoadPath            = path;
             Outputs             = new List<SocketOutput>();
             Inputs              = new List<SocketInput>();
-            ConnectedOutputs    = new List<SocketOutput>();
 
             _nodeEvents         = nodeEvents;
             _socketEvents       = socketEvents;
@@ -63,13 +61,11 @@ namespace RuntimeNodeEditor
 
         public void Connect(SocketInput input, SocketOutput output)
         {
-            ConnectedOutputs.Add(output);
             OnConnectionEvent?.Invoke(input, output);
         }
 
         public void Disconnect(SocketInput input, SocketOutput output)
         {
-            ConnectedOutputs.Remove(output);
             OnDisconnectEvent?.Invoke(input, output);
         }
 
