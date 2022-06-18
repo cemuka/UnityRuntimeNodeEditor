@@ -48,11 +48,6 @@ public class ApplicationStartup : MonoBehaviour
         // var graph = editor.CreateGraph<NodeGraph>(editorHolder, myAwsomeColor);
         editor.StartEditor(graph);
     }
-
-    private void Update()
-    {
-        editor.UpdateEditor();
-    }
 }
 
 ```
@@ -68,11 +63,6 @@ public class ApplicationStartup : MonoBehaviour
     private void Start()
     {
         editor.StartEditor(graph);
-    }
-
-    private void Update()
-    {
-        editor.UpdateEditor();
     }
 }
 ```  
