@@ -117,7 +117,8 @@ namespace RuntimeNodeEditor
 
         public void Disconnect(SocketInput input)
         {
-            foreach (var conn in input.Connections)
+            var dcList = new List<Connection>(input.Connections);
+            foreach (var conn in dcList)
             {
                 Disconnect(conn);   
             }

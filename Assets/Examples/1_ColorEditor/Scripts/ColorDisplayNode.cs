@@ -17,6 +17,10 @@ namespace RuntimeNodeEditor.Examples
 
         public override void Setup()
         {
+            rInput.connectionType = ConnectionType.Single;
+            gInput.connectionType = ConnectionType.Single;
+            bInput.connectionType = ConnectionType.Single;
+
             Register(rInput);
             Register(gInput);
             Register(bInput);
