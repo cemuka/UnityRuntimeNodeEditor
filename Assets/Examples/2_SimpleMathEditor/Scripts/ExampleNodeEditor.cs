@@ -16,7 +16,6 @@ namespace RuntimeNodeEditor.Examples
             _savePath = Application.dataPath + "/Examples/2_SimpleMathEditor/Resources/graph.json";
             
             Events.OnGraphPointerClickEvent           += OnGraphPointerClick;
-            Events.OnGraphPointerDragEvent            += OnGraphPointerDrag;
             Events.OnNodePointerClickEvent            += OnNodePointerClick;
             Events.OnConnectionPointerClickEvent      += OnNodeConnectionPointerClick;
         }
@@ -53,14 +52,6 @@ namespace RuntimeNodeEditor.Examples
             CloseContextMenu();
             Graph.Clear();
             Graph.LoadFile(savePath);
-        }
-
-        private void OnGraphPointerDrag(PointerEventData eventData)
-        {
-            if (eventData.button == PointerEventData.InputButton.Middle)
-            {
-                Graph.GraphContainer.localPosition += new Vector3(eventData.delta.x, eventData.delta.y);
-            }
         }
 
         private void OnNodePointerClick(Node node, PointerEventData eventData)

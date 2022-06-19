@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -25,6 +26,10 @@ namespace RuntimeNodeEditor
         private Vector2             _pointerOffset;
 	    private Vector2             _localPointerPos;
 	    private Vector2             _duplicateOffset;
+        private Vector2             _zoomCenterPos;
+        private float               _currentZoom;
+        private float               _minZoom;
+        private float               _maxZoom;
         private RectTransform       _nodeContainer;
 	    private RectTransform       _graphContainer;
 
@@ -38,15 +43,20 @@ namespace RuntimeNodeEditor
             nodes                                       = new List<Node>();
 	        connections                                 = new List<Connection>();
             _signalSystem                               = signalSystem;
+            _currentZoom                                = 1f;
+            _minZoom                                    = minZoom;
+            _maxZoom                                    = maxZoom;
 
             _signalSystem.OnOutputSocketDragStartEvent    += OnOutputDragStarted;
-            _signalSystem.OnOutputSocketDragDropEvent          += OnOutputDragDroppedTo;
+            _signalSystem.OnOutputSocketDragDropEvent     += OnOutputDragDroppedTo;
             _signalSystem.OnInputSocketClickEvent         += OnInputSocketClicked;
             _signalSystem.OnOutputSocketClickEvent        += OnOutputSocketClicked;
             _signalSystem.OnNodePointerDownEvent          += OnNodePointerDown;
             _signalSystem.OnNodePointerDragEvent          += OnNodePointerDrag;
+            _signalSystem.OnGraphPointerDragEvent         += OnGraphPointerDragged;
+            _signalSystem.OnGraphPointerScrollEvent       += OnGraphPointerScrolled;
 
-            pointerListener.Init(_signalSystem, _graphContainer, minZoom, maxZoom);
+            pointerListener.Init(_signalSystem);
             drawer.Init(_signalSystem);
         }
 
@@ -170,6 +180,8 @@ namespace RuntimeNodeEditor
                 {
                     LoadConn(data);
                 }
+
+                drawer.UpdateDraw();
             }
             else
             {
@@ -238,6 +250,8 @@ namespace RuntimeNodeEditor
         {
             var nodesToClear = new List<Node>(nodes);
             nodesToClear.ForEach(n => Delete(n));
+
+            drawer.UpdateDraw();
         }
 
         //  event handlers
@@ -334,6 +348,36 @@ namespace RuntimeNodeEditor
             DragNode(node, eventData);
         }
 
+        protected virtual void OnGraphPointerScrolled(PointerEventData eventData)
+        {
+            if (Mathf.Abs(eventData.scrollDelta.y) > float.Epsilon)
+            {
+                _currentZoom    *= 1f + eventData.scrollDelta.y;
+	            _currentZoom    = Mathf.Clamp(_currentZoom, _minZoom, _maxZoom);
+	            _zoomCenterPos  = Utility.GetMousePosition();
+
+                Vector2 beforePointInContent;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(_graphContainer, _zoomCenterPos, null, out beforePointInContent);
+
+                Vector2 pivotPosition = new Vector3(_graphContainer.pivot.x * _graphContainer.rect.size.x, _graphContainer.pivot.y * _graphContainer.rect.size.y);
+                Vector2 posFromBottomLeft = pivotPosition + beforePointInContent;
+                SetPivot(_graphContainer, new Vector2(posFromBottomLeft.x / _graphContainer.rect.width, posFromBottomLeft.y / _graphContainer.rect.height));
+
+                if (Mathf.Abs(_graphContainer.localScale.x - _currentZoom) > 0.001f)
+                {
+                    _graphContainer.localScale = Vector3.one * _currentZoom;
+                }
+            }
+        }
+
+        protected virtual void OnGraphPointerDragged(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Middle)
+            {
+                _graphContainer.localPosition += new Vector3(eventData.delta.x, eventData.delta.y);
+            }
+        }
+
 
         //  helper methods
         private void DragNode(Node node, PointerEventData eventData)
@@ -414,6 +458,14 @@ namespace RuntimeNodeEditor
             }
         }
 
+        private void SetPivot(RectTransform rectTransform, Vector2 pivot)
+        {
+            Vector2 size = rectTransform.rect.size;
+            Vector2 deltaPivot = rectTransform.pivot - pivot;
+            Vector3 deltaPosition = new Vector3(deltaPivot.x * size.x, deltaPivot.y * size.y) * rectTransform.localScale.x;
+            rectTransform.pivot = pivot;
+            rectTransform.localPosition -= deltaPosition;
+        }
         private static string NewId() { return System.Guid.NewGuid().ToString(); }
     }
 }

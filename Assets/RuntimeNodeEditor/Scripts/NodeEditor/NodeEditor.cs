@@ -8,8 +8,8 @@ namespace RuntimeNodeEditor
     {
         public NodeGraph                Graph  { get { return _graph; } }
         public SignalSystem             Events { get { return _signalSystem; } }
-        public float                    minZoom;
-        public float                    maxZoom;
+        public float                    minZoom = 0.3f;
+        public float                    maxZoom = 2f;
         public GameObject               contextMenuPrefab;
         
         private NodeGraph               _graph;

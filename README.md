@@ -45,7 +45,7 @@ public class ApplicationStartup : MonoBehaviour
     private void Start()
     {
         var graph = editor.CreateGraph<NodeGraph>(editorHolder);
-        // var graph = editor.CreateGraph<NodeGraph>(editorHolder, myAwsomeColor);
+        // var graph = editor.CreateGraph<NodeGraph>(editorHolder, bgColor, connColor);
         editor.StartEditor(graph);
     }
 }
@@ -57,7 +57,6 @@ You may want to use your own custom graph and prefab as well.
 public class ApplicationStartup : MonoBehaviour
 {
     public RectTransform        editorHolder;
-    public MyCustomGraph        graph;
     public ExampleNodeEditor    editor;
 
     private void Start()
@@ -188,7 +187,6 @@ To create a node from your editor, pass its path from `Resources` folder.
 private void CreateMyNode()
 {
     graph.Create("Prefabs/Nodes/MyAwesomeNode");    //  your prefab path in resources
-    CloseContextMenu();
 }
 ```
 

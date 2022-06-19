@@ -9,11 +9,11 @@ Welcome to the RuntimeNodeEditor documentation.
 
 - A `Node.cs` is a container for sockets. It listens connection events for its sockets.
 
-- A `NodeGraph.cs` can create nodes and draws connections between sockets. Can be serialized into json file.
+- A `NodeGraph.cs` can create nodes and draws connections between sockets. Can be exported or serialized into json file.
 
-- `NodeEditor.cs` is a MonoBehavior class and lives in the scene. Can listen graph events. It has a simple context menu feature.
+- `NodeEditor.cs` is derives from `MonoBehavior` and lives in the scene. Can listen graph events. It has a simple context menu feature.
 
-- It is possible to have multiple node editors in a scene. Each editor will 
+- It is possible to have multiple node editors in a scene. Each editor will handle its events and process them.
 
 - Works completely event based. Integrates with unity `EventSystem` to listen pointer events for sockets, nodes and graph.
 
@@ -25,7 +25,201 @@ Welcome to the RuntimeNodeEditor documentation.
 RuntimeNodeEditor is intended as a framework to work easily in a unity scene. 
 It can be setup with a minimal configuration and its event based flow allows users to create their system on top of it. 
 
-## Quick start
+## Quick tutorial
+
+Simply extend the `NodeEditor`.
+
+```c#
+public class MyNodeEditor : NodeEditor
+{
+    public override void StartEditor(NodeGraph graph)
+    {
+        base.StartEditor(graph);
+
+        //  make your custom initialization here
+    }
+}
+```
+
+```c#
+public class ApplicationStartup : MonoBehaviour
+{
+    public RectTransform        editorHolder;   //nested in a canvas object
+    
+    private MyNodeEditor   _editor;
+
+    private void Start()
+    {
+        _editor = gameObject.AddComponent<MyEditor>();        
+        var graph = _editor.CreateGraph<NodeGraph>(editorHolder, Color.black, Color.green);
+        _editor.StartEditor(graph);
+    }
+}
+```
+
+If we run this example, a graph will be created as a child in `editorHolder` object. But editor and graph won't do anything. Let's add some functuionality.
+
+RuntimeNodeEditor relies on `Resorces` folder to create node prefabs. Project comes with a couple of examples. We'll use the sample nodes like below.
+
+```c#
+public class MyNodeEditor : NodeEditor
+{
+    public override void StartEditor(NodeGraph graph)
+    {
+        base.StartEditor(graph);
+
+        //  make your custom initialization here
+
+        //  use fluent builder create a context
+        var ctx = new ContextMenuBuilder()
+
+        .Add("nodes/float", ()=> Graph.Create("Nodes/FloatNode"))
+        .Add("nodes/opeartion", ()=> Graph.Create("Nodes/MathOperationNode"))
+        .Build();
+
+        //  set the context
+        SetContextMenu(ctx);
+    }
+}
+```
+
+Now we should tell how to display the context menu.
+
+```c#
+public class MyNodeEditor : NodeEditor
+{
+    public override void StartEditor(NodeGraph graph)
+    {
+        base.StartEditor(graph);
+
+        //  make your custom initialization here
+
+        //  use fluent builder create a context
+        var ctx = new ContextMenuBuilder()
+
+        .Add("nodes/float", ()=> Graph.Create("Nodes/FloatNode"))
+        .Add("nodes/opeartion", ()=> Graph.Create("Nodes/MathOperationNode"))
+        .Build();
+
+        //  set the context
+        SetContextMenu(ctx);
+
+        //  listen graph events
+        Events.OnGraphPointerClickEvent += OnClick;
+    }
+
+    private void OnClick(PointerEventData eventData)
+    {
+        //  handle event
+    }
+}
+```
+
+We subscribe to `OnGraphPointerClickEvent` to listen pointer events on graph. Let's add what to do.
+
+```c#
+public class MyNodeEditor : NodeEditor
+{
+    ...
+
+    private void OnClick(PointerEventData eventData)
+    {
+        if(eventData.button == PointerEventData.InputButton.Left)
+        {
+            CloseContextMenu();
+        }
+            
+        if(eventData.button == PointerEventData.InputButton.Right)
+        {
+            DisplayContextMenu();
+        }
+    }
+}
+```
+
+Let's right click and see the result.
+
+![quick context](../../img/quick-ctx.png)
+
+Last part is the context menu prefab, it also comes with samples. You can modify the prefab's visuals to fit for your needs easily.
+
+```c#
+public class ApplicationStartup : MonoBehaviour
+{
+    public RectTransform editorHolder;
+    public GameObject   ctxMenuPrefab; // 1. assigned from the scene
+    
+    private MyEditor   _editor;
+
+    private void Start()
+    {
+        _editor = gameObject.AddComponent<MyEditor>();
+        _editor.contextMenuPrefab = ctxMenuPrefab;  // 2. assign to editor
+        
+        var graph = _editor.CreateGraph<NodeGraph>(editorHolder, Color.black, Color.green);
+        _editor.StartEditor(graph);
+    }
+}
+```
+
+Note that context menu is an optional feature. `NodeEditor` won't need it in order to operate.
+
+Now if you hit play, you can zoom in/out with middle mouse scroll, middle button drag to navigate and connect sockets from your nodes.
+
+![quick context](../../img/quick-nodes.png)
+
+Here is the complete sample: 
+
+```c#
+public class MyEditor : NodeEditor
+{
+    public override void StartEditor(NodeGraph graph)
+    {
+        base.StartEditor(graph);
+
+        var ctx = new ContextMenuBuilder()
+            .Add("nodes/float", ()=> Graph.Create("Nodes/FloatNode"))
+            .Add("nodes/opeartion", ()=> Graph.Create("Nodes/MathOperationNode"))
+            .Build();
+
+        SetContextMenu(ctx);
+
+        Events.OnGraphPointerClickEvent += OnClick;
+    }
+
+    private void OnClick(PointerEventData eventData)
+    {
+        if(eventData.button == PointerEventData.InputButton.Left)
+        {
+            CloseContextMenu();
+        }
+            
+        if(eventData.button == PointerEventData.InputButton.Right)
+        {
+            DisplayContextMenu();
+        }
+    }
+}
+```
+
+```c#
+public class ApplicationStartup : MonoBehaviour
+{
+    public RectTransform editorHolder;
+    public GameObject   ctxMenuPrefab;
+    
+    private MyEditor   _editor;
+
+    private void Start()
+    {
+        _editor = gameObject.AddComponent<MyEditor>();
+        _editor.contextMenuPrefab = ctxMenuPrefab;
+        
+        var graph = _editor.CreateGraph<NodeGraph>(editorHolder, Color.black, Color.green);
+        _editor.StartEditor(graph);
+    }
+}
+```
 
 
 
@@ -133,7 +327,7 @@ It also listen the pointer events from graph, nodes and connections. Check out `
 
 ### NodeEditor
 
-`NodeEditor is the central part of the framework. It can be simplified a complete editor like below.
+`NodeEditor` is the central part of the framework. A standart editor can be simplified like below.
 
 ```c#
 public class MyNodeEditor : NodeEditor
@@ -281,46 +475,8 @@ public class MyNodeEditor : NodeEditor
 
 
 ## How to create a node
+## How to serialize a graph
 ## Make your custom node
-## Anatomy of the graph
-
-## Your first editor
-
-```c#
-public class MyNodeEditor : NodeEditor
-{
-    public override void StartEditor(NodeGraph graph)
-    {
-        base.StartEditor(graph);
-
-        //  make your custom initialization here
-    }
-}
-```
-
-```c#
-public class ApplicationStartup : MonoBehaviour
-{
-    public RectTransform    editorHolder;  // graph container will stretch in this transform. 
-    public MyNodeEditor     editor;
-
-    private void Start()
-    {
-        var graph = editor.CreateGraph<NodeGraph>(editorHolder);
-        editor.StartEditor(graph);
-    }
-
-    private void Update()
-    {
-        //  handles drawing connections
-        editor.UpdateEditor();
-    }
-}
-```
-
-
-
-
+## Make your custom graph
 
 ## Example editors in project
-There is a complete 

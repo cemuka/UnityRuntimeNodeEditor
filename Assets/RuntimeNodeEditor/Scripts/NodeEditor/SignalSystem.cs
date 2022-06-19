@@ -7,7 +7,7 @@ namespace RuntimeNodeEditor
     {
         public event Action<PointerEventData>               OnGraphPointerClickEvent;
         public event Action<PointerEventData>               OnGraphPointerDragEvent;
-        public event Action<PointerEventData>               OnGraphPointeScrollEvent;
+        public event Action<PointerEventData>               OnGraphPointerScrollEvent;
 
         public void InvokeGraphPointerClick(PointerEventData eventData)
         {
@@ -21,7 +21,7 @@ namespace RuntimeNodeEditor
 
         public void InvokeGraphPointerScroll(PointerEventData eventData)
         {
-            OnGraphPointeScrollEvent?.Invoke(eventData);
+            OnGraphPointerScrollEvent?.Invoke(eventData);
         }
 
         //  INodePointerListener
