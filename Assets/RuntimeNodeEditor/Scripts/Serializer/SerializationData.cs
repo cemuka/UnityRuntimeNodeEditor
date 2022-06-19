@@ -32,7 +32,6 @@ namespace RuntimeNodeEditor
 
     public class GraphData
     {
-        public string name;
         public NodeData[] nodes;
         public ConnectionData[] connections;
     }

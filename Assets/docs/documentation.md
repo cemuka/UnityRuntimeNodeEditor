@@ -17,11 +17,19 @@ Welcome to the RuntimeNodeEditor documentation.
 
 - Works completely event based. Integrates with unity `EventSystem` to listen pointer events for sockets, nodes and graph.
 
+- Customizable for every detail. Some parts of the framework require manual work 
+
 
 # Getting started
 
 RuntimeNodeEditor is intended as a framework to work easily in a unity scene. 
 It can be setup with a minimal configuration and its event based flow allows users to create their system on top of it. 
+
+## Quick start
+
+
+
+
 
 ## Core concepts
 
@@ -30,6 +38,7 @@ It can be setup with a minimal configuration and its event based flow allows use
 - NodeGraph
 - NodeEditor
 - ContextMenu
+- Serializing
 
 ### Socket and Connection
 
@@ -38,9 +47,9 @@ It can be setup with a minimal configuration and its event based flow allows use
 A single connection happens between an input and an output socket. 
 This is a one-direction communication from the output to input. An input may accept single or multiple connections. 
 
-`InputSocket` and `OutputSocket` is implemented to work as generic sockets derived from abstract `Socket`. 
+`SocketInput` and `SocketOutput` is implemented to work as generic sockets derived from abstract `Socket`. 
 
-`OutputSocket` implements `IOutput` interface to make it easy to share and read the incoming value as an object.
+`SocketOutput` implements `IOutput` interface to make it easy to share and read the incoming value as an object.
 
 ```c#
 public interface IOutput
@@ -50,21 +59,19 @@ public interface IOutput
 }
 ```
 
-
-
 ### Node
 
 ```c#
 public class SampleNode : Node
 {
-    public OutputSocket myOutput;
+    public SocketOutput myOutput;
 }
 ```
 
-A node is a hub for sockets. It registers and controlls its sockets when a connection invoked. 
+`Node` is a hub for sockets. It registers and controlls its sockets when a connection invoked. 
 
 
-When a connection succeeded, input socket's owner node invokes the `OnConnectionEvent` event.
+When a connection established, input socket's owner node invokes the `OnConnectionEvent` event.
 
 
 ```c#
@@ -98,16 +105,35 @@ public class SampleNode : Node
 }
 ```
 
+This way it is possible to listen connection and disconnection events to get information from outputs
 
 ### NodeGraph
+
+`NodeGraph` will contain nodes, connections and connection curves. Graph can create a node by providing its prefab path from `Resources` folder.
+
+```c#
+public class MyNodeEditor : NodeEditor
+{
+    ...
+
+    private void SomeMethod()
+    {
+        Graph.Create("path/to/prefab/in/Resources");
+    }
+}
+
+```
+
+Following a prefab path is a design decision. It has a certain benefits to make prefab instantiation easy (and serialization)but comes with some manual work for sure. 
+
+Graph connects sockets by listening pointer events by default. It is possible to override its virtual methods or make costumizations.
+
+It also listen the pointer events from graph, nodes and connections. Check out `SignalSystem.cs` for the complete events.
+
+
 ### NodeEditor
-### ContextMenu
 
-
-
-
-
-## Your first editor
+`NodeEditor is the central part of the framework. It can be simplified a complete editor like below.
 
 ```c#
 public class MyNodeEditor : NodeEditor
@@ -116,32 +142,21 @@ public class MyNodeEditor : NodeEditor
     {
         base.StartEditor(graph);
 
-        //  make your custom initialization here
+
+        //  Create, delete or duplicate nodes
+        
+        //  Show or hide context menu
+        
+        //  Set context menu actions
+
+        //  Listen events
     }
 }
+
 ```
 
-```c#
-public class ApplicationStartup : MonoBehaviour
-{
-    public RectTransform    editorHolder;  // graph container will stretch in this transform. 
-    public MyNodeEditor     editor;
+### Context menu
 
-    private void Start()
-    {
-        var graph = editor.CreateGraph<NodeGraph>(editorHolder);
-        editor.StartEditor(graph);
-    }
-
-    private void Update()
-    {
-        //  handles drawing connections
-        editor.UpdateEditor();
-    }
-}
-```
-
-## Context menu
 RuntimeNodeEditor comes with a simple context menu solution.
 Context menu is totally optional but I believe that a node editor wouldn't be much enjoyable without a context menu. 
 Because of that you have complete controll on how it behave.
@@ -188,13 +203,124 @@ public class MyNodeEditor : NodeEditor
 }
 ```
 
+### Serializing
+
+A graph can be serialized and deserialized. 
+
+Note that, in order to use `Duplicate` method in NodeGrap target node must implement serialization. Here is a sample node from `Examples` folder.
+
+```c#
+
+//  FloatNode.cs
+public class FloatNode : Node
+{
+    public TMP_InputField valueField;
+    
+    ...
+
+    public override void OnSerialize(Serializer serializer)
+    {
+        serializer.Add("floatValue", valueField.text);
+    }
+
+    public override void OnDeserialize(Serializer serializer)
+    {
+        var value = serializer.Get("floatValue");
+        valueField.SetTextWithoutNotify(value);
+
+        ...
+    }
+
+    ...
+}
+
+```
+
+Serializitaion produces a json string and NodeGraph can write it as a file to specified path. It uses unity `JsonUtility`.
+
+Since its text based, `JsonUtility` can be used further like below
+
+```c#
+
+//  Serialize
+var jsonData = JsonUtility.ToJson(myCustomData);
+serializer.Add("myData", jsonData);
 
 
+//  Deserialize
+var jsonData = serializer.Get("myData");   
+myCustomData = JsonUtility.FromJson<CustomJsonData>(jsonData);    
+```
 
+Finally save to a file or load from a file.
 
-## Example node editor
-There is a complete 
+```c#
+
+//  ExampleNodeEditor.cs
+public class MyNodeEditor : NodeEditor
+{
+    ...
+
+    private void SaveGraph(string savePath)
+    {
+        CloseContextMenu();
+        Graph.Save(savePath);
+    }
+
+    private void LoadGraph(string savePath)
+    {
+        CloseContextMenu();
+        Graph.Clear();
+        Graph.Load(savePath);
+    }
+
+    ...
+}
+
+```
+
 
 ## How to create a node
 ## Make your custom node
 ## Anatomy of the graph
+
+## Your first editor
+
+```c#
+public class MyNodeEditor : NodeEditor
+{
+    public override void StartEditor(NodeGraph graph)
+    {
+        base.StartEditor(graph);
+
+        //  make your custom initialization here
+    }
+}
+```
+
+```c#
+public class ApplicationStartup : MonoBehaviour
+{
+    public RectTransform    editorHolder;  // graph container will stretch in this transform. 
+    public MyNodeEditor     editor;
+
+    private void Start()
+    {
+        var graph = editor.CreateGraph<NodeGraph>(editorHolder);
+        editor.StartEditor(graph);
+    }
+
+    private void Update()
+    {
+        //  handles drawing connections
+        editor.UpdateEditor();
+    }
+}
+```
+
+
+
+
+
+## Example editors in project
+There is a complete 

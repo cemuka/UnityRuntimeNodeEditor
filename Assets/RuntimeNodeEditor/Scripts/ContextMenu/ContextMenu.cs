@@ -11,10 +11,10 @@ namespace RuntimeNodeEditor
     {
         public event Action<ContextItemData, ContextContainer>   OnMenuItemClick;
 
-        public GameObject contextContainerPrefab;
-        public GameObject contextItemPrefab;
-        private RectTransform _rect;
-        private ContextContainer _root;
+        public GameObject           contextContainerPrefab;
+        public GameObject           contextItemPrefab;
+        private RectTransform       _rect;
+        private ContextContainer     _root;
 
         private List<ContextContainer> _subContainers;
 

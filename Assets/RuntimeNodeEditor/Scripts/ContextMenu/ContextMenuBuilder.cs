@@ -26,19 +26,18 @@ namespace RuntimeNodeEditor
         {
             path = path.Replace("\\", "/");
             string[] split = path.Split('/');
-            ContextItemData menu_item = _root;
+            ContextItemData itemData = _root;
             int index = 0;
 
             while (index < split.Length)
             {
                 bool found = false;
 
-
-                for (int i = 0; i < menu_item.children.Count; ++i)
+                for (int i = 0; i < itemData.children.Count; ++i)
                 {
-                    if (menu_item.children[i].name == split[index])
+                    if (itemData.children[i].name == split[index])
                     {
-                        menu_item = menu_item.children[i];
+                        itemData = itemData.children[i];
                         ++index;
                         found = true;
                         break;
@@ -47,14 +46,15 @@ namespace RuntimeNodeEditor
 
                 if (!found)
                 {
-                    var new_menu_item = new ContextItemData(split[index]) { parent = menu_item };
-                    menu_item.children.Add(new_menu_item);
-                    menu_item = new_menu_item;
+                    var newItemData = new ContextItemData(split[index]) { parent = itemData };
+                    itemData.children.Add(newItemData);
+                    itemData = newItemData;
                     ++index;
                     found = true;
                 }
             }
-            return menu_item;
+
+            return itemData;
         }
     }
 
@@ -65,10 +65,9 @@ namespace RuntimeNodeEditor
         public List<ContextItemData> children;
         public Action callback;
 
-        public bool IsRoot => parent == null;
-        public int Level => IsRoot ? 0 : parent.Level + 1;
-
-        public bool IsTerminal => children.Count == 0;
+        public bool IsRoot      => parent == null;
+        public int  Level       => IsRoot ? 0 : parent.Level + 1;
+        public bool IsTerminal  => children.Count == 0;
 
         public ContextItemData(string name)
         {

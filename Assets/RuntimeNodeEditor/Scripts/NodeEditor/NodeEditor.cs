@@ -49,20 +49,6 @@ namespace RuntimeNodeEditor
             _contextMenuData = ctx;
         }
 
-        //  save and load
-        public void SaveGraph(string path)
-        {
-            CloseContextMenu();
-            _graph.Save(path);
-        }
-
-        public void LoadGraph(string path)
-        {
-            CloseContextMenu();
-            _graph.Clear();
-            _graph.Load(path);
-        }
-
         //  create graph in scene
         public TGraphComponent CreateGraph<TGraphComponent>(RectTransform holder) where TGraphComponent : NodeGraph
         {

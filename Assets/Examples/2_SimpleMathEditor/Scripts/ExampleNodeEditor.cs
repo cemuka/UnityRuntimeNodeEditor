@@ -1,4 +1,5 @@
-﻿using RuntimeNodeEditor;
+﻿using System;
+using RuntimeNodeEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -40,7 +41,20 @@ namespace RuntimeNodeEditor.Examples
                 case PointerEventData.InputButton.Left: CloseContextMenu(); break;
             }
         }
-    
+
+        private void SaveGraph(string savePath)
+        {
+            CloseContextMenu();
+            Graph.SaveFile(savePath);
+        }
+
+        private void LoadGraph(string savePath)
+        {
+            CloseContextMenu();
+            Graph.Clear();
+            Graph.LoadFile(savePath);
+        }
+
         private void OnGraphPointerDrag(PointerEventData eventData)
         {
             if (eventData.button == PointerEventData.InputButton.Middle)

@@ -40,7 +40,7 @@ namespace RuntimeNodeEditor
             _signalSystem                               = signalSystem;
 
             _signalSystem.OnOutputSocketDragStartEvent    += OnOutputDragStarted;
-            _signalSystem.OnOutputSocketDragDrop          += OnOutputDragDroppedTo;
+            _signalSystem.OnOutputSocketDragDropEvent          += OnOutputDragDroppedTo;
             _signalSystem.OnInputSocketClickEvent         += OnInputSocketClicked;
             _signalSystem.OnOutputSocketClickEvent        += OnOutputSocketClicked;
             _signalSystem.OnNodePointerDownEvent          += OnNodePointerDown;
@@ -54,11 +54,8 @@ namespace RuntimeNodeEditor
         {
 	        var mousePosition   = Utility.GetMousePosition();
 	        var pos             = Utility.GetLocalPointIn(nodeContainer, mousePosition);
-            var node            = Utility.CreateNodePrefab<Node>(prefabPath, nodeContainer);
-            node.Init(_signalSystem, _signalSystem, pos, NewId(), prefabPath);
-            node.Setup();
-            nodes.Add(node);
-            HandleSocketRegister(node);
+            
+            Create(prefabPath, pos);
         }
 
         public void Create(string prefabPath, Vector2 pos)
@@ -137,7 +134,55 @@ namespace RuntimeNodeEditor
                 .ForEach(conn => Disconnect(conn));
         }
 
-        public void Save(string path)
+        public void SaveFile(string path)
+        {
+            System.IO.File.WriteAllText(path, ExportJson());
+        }
+
+        public void LoadFile(string path)
+        {
+            if (System.IO.File.Exists(path))
+            {
+                var file = System.IO.File.ReadAllText(path);
+                var graph = JsonUtility.FromJson<GraphData>(file);
+
+                foreach (var data in graph.nodes)
+                {
+                    LoadNode(data);
+                }
+
+                foreach (var node in nodes)
+                {
+                    var nodeData = graph.nodes.FirstOrDefault(data => data.id == node.ID);
+
+                    for (int i = 0; i < nodeData.inputSocketIds.Length; i++)
+                    {
+                        node.Inputs[i].socketId = nodeData.inputSocketIds[i];
+                    }
+
+                    for (int i = 0; i < nodeData.outputSocketIds.Length; i++)
+                    {
+                        node.Outputs[i].socketId = nodeData.outputSocketIds[i];
+                    }
+                }
+
+                foreach (var data in graph.connections)
+                {
+                    LoadConn(data);
+                }
+            }
+            else
+            {
+                Debug.Log("Specified file not exist.");
+            }
+        }
+
+        public string ExportJson()
+        {
+            return JsonUtility.ToJson(Export(), true);
+        }
+
+        public GraphData Export()
         {
             var graph       = new GraphData();
             var nodeDatas   = new List<NodeData>();
@@ -183,49 +228,10 @@ namespace RuntimeNodeEditor
                 connDatas.Add(data);
             }
 
-            graph.name = "awesome graph";
             graph.nodes = nodeDatas.ToArray();
             graph.connections = connDatas.ToArray();
 
-            System.IO.File.WriteAllText(path, JsonUtility.ToJson(graph, true));
-        }
-
-        public void Load(string path)
-        {
-            if (System.IO.File.Exists(path))
-            {
-                var file = System.IO.File.ReadAllText(path);
-                var graph = JsonUtility.FromJson<GraphData>(file);
-
-                foreach (var data in graph.nodes)
-                {
-                    LoadNode(data);
-                }
-
-                foreach (var node in nodes)
-                {
-                    var nodeData = graph.nodes.FirstOrDefault(data => data.id == node.ID);
-
-                    for (int i = 0; i < nodeData.inputSocketIds.Length; i++)
-                    {
-                        node.Inputs[i].socketId = nodeData.inputSocketIds[i];
-                    }
-
-                    for (int i = 0; i < nodeData.outputSocketIds.Length; i++)
-                    {
-                        node.Outputs[i].socketId = nodeData.outputSocketIds[i];
-                    }
-                }
-
-                foreach (var data in graph.connections)
-                {
-                    LoadConn(data);
-                }
-            }
-            else
-            {
-                Debug.Log("Specified file not exist.");
-            }
+            return graph;
         }
 
         public void Clear()
@@ -233,11 +239,6 @@ namespace RuntimeNodeEditor
             var nodesToClear = new List<Node>(nodes);
             nodesToClear.ForEach(n => Delete(n));
         }
-
-        // public void OnUpdate()
-        // {
-        //     drawer.UpdateDraw();
-        // }
 
         //  event handlers
         protected virtual void OnInputSocketClicked(SocketInput input, PointerEventData eventData)
