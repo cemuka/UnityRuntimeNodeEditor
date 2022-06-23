@@ -474,9 +474,133 @@ public class MyNodeEditor : NodeEditor
 ```
 
 
-## How to create a node
-## How to serialize a graph
 ## Make your custom node
+
+1. Create a class
+
+```c#
+public class MyCustomNode : Node
+{
+    //  define ui objects
+
+    //  define connection sockets
+
+    public override void Setup()
+    {
+        //  make your initializations
+    }
+}
+```
+
+> `OnSerialize` and `OnDeserialize` methods are needed for serialization. Also node duplication from graph also relies on this methods. Otherwise graph serialization won't work.
+
+
+2. Create a prefab
+3. Place it in Resources folder
+
+
+
 ## Make your custom graph
 
+### Overriding NodeGraph
+
+NodeGraph is the core part of the system. It responsible for nodes, connections and listening pointer events. If your graph requires custom behaviors, graph can be override.
+
+```c#
+public class CustomGraph : NodeGraph
+{
+
+}
+```
+
+### Graph Prefab
+
+To start the editor you need to provide a graph.
+
+
+
+
+## Make your custom context menu
+## How to create a node
+
+Simply call `Create(string path)` method from `NodeGraph`.
+
+```c#
+public class MyNodeEditor : NodeEditor
+{
+    ...
+    private void CreateANode()
+    {
+        Graph.Create("path/to/prefab/from/Resources");
+    }
+}
+```
+
+
+
+
+## How to serialize a graph
+
+RuntimeNodeEditor provides a simple serialization.
+
+```c#
+
+//  extract the serialized graph data as json 
+var graphData = Graph.ExportJson();
+
+//  save as json file to path
+Grap.Save("path/to/file");
+
+```
+
+Let's take a look at serialized json.
+
+
+```json
+{
+    "nodes": [
+
+    ],
+    "connections": [
+        {
+            "id": "a979fb29-4643-4479-bb7a-38e5e70b7efa",
+            "outputSocketId": "fc88d4ab-bbdf-4219-b661-40a5d474567d",
+            "inputSocketId": "e5fbbf79-8c6f-43e7-80cd-61a39b8938e3"
+        }
+    ]
+}
+```
+
+
+
+
 ## Example editors in project
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

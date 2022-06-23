@@ -6,6 +6,8 @@ namespace RuntimeNodeEditor
 {
     public class BezierCurveDrawer : MonoBehaviour
     {
+        public UILineRendererWithListener RequestLine { get { return _lineRenderer; } }
+
         public RectTransform pointerLocator;
         public RectTransform lineContainer;
         [Header("Bezier settings")]
@@ -77,6 +79,10 @@ namespace RuntimeNodeEditor
             _lineRenderer.gameObject.SetActive(_hasRequest);
         }
 
+        public void SetConnectionColor(string connId, Color color)
+        {
+            _connections[connId].lineRenderer.color = color;
+        }
         //  drawing
         private void DrawConnection(SocketHandle port1, SocketHandle port2, UILineRendererWithListener lineRenderer)
         {

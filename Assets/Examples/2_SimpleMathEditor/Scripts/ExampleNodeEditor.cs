@@ -18,6 +18,14 @@ namespace RuntimeNodeEditor.Examples
             Events.OnGraphPointerClickEvent           += OnGraphPointerClick;
             Events.OnNodePointerClickEvent            += OnNodePointerClick;
             Events.OnConnectionPointerClickEvent      += OnNodeConnectionPointerClick;
+            Events.OnSocketConnect                    += OnConnect;
+
+            Graph.SetSize(Vector2.one * 20000);
+        }
+
+        private void OnConnect(SocketInput arg1, SocketOutput arg2)
+        {
+            Graph.drawer.SetConnectionColor(arg2.connection.connId, Color.green);
         }
 
         private void OnGraphPointerClick(PointerEventData eventData)

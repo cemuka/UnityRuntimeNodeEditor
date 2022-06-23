@@ -8,8 +8,7 @@ namespace RuntimeNodeEditor
 {
     public class NodeGraph : MonoBehaviour
     {
-        public RectTransform            GraphContainer          => _graphContainer;
-        public GraphPointerListener     GraphPointerListener    => pointerListener;
+        public RectTransform        GraphContainer  => _graphContainer;
 
         //  scene references
         public RectTransform        contextMenuContainer;
@@ -60,6 +59,11 @@ namespace RuntimeNodeEditor
             drawer.Init(_signalSystem);
         }
 
+        public void SetSize(Vector2 size)
+        {
+            _graphContainer.sizeDelta = size;
+        }
+
         public void Create(string prefabPath)
         {
 	        var mousePosition   = Utility.GetMousePosition();
@@ -102,9 +106,9 @@ namespace RuntimeNodeEditor
 
             connections.Add(connection);
             input.OwnerNode.Connect(input, output);
+            drawer.Add(connection.connId, output.handle, input.handle);
 
             _signalSystem.InvokeSocketConnection(input, output);
-            drawer.Add(connection.connId, output.handle, input.handle);
         }
 
         public void Disconnect(Connection conn)
