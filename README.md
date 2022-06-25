@@ -13,6 +13,8 @@ My goal was make it in runtime with unity ui.
 - Create graph by api or custom prefab
 - Legacy and new Input System 
 
+Unity version 2021.3.3f1
+
 ![node editor](./img/node_gif2.gif)
 
 RGB color display example
