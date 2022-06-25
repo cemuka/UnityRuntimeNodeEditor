@@ -6,7 +6,7 @@ namespace RuntimeNodeEditor
 {
     public class BezierCurveDrawer : MonoBehaviour
     {
-        public UILineRendererWithListener RequestLine { get { return _lineRenderer; } }
+        public UILineRenderer RequestLine { get { return _lineRenderer; } }
 
         public RectTransform pointerLocator;
         public RectTransform lineContainer;
@@ -17,7 +17,7 @@ namespace RuntimeNodeEditor
 
         private RectTransform                _lineContainer;
         private RectTransform                _pointerLocator;
-        private UILineRendererWithListener   _lineRenderer;
+        private UILineRenderer               _lineRenderer;
         private bool                         _hasRequest;
         private Socket                       _draggingSocket;
         private IConnectionEvents            _events;
@@ -84,7 +84,7 @@ namespace RuntimeNodeEditor
             _connections[connId].lineRenderer.color = color;
         }
         //  drawing
-        private void DrawConnection(SocketHandle port1, SocketHandle port2, UILineRendererWithListener lineRenderer)
+        private void DrawConnection(SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
         {
             var pointList = new List<Vector2>();
 
@@ -125,15 +125,15 @@ namespace RuntimeNodeEditor
             _lineRenderer.SetVerticesDirty();
         }
 
-        private UILineRendererWithListener CreateLine()
+        private UILineRenderer CreateLine()
         {
             return CreateLine(connectionColor);
         }
 
-        private UILineRendererWithListener CreateLine(Color color)
+        private UILineRenderer CreateLine(Color color)
         {
             var lineGO          = new GameObject("BezierLine");
-            var linerenderer    = lineGO.AddComponent<UILineRendererWithListener>();
+            var linerenderer    = lineGO.AddComponent<UILineRenderer>();
             var lineRect        = lineGO.GetComponent<RectTransform>();
 
             lineGO.transform.SetParent(_lineContainer);
@@ -159,9 +159,9 @@ namespace RuntimeNodeEditor
             public readonly string id;
             public readonly SocketHandle output;
             public readonly SocketHandle input;
-            public readonly UILineRendererWithListener lineRenderer;
+            public readonly UILineRenderer lineRenderer;
 
-            public ConnectionDrawData(string id, SocketHandle port1, SocketHandle port2, UILineRendererWithListener lineRenderer)
+            public ConnectionDrawData(string id, SocketHandle port1, SocketHandle port2, UILineRenderer lineRenderer)
             {
                 this.id = id;
                 this.output = port1;

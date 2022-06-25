@@ -63,17 +63,15 @@ namespace RuntimeNodeEditor.Examples
         public override void OnSerialize(Serializer serializer)
         {
             var output = outputSocket.GetValue<float>();
-            serializer.Add("outputValue", output.ToString())
-                        .Add("opType", dropdown.value.ToString());
+            serializer.Add("opType",        dropdown.value.ToString());
         }
 
         public override void OnDeserialize(Serializer serializer)
         {
             var opType = int.Parse(serializer.Get("opType"));
             dropdown.SetValueWithoutNotify(opType);
-
-            var outputValue = serializer.Get("outputValue");
-            Display(outputValue);
+            
+            OnConnectedValueUpdated();
         }
 
         private void OnConnectedValueUpdated()
