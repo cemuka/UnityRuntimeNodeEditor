@@ -15,7 +15,7 @@ My goal was make it in runtime with unity ui.
 
 ![node editor](./img/node_gif2.gif)
 
-A simpler sample added  
+RGB color display example
 
 ![node editor](./img/color.png)
 
