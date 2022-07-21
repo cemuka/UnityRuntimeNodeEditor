@@ -34,7 +34,7 @@ namespace RuntimeNodeEditor
                                                                                   out localPointerPos);
 #endif
 #if ENABLE_INPUT_SYSTEM
-	        success = RectTransformUtility.ScreenPointToLocalPointInRectangle(_contextMenuContainer,
+	        success = RectTransformUtility.ScreenPointToLocalPointInRectangle(rect,
 		        						UnityEngine.InputSystem.Mouse.current.position.ReadValue(),
 		        						null,
 		        						out localPointerPos);
