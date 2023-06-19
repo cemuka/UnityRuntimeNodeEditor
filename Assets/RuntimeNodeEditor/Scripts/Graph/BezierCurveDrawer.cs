@@ -111,14 +111,15 @@ namespace RuntimeNodeEditor
             _pointerLocator.localPosition = localPointerPos;
 
             var pointList = new List<Vector2>();
-
+            var step = 1f / (vertexCount - 1);
+            var t = 0f;
             for (float i = 0; i < vertexCount; i++)
             {
-                var t = i / vertexCount;
                 pointList.Add(Utility.QuadraticCurve(GetLocalPoint(port.handle1.position),
                                                      GetLocalPoint(port.handle2.position),
                                                      GetLocalPoint(_pointerLocator.position),
                                                      t));
+                t += step;
             }
 
             _lineRenderer.m_points = pointList.ToArray();
