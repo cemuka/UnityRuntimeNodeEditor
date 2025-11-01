@@ -198,6 +198,9 @@ Check out the complete expample in `ExampleScene` for more details.
 This project is actively in development. 
 Feel free to drop an issue for any suggestion or feedback.  
 
+Wanna support me? Please, consider checkin out my new project [knightborn](https://store.steampowered.com/app/2748030/Knightborn/).  
+![kb](https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2748030/a4ba0047bbd03650ec73acec814fa51c16ce8bb7/capsule_616x353.jpg?t=1759844595)
+
 
 ### LICENSE  
 MIT  
